@@ -1,87 +1,209 @@
-{% extends '_layout.swig' %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>标签 | Jayleonc</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="标签">
+<meta property="og:url" content="https://jayleonc.github.io/tags/index.html">
+<meta property="og:site_name" content="Jayleonc">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-03-01T07:25:09.000Z">
+<meta property="article:modified_time" content="2019-03-01T07:25:58.000Z">
+<meta property="article:author" content="Jayleonc">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jayleonc" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
 
-  {% block title %}{#
-  #}{% set page_title_suffix = ' | ' + title %}{#
+  
 
-  #}{% if page.type === 'categories' and not page.title %}{#
-    #}{{ __('title.category') + page_title_suffix }}{#
-  #}{% elif page.type === 'tags' and not page.title %}{#
-    #}{{ __('title.tag') + page_title_suffix }}{#
-  #}{% elif page.type === 'schedule' and not page.title %}{#
-    #}{{ __('title.schedule') + page_title_suffix }}{#
-  #}{% else %}{#
-    #}{{ page.title + page_title_suffix }}{#
-  #}{% endif %}{#
-#}{% endblock %}
+<meta name="generator" content="Hexo 6.3.0"></head>
 
-{% block page_class %}page-post-detail{% endblock %}
-
-{% block content %}
-
-  <div id="posts" class="posts-expand">
-    {##################}
-    {### PAGE BLOCK ###}
-    {##################}
-    <div class="post-block page">
-      {% include '_partials/page/page-header.swig' %}
-      {#################}
-      {### PAGE BODY ###}
-      {#################}
-      <div class="post-body{% if theme.han %} han-init-context{% endif %}{% if page.direction && page.direction.toLowerCase() === 'rtl' %} rtl{% endif %}">
-        {# tagcloud page support #}
-        {% if page.type === 'tags' %}
-          <div class="tag-cloud">
-            <div class="tag-cloud-title">
-              {% set visibleTags = 0 %}
-              {% for tag in site.tags %}
-                {% if tag.length %}
-                  {% set visibleTags += 1 %}
-                {% endif %}
-              {% endfor %}
-              {{ _p('counter.tag_cloud', visibleTags) }}
-            </div>
-            <div class="tag-cloud-tags">
-              {{ tagcloud({min_font: 12, max_font: 30, amount: 300, color: true, start_color: '#ccc', end_color: '#111'}) }}
-            </div>
-          </div>
-        {% elif page.type === 'categories' %}
-          <div class="category-all-page">
-            <div class="category-all-title">
-              {% set visibleCategories = 0 %}
-              {% for cat in site.categories %}
-                {% if cat.length %}
-                  {% set visibleCategories += 1 %}
-                {% endif %}
-              {% endfor %}
-              {{ _p('counter.categories', visibleCategories) }}
-            </div>
-            <div class="category-all">
-              {{ list_categories() }}
-            </div>
-          </div>
-        {% elif page.type === 'schedule' %}
-          {% include 'schedule.swig' %}
-        {% else %}
-          {{ page.content }}
-        {% endif %}
-      </div>
-      {#####################}
-      {### END PAGE BODY ###}
-      {#####################}
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jayleonc</a>
+      </h1>
+      
     </div>
-    {% include '_partials/page/breadcrumb.swig' %}
-    {######################}
-    {### END PAGE BLOCK ###}
-    {######################}
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://jayleonc.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="page-" class="article article-type-page" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/tags/index.html" class="article-date">
+  <time datetime="2019-03-01T07:25:09.000Z" itemprop="datePublished">2019-03-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      标签
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://jayleonc.github.io/tags/index.html" data-id="clfmspenc00029fdp2sqt8r1o" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%94%E6%9C%88%E5%A4%A9/" rel="tag">五月天</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BF%83%E8%B7%AF%E5%8E%86%E7%A8%8B/" rel="tag">心路历程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E8%AE%B0/" rel="tag">日记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AD%8C%E8%AF%8D/" rel="tag">歌词</a></li></ul>
+    </div>
   </div>
 
-{% endblock %}
 
-{% block sidebar %}
-  {{ sidebar_template.render(false) }}
-{% endblock %}
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/%E4%BA%94%E6%9C%88%E5%A4%A9/" style="font-size: 10px;">五月天</a> <a href="/tags/%E5%BF%83%E8%B7%AF%E5%8E%86%E7%A8%8B/" style="font-size: 10px;">心路历程</a> <a href="/tags/%E6%97%A5%E8%AE%B0/" style="font-size: 10px;">日记</a> <a href="/tags/%E6%AD%8C%E8%AF%8D/" style="font-size: 10px;">歌词</a>
+    </div>
+  </div>
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/03/03/%E5%9B%9E%E6%A0%A1%E6%97%A5%E8%AE%B0/">回校日记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/03/Linux-SSR/">Linux SSR</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E4%B9%8B%E8%B7%AF/">搭建个人博客之路</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/01/%E4%BD%A0%E4%B8%8D%E6%98%AF%E7%9C%9F%E6%AD%A3%E7%9A%84%E5%BF%AB%E4%B9%90---%E4%BA%94%E6%9C%88%E5%A4%A9/">你不是真正的快乐 - 五月天</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/28/%E6%88%91%E7%9A%84%E5%A5%B3%E6%9C%8B%E5%8F%8B/">我的女朋友</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2023 Jayleonc<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>
