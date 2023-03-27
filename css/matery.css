@@ -241,7 +241,7 @@ mark {
 }
 
 .bg-color {
-    background-image: linear-gradient(to right, #4cbf30 0%, #0f9d58 100%);
+    background-image: linear-gradient(to right, #b830bf 0%, #9d0f6b 100%);
 }
 
 .text-color {
@@ -597,10 +597,10 @@ header .go-back i {
 
     0%,
     100% {
-        background: rgba(156, 39, 176, 0.75);
-        background: linear-gradient(45deg, rgba(156, 39, 176, 0.75) 0%, rgba(156, 39, 176, 0.65) 100%);
-        background: -moz-linear-gradient(135deg, rgba(156, 39, 176, 0.75) 0%, rgba(156, 39, 176, 0.65) 100%);
-        background: -webkit-linear-gradient(135deg, rgba(156, 39, 176, 0.75) 0%, rgba(156, 39, 176, 0.65) 100%);
+        background: rgba(161, 52, 9, 0.75);
+        background: linear-gradient(45deg, rgba(176, 34, 51, 0.75) 0%, rgba(22, 37, 150, 0.65) 100%);
+        background: -moz-linear-gradient(135deg, rgba(39, 142, 176, 0.75) 0%, rgba(39, 176, 144, 0.65) 100%);
+        background: -webkit-linear-gradient(135deg, rgba(43, 164, 130, 0.75) 0%, rgba(149, 189, 38, 0.65) 100%);
     }
 
     16% {
