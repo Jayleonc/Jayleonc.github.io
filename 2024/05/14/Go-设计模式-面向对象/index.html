@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Kubernetes 学习笔记, Jayleonc">
+    <meta name="keywords" content="Go 设计模式 - 面向对象, Jayleonc">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Kubernetes 学习笔记 | Jayleonc</title>
+    <title>Go 设计模式 - 面向对象 | Jayleonc</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/23.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Kubernetes 学习笔记</h1>
+                    <h1 class="description center-align post-title">Go 设计模式 - 面向对象</h1>
                 </div>
             </div>
         </div>
@@ -431,23 +431,14 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Kubernetes/">
-                                <span class="chip bg-color">Kubernetes</span>
+                            <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+                                <span class="chip bg-color">设计模式</span>
                             </a>
                         
                     </div>
                     
                 </div>
                 <div class="col s5 right-align">
-                    
-                    <div class="post-cate">
-                        <i class="fas fa-bookmark fa-fw icon-category"></i>
-                        
-                            <a href="/categories/Kubernetes/" class="post-category">
-                                Kubernetes
-                            </a>
-                        
-                    </div>
                     
                 </div>
             </div>
@@ -456,7 +447,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-04-06
+                    2024-05-14
                 </div>
                 
 
@@ -465,14 +456,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    70
+                    1.5k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    5 分
                 </div>
                 
 
@@ -487,7 +478,155 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="Kubernetes-学习笔记"><a href="#Kubernetes-学习笔记" class="headerlink" title="Kubernetes 学习笔记"></a>Kubernetes 学习笔记</h1><p>最近为了进一步学习 Kube，使用《Kubernetes 权威指南 – 从Docker到Kubernetes实践全接触 第五版》进行学习，该文章是我的学习笔记，我会记录我认为值得记录的内容，希望也可以帮助到你。</p>
+                <p>这篇文章会聊到面向对象编程和Go 的面向对象编程，并尽可能的讲的通俗和有趣。</p>
+<h2 id="面向对象"><a href="#面向对象" class="headerlink" title="面向对象"></a>面向对象</h2><h3 id="什么是面向对象编程？"><a href="#什么是面向对象编程？" class="headerlink" title="什么是面向对象编程？"></a>什么是面向对象编程？</h3><p>面向对象编程是一种编程范式或编程风格。它以类或对象作为组织代码的基本单元，并将封装、抽象、继承、多态四个特性，作为代码设计和实现的基石 。实际上，面向对象编程从字面上，按照最简单、最原始的方式来理解，就是将对象或类作为代码组织的基本单元，来进行编程的一种编程范式或者编程风格，并不一定需要封装、抽象、继承、多态这四大特性的支持。</p>
+<h3 id="Go-的面相对象编程"><a href="#Go-的面相对象编程" class="headerlink" title="Go 的面相对象编程"></a>Go 的面相对象编程</h3><p>在简单的解释了什么是面向对象编程后，我在这里直接为你展示，Go 的面相对象编程例子，方便你更好的理解。</p>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">type</span> Animal <span class="token keyword">interface</span> <span class="token punctuation">{</span>
+    <span class="token function">Speak</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">type</span> Dog <span class="token keyword">struct</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>d Dog<span class="token punctuation">)</span> <span class="token function">Speak</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token string">"Woof"</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">type</span> Cat <span class="token keyword">struct</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>c Cat<span class="token punctuation">)</span> <span class="token function">Speak</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token string">"Meow"</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> animals <span class="token punctuation">[</span><span class="token punctuation">]</span>Animal
+    animals <span class="token operator">=</span> <span class="token function">append</span><span class="token punctuation">(</span>animals<span class="token punctuation">,</span> Dog<span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> Cat<span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+    <span class="token keyword">for</span> <span class="token boolean">_</span><span class="token punctuation">,</span> animal <span class="token operator">:=</span> <span class="token keyword">range</span> animals <span class="token punctuation">{</span>
+        fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>animal<span class="token punctuation">.</span><span class="token function">Speak</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>上面可以说是你最常见过的代码了，Java 那边也经常用这样的代码进行讲解，不过我不会具体的讲解这里的代码，因为你应该要看的懂。</p>
+<p>Go 语言不直接支持传统的面向对象编程，没有类和继承的概念，但通过结构体（struct）和接口（interface）实现了一些面向对象的特性。你可以使用结构体定义数据结构，通过方法（method）实现行为，并使用接口定义多态性。适合需要模拟现实世界对象和关系的场景，如游戏开发中的实体、用户管理系统等。</p>
+<h4 id="面向对象编程的简化理解"><a href="#面向对象编程的简化理解" class="headerlink" title="面向对象编程的简化理解"></a>面向对象编程的简化理解</h4><p>即使不考虑封装、抽象、继承和多态，面向对象编程仍然可以通过以下方式来理解：</p>
+<ul>
+<li><strong>代码组织</strong>：以对象为基本单位进行代码组织，类定义了对象的结构和行为。</li>
+<li><strong>数据与行为的组合</strong>：将数据（属性）和行为（方法）组合在一起，以对象的形式封装。</li>
+<li><strong>对象交互</strong>：通过对象之间的交互来实现程序逻辑，而不是通过单纯的函数调用。</li>
+</ul>
+<h3 id="Go-的广义面向对象编程"><a href="#Go-的广义面向对象编程" class="headerlink" title="Go 的广义面向对象编程"></a>Go 的广义面向对象编程</h3><p>从广义上来说，Go 可以被认为是一种支持面向对象编程（OOP）的编程语言。虽然 Go 没有传统面向对象编程语言中的类和继承，但它提供了结构体（struct）和接口（interface），这使得它能够实现许多面向对象的概念和模式。以下是一些支持这一观点的具体特性：</p>
+<h4 id="1-结构体（Struct）"><a href="#1-结构体（Struct）" class="headerlink" title="1. 结构体（Struct）"></a>1. 结构体（Struct）</h4><p>Go 使用结构体来定义数据类型，并可以为这些结构体定义方法。结构体类似于面向对象编程中的类，但没有继承的概念。</p>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">type</span> Person <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Name <span class="token builtin">string</span>
+    Age  <span class="token builtin">int</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>p Person<span class="token punctuation">)</span> <span class="token function">Greet</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token string">"Hello, my name is "</span> <span class="token operator">+</span> p<span class="token punctuation">.</span>Name
+<span class="token punctuation">}</span>
+</code></pre>
+<h4 id="2-方法（Methods）"><a href="#2-方法（Methods）" class="headerlink" title="2. 方法（Methods）"></a>2. 方法（Methods）</h4><p>Go 允许为任意类型（包括结构体类型）定义方法。这些方法可以看作是结构体的行为。</p>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">func</span> <span class="token punctuation">(</span>p Person<span class="token punctuation">)</span> <span class="token function">Greet</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token string">"Hello, my name is "</span> <span class="token operator">+</span> p<span class="token punctuation">.</span>Name
+<span class="token punctuation">}</span>
+</code></pre>
+<h4 id="3-接口（Interfaces）"><a href="#3-接口（Interfaces）" class="headerlink" title="3. 接口（Interfaces）"></a>3. 接口（Interfaces）</h4><p>Go 的接口提供了一种方式来定义行为，并允许不同的类型实现这些接口。接口在 Go 中非常强大，因为它们支持多态性。</p>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">type</span> Greeter <span class="token keyword">interface</span> <span class="token punctuation">{</span>
+    <span class="token function">Greet</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">greet</span><span class="token punctuation">(</span>g Greeter<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>g<span class="token punctuation">.</span><span class="token function">Greet</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    p <span class="token operator">:=</span> Person<span class="token punctuation">{</span>Name<span class="token punctuation">:</span> <span class="token string">"Alice"</span><span class="token punctuation">,</span> Age<span class="token punctuation">:</span> <span class="token number">30</span><span class="token punctuation">}</span>
+    <span class="token function">greet</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// 输出: Hello, my name is Alice</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h4 id="4-嵌入（Embedding）"><a href="#4-嵌入（Embedding）" class="headerlink" title="4. 嵌入（Embedding）"></a>4. 嵌入（Embedding）</h4><p>Go 支持嵌入，这可以看作是组合而不是继承的一种方式，使得我们可以重用代码。</p>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">type</span> Employee <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    Person
+    Position <span class="token builtin">string</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    e <span class="token operator">:=</span> Employee<span class="token punctuation">{</span>Person<span class="token punctuation">:</span> Person<span class="token punctuation">{</span>Name<span class="token punctuation">:</span> <span class="token string">"Bob"</span><span class="token punctuation">,</span> Age<span class="token punctuation">:</span> <span class="token number">25</span><span class="token punctuation">}</span><span class="token punctuation">,</span> Position<span class="token punctuation">:</span> <span class="token string">"Developer"</span><span class="token punctuation">}</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span><span class="token function">Greet</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// 输出: Hello, my name is Bob</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h4 id="5-多态性（Polymorphism）"><a href="#5-多态性（Polymorphism）" class="headerlink" title="5. 多态性（Polymorphism）"></a>5. 多态性（Polymorphism）</h4><p>通过接口，Go 实现了多态性，不同类型可以实现相同的接口，从而在不修改代码的情况下实现行为的替换。</p>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">type</span> Dog <span class="token keyword">struct</span><span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>d Dog<span class="token punctuation">)</span> <span class="token function">Greet</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token string">"Woof"</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> g Greeter
+    g <span class="token operator">=</span> Person<span class="token punctuation">{</span>Name<span class="token punctuation">:</span> <span class="token string">"Alice"</span><span class="token punctuation">,</span> Age<span class="token punctuation">:</span> <span class="token number">30</span><span class="token punctuation">}</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>g<span class="token punctuation">.</span><span class="token function">Greet</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// 输出: Hello, my name is Alice</span>
+
+    g <span class="token operator">=</span> Dog<span class="token punctuation">{</span><span class="token punctuation">}</span>
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span>g<span class="token punctuation">.</span><span class="token function">Greet</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// 输出: Woof</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="封装、抽象、继承、多态"><a href="#封装、抽象、继承、多态" class="headerlink" title="封装、抽象、继承、多态"></a>封装、抽象、继承、多态</h3><p>接下来会详细的聊一下，普遍认知中的面向对象四大特性，理解面向对象编程及 Go 语言中面向对象编程概念的关键就是理解这四大特性: 封装、抽象、继承、多态。过程中会介绍 Go 语言中，如何体现这四大特性。</p>
+<h4 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h4><p>接下来简单介绍封装特性。封装也叫作信息隐藏或者数据访问保护。对象或类通过暴露有限的访问接口，授权外部仅能通过类提供的方式 (或者叫函数) 来访问内部信息或者数据。</p>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">package</span> main
+
+<span class="token keyword">import</span> <span class="token string">"fmt"</span>
+
+<span class="token comment" spellcheck="true">// Counter 结构体</span>
+<span class="token keyword">type</span> Counter <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    value <span class="token builtin">int</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment" spellcheck="true">// NewCounter 构造函数，初始化一个新的 Counter</span>
+<span class="token keyword">func</span> <span class="token function">NewCounter</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">*</span>Counter <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token operator">&amp;</span>Counter<span class="token punctuation">{</span>value<span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment" spellcheck="true">// Increment 方法，用于增加计数器的值</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>c <span class="token operator">*</span>Counter<span class="token punctuation">)</span> <span class="token function">Increment</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    c<span class="token punctuation">.</span>value<span class="token operator">++</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment" spellcheck="true">// Value 方法，用于获取当前计数器的值</span>
+<span class="token keyword">func</span> <span class="token punctuation">(</span>c <span class="token operator">*</span>Counter<span class="token punctuation">)</span> <span class="token function">Value</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">int</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> c<span class="token punctuation">.</span>value
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    c <span class="token operator">:=</span> <span class="token function">NewCounter</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// 创建一个新的 Counter 实例</span>
+    
+    c<span class="token punctuation">.</span><span class="token function">Increment</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// 增加计数器的值</span>
+    c<span class="token punctuation">.</span><span class="token function">Increment</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    
+    fmt<span class="token punctuation">.</span><span class="token function">Println</span><span class="token punctuation">(</span><span class="token string">"Counter value:"</span><span class="token punctuation">,</span> c<span class="token punctuation">.</span><span class="token function">Value</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// 输出: Counter value: 2</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<ol>
+<li><p><strong>数据隐藏</strong>：</p>
+<ul>
+<li><code>Counter</code> 结构体的 <code>value</code> 字段是不可访问的（小写字母开头），只能在 <code>Counter</code> 结构体内部访问。</li>
+<li>外部代码无法直接修改 <code>value</code> 的值，保护了数据的完整性。</li>
+</ul>
+</li>
+<li><p><strong>通过方法访问数据</strong>：</p>
+<ul>
+<li><p><code>Increment</code> 方法是可访问的，用于增加计数器的值。</p>
+</li>
+<li><p><code>Value</code> 方法是可访问的，用于获取当前计数器的值。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h5 id="封装的意义"><a href="#封装的意义" class="headerlink" title="封装的意义"></a><strong>封装的意义</strong></h5><ol>
+<li><strong>数据隐藏</strong>：<code>value</code> 字段被隐藏，防止外部直接访问和修改，保护数据的完整性。</li>
+<li><strong>控制访问权限</strong>：通过 <code>Increment</code> 和 <code>Value</code> 方法控制对计数器的操作。</li>
+<li><strong>提高代码的可维护性</strong>：封装实现细节，外部代码不需要关心计数器的内部实现，只需要调用提供的方法。</li>
+</ol>
+<h4 id="抽象"><a href="#抽象" class="headerlink" title="抽象"></a>抽象</h4><p>… 未完待续</p>
 
                 
             </div>
@@ -514,7 +653,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://jayleonc.github.io/2023/04/06/Kubernetes-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">https://jayleonc.github.io/2023/04/06/Kubernetes-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</a>
+                    <a href="https://jayleonc.github.io/2024/05/14/Go-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">https://jayleonc.github.io/2024/05/14/Go-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -552,8 +691,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Kubernetes/">
-                                    <span class="chip bg-color">Kubernetes</span>
+                                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+                                    <span class="chip bg-color">设计模式</span>
                                 </a>
                             
                         </div>
@@ -723,17 +862,18 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2023/04/12/Linux-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+                <a href="/2024/05/14/Go-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="Linux 学习笔记">
+                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="Go 设计模式 - 面向对象">
                         
-                        <span class="card-title">Linux 学习笔记</span>
+                        <span class="card-title">Go 设计模式 - 面向对象</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -743,26 +883,23 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-04-12
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-05-14
+                            </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/Linux/" class="post-category">
-                                    Linux
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Jayleonc
                             
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Linux/">
-                        <span class="chip bg-color">Linux</span>
+                    <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+                        <span class="chip bg-color">设计模式</span>
                     </a>
                     
                 </div>
@@ -776,13 +913,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2023/03/28/kube-%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/">
+                <a href="/2024/05/08/%E5%85%B3%E4%BA%8E%E6%9C%80%E8%BF%91%E7%9A%84%E6%88%91%EF%BC%8C%E5%92%8C%E8%A6%81%E4%B8%8D%E8%A6%81%E7%BB%A7%E7%BB%AD%E5%86%99%E5%8D%9A%E5%AE%A2%E7%9A%84%E6%80%9D%E8%80%83/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="kube 集群安装">
+                        <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="关于最近的我，和要不要继续写博客的思考">
                         
-                        <span class="card-title">kube 集群安装</span>
+                        <span class="card-title">关于最近的我，和要不要继续写博客的思考</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -793,16 +930,12 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-03-28
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-05-08
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/Kubernetes/" class="post-category">
-                                    Kubernetes
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Jayleonc
                             
                         </span>
                     </div>
@@ -810,8 +943,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Kubernetes/">
-                        <span class="chip bg-color">Kubernetes</span>
+                    <a href="/tags/%E6%80%9D%E8%80%83/">
+                        <span class="chip bg-color">思考</span>
                     </a>
                     
                 </div>
