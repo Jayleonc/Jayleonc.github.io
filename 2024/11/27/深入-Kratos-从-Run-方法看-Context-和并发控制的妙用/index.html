@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="我的第一篇博客文章, Jayleonc">
+    <meta name="keywords" content="深入 Kratos: 从 Run 方法看 Context 和并发控制的妙用, Jayleonc">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>我的第一篇博客文章 | Jayleonc</title>
+    <title>深入 Kratos: 从 Run 方法看 Context 和并发控制的妙用 | Jayleonc</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/17.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/18.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">我的第一篇博客文章</h1>
+                    <h1 class="description center-align post-title">深入 Kratos: 从 Run 方法看 Context 和并发控制的妙用</h1>
                 </div>
             </div>
         </div>
@@ -429,9 +429,17 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+                                <span class="chip bg-color">并发编程</span>
+                            </a>
+                        
+                            <a href="/tags/Context/">
+                                <span class="chip bg-color">Context</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
@@ -443,7 +451,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2019-02-28
+                    2024-11-27
                 </div>
                 
 
@@ -452,14 +460,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    74
+                    1.3k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    4 分
                 </div>
                 
 
@@ -474,7 +482,103 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>大家好，我是廖浚钧，现在是一名大一新生，专业软件技术。这个专业在本科叫做，软件工程，所以我是一名大专学生！<br>但是我并不会因此感到沮丧，因为我清楚的知道，我是谁，我将成为谁…</p>
+                <p>在 Go 程序开发中，<strong>Context</strong> 是一个不可或缺的工具，它不仅是并发编程的基石，还能帮助我们优雅地管理程序的生命周期。在学习 Kratos 框架时，其 <code>App</code> 的 <code>Run</code> 方法展示了如何通过 Context 和 errgroup 实现并发控制和生命周期管理。</p>
+<p>本篇博客将以 Kratos 的 <code>App.Run</code> 方法为例，重点解析 Context 的使用场景、设计理念，以及与 errgroup 的结合使用。</p>
+<h3 id="1-什么是-Context？"><a href="#1-什么是-Context？" class="headerlink" title="1. 什么是 Context？"></a><strong>1. 什么是 Context？</strong></h3><p><code>context.Context</code> 是 Go 标准库中用于控制并发任务的工具。其核心功能包括：</p>
+<ul>
+<li><strong>传递请求范围内的数据</strong>：使用 <code>context.WithValue</code> 在上下文中传递数据。</li>
+<li><strong>控制生命周期</strong>：通过 <code>context.WithCancel</code> 或 <code>context.WithTimeout</code> 以及 <code>context.WithDeadline</code> 来取消操作。</li>
+<li><strong>链式传递</strong>：Context 可在协程间传递，形成一个父子关系链。</li>
+</ul>
+<p>常见的 Context 使用场景包括：</p>
+<ul>
+<li>请求超时控制。</li>
+<li>传递全局数据（如用户 ID、请求 Token）。</li>
+<li>任务的生命周期管理。</li>
+</ul>
+<p>Kratos 框架在 <code>App</code> 的生命周期管理中充分利用了 Context 的这些特性。</p>
+<h3 id="2-什么是-App？"><a href="#2-什么是-App？" class="headerlink" title="2. 什么是 App？"></a><strong>2. 什么是 App？</strong></h3><p>在 Kratos 框架中，<code>App</code> 是应用程序的生命周期管理器（lifecycle manager）。它负责协调应用的启动、运行和停止，提供了一种优雅的方式来处理服务的并发管理和生命周期事件。</p>
+<h4 id="2-1-App-的定义"><a href="#2-1-App-的定义" class="headerlink" title="2.1 App 的定义"></a>2.1 <strong>App 的定义</strong></h4><p><code>App</code> 的定义如下：</p>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">type</span> App <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    opts     options               <span class="token comment" spellcheck="true">// 应用的配置选项</span>
+    ctx      context<span class="token punctuation">.</span>Context       <span class="token comment" spellcheck="true">// 应用的根 Context，用于生命周期管理</span>
+    cancel   context<span class="token punctuation">.</span>CancelFunc    <span class="token comment" spellcheck="true">// 取消函数，通知所有子任务停止</span>
+    mu       sync<span class="token punctuation">.</span>Mutex            <span class="token comment" spellcheck="true">// 锁，用于并发安全地操作实例</span>
+    instance <span class="token operator">*</span>registry<span class="token punctuation">.</span>ServiceInstance <span class="token comment" spellcheck="true">// 服务注册的实例信息</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<ul>
+<li><strong>opts</strong>: 包含应用的配置，比如服务名称、版本、元数据、信号等。</li>
+<li><strong>ctx 和 cancel</strong>: 用于管理应用的生命周期，<code>ctx</code> 是 Context 链的根。</li>
+<li><strong>instance</strong>: 当前服务的注册实例信息，便于与注册中心交互。</li>
+</ul>
+<h4 id="2-2-App-的功能"><a href="#2-2-App-的功能" class="headerlink" title="2.2 App 的功能"></a>2.2 <strong>App 的功能</strong></h4><p><code>App</code> 的核心功能是：</p>
+<ul>
+<li><strong>生命周期管理</strong>：提供钩子函数（如 <code>beforeStart</code>、<code>afterStart</code>、<code>beforeStop</code> 和 <code>afterStop</code>），允许开发者在特定阶段插入逻辑。</li>
+<li><strong>服务管理</strong>：支持启动和停止多个服务（如 HTTP、gRPC 服务）。</li>
+<li><strong>服务注册</strong>：与注册中心交互，完成服务的注册与注销。</li>
+</ul>
+<h3 id="3-Kratos-App-Run-方法的-Context-应用"><a href="#3-Kratos-App-Run-方法的-Context-应用" class="headerlink" title="3. Kratos App.Run 方法的 Context 应用"></a><strong>3. Kratos <code>App.Run</code> 方法的 Context 应用</strong></h3><p>在 Kratos 的 <code>App</code> 中，<code>Run</code> 方法是整个应用程序的核心运行逻辑。它用 Context 管理应用的生命周期，用 errgroup 管理并发任务，展示了 Context 在复杂场景中的实战应用。</p>
+<h4 id="3-1-Context-的创建与传播"><a href="#3-1-Context-的创建与传播" class="headerlink" title="3.1 Context 的创建与传播"></a>3.1 <strong>Context 的创建与传播</strong></h4><p><code>App</code> 在构造时，创建了一个根 Context：</p>
+<pre class=" language-go"><code class="language-go">ctx<span class="token punctuation">,</span> cancel <span class="token operator">:=</span> context<span class="token punctuation">.</span><span class="token function">WithCancel</span><span class="token punctuation">(</span>o<span class="token punctuation">.</span>ctx<span class="token punctuation">)</span>
+</code></pre>
+<ul>
+<li><strong>根 Context</strong>：通过 <code>context.WithCancel</code> 创建，调用 <code>cancel</code> 即可通知所有子协程退出。</li>
+<li><strong>子 Context</strong>：在需要传递超时或范围限制时，可以进一步调用 <code>context.WithTimeout</code> 或 <code>context.WithDeadline</code>。</li>
+</ul>
+<p>Kratos 将 Context 封装为 <code>sctx</code>，并通过 <code>NewContext</code> 函数传递到应用的各个模块：</p>
+<pre class=" language-go"><code class="language-go">sctx <span class="token operator">:=</span> <span class="token function">NewContext</span><span class="token punctuation">(</span>a<span class="token punctuation">.</span>ctx<span class="token punctuation">,</span> a<span class="token punctuation">)</span>
+</code></pre>
+<p>这保证了 <code>App</code> 的生命周期控制能传递到所有服务和任务中。</p>
+<h4 id="3-2-与-errgroup-的结合使用"><a href="#3-2-与-errgroup-的结合使用" class="headerlink" title="3.2 与 errgroup 的结合使用"></a>3.2 <strong>与 errgroup 的结合使用</strong></h4><p><code>errgroup</code> 是 Go 提供的工具，用于管理一组并发任务，并收集它们的错误。Kratos 在 <code>Run</code> 方法中通过 <code>errgroup.WithContext</code> 与 Context 结合：</p>
+<pre class=" language-go"><code class="language-go">eg<span class="token punctuation">,</span> ctx <span class="token operator">:=</span> errgroup<span class="token punctuation">.</span><span class="token function">WithContext</span><span class="token punctuation">(</span>sctx<span class="token punctuation">)</span>
+</code></pre>
+<ul>
+<li><code>eg</code> 管理多个服务的启动和停止任务。</li>
+<li><code>ctx</code> 用于监听取消信号，一旦接收到取消信号，<code>errgroup</code> 会自动停止所有子任务。</li>
+</ul>
+<h3 id="4-Run-方法中的并发设计解析"><a href="#4-Run-方法中的并发设计解析" class="headerlink" title="4. Run 方法中的并发设计解析"></a><strong>4. <code>Run</code> 方法中的并发设计解析</strong></h3><p>在 <code>Run</code> 方法中，Context 的使用贯穿始终。以下是关键代码片段及其解析：</p>
+<h4 id="4-1-服务启动和停止控制"><a href="#4-1-服务启动和停止控制" class="headerlink" title="4.1 服务启动和停止控制"></a>4.1 <strong>服务启动和停止控制</strong></h4><p><code>Run</code> 方法用 <code>errgroup</code> 启动所有服务，同时监听服务退出信号：</p>
+<pre class=" language-go"><code class="language-go">wg<span class="token punctuation">.</span><span class="token function">Add</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+eg<span class="token punctuation">.</span><span class="token function">Go</span><span class="token punctuation">(</span><span class="token keyword">func</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">error</span> <span class="token punctuation">{</span>
+    wg<span class="token punctuation">.</span><span class="token function">Done</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> srv<span class="token punctuation">.</span><span class="token function">Start</span><span class="token punctuation">(</span><span class="token function">NewContext</span><span class="token punctuation">(</span>a<span class="token punctuation">.</span>opts<span class="token punctuation">.</span>ctx<span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre>
+<ul>
+<li>使用 <code>sync.WaitGroup</code> 确保服务启动完成后，才能继续注册服务。</li>
+<li>用 Context 传递 <code>App</code> 的生命周期控制信号。</li>
+</ul>
+<h4 id="4-2-信号监听与优雅退出"><a href="#4-2-信号监听与优雅退出" class="headerlink" title="4.2 信号监听与优雅退出"></a>4.2 <strong>信号监听与优雅退出</strong></h4><p><code>Run</code> 通过 Context 和信号机制，实现了优雅退出：</p>
+<pre class=" language-go"><code class="language-go">c <span class="token operator">:=</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">chan</span> os<span class="token punctuation">.</span>Signal<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
+signal<span class="token punctuation">.</span><span class="token function">Notify</span><span class="token punctuation">(</span>c<span class="token punctuation">,</span> a<span class="token punctuation">.</span>opts<span class="token punctuation">.</span>sigs<span class="token operator">...</span><span class="token punctuation">)</span>
+eg<span class="token punctuation">.</span><span class="token function">Go</span><span class="token punctuation">(</span><span class="token keyword">func</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">error</span> <span class="token punctuation">{</span>
+    <span class="token keyword">select</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> <span class="token operator">&lt;-</span>ctx<span class="token punctuation">.</span><span class="token function">Done</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token boolean">nil</span>
+    <span class="token keyword">case</span> <span class="token operator">&lt;-</span>c<span class="token punctuation">:</span>
+        <span class="token keyword">return</span> a<span class="token punctuation">.</span><span class="token function">Stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre>
+<ul>
+<li>当系统接收到终止信号（如 <code>SIGTERM</code>），或手动调用 <code>Stop</code> 时，<code>ctx</code> 会触发取消信号。</li>
+<li>所有依赖该 Context 的协程都会有序退出。</li>
+</ul>
+<h4 id="4-3-服务的注销与清理"><a href="#4-3-服务的注销与清理" class="headerlink" title="4.3 服务的注销与清理"></a>4.3 <strong>服务的注销与清理</strong></h4><p>在停止服务时，Kratos 通过 Context 确保操作有超时限制：</p>
+<pre class=" language-go"><code class="language-go">stopCtx<span class="token punctuation">,</span> cancel <span class="token operator">:=</span> context<span class="token punctuation">.</span><span class="token function">WithTimeout</span><span class="token punctuation">(</span><span class="token function">NewContext</span><span class="token punctuation">(</span>a<span class="token punctuation">.</span>opts<span class="token punctuation">.</span>ctx<span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">,</span> a<span class="token punctuation">.</span>opts<span class="token punctuation">.</span>stopTimeout<span class="token punctuation">)</span>
+<span class="token keyword">defer</span> <span class="token function">cancel</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">return</span> srv<span class="token punctuation">.</span><span class="token function">Stop</span><span class="token punctuation">(</span>stopCtx<span class="token punctuation">)</span>
+</code></pre>
+<ul>
+<li>若超时未完成任务，<code>stopCtx</code> 会自动取消，避免阻塞。</li>
+</ul>
+<h3 id="5-总结：Context-在并发场景中的优雅实践"><a href="#5-总结：Context-在并发场景中的优雅实践" class="headerlink" title="5. 总结：Context 在并发场景中的优雅实践"></a><strong>5. 总结：Context 在并发场景中的优雅实践</strong></h3><p>Kratos 的 <code>App.Run</code> 方法为我们提供了一个 Context 实践的优秀范例：</p>
+<ul>
+<li><strong>任务生命周期管理</strong>：通过 Context 控制服务的启动、运行和停止。</li>
+<li><strong>协程取消机制</strong>：结合 errgroup，实现了并发任务的有序退出。</li>
+<li><strong>优雅退出与信号处理</strong>：通过 Context 和信号监听，确保服务能够在接收到终止信号时优雅退出。</li>
+</ul>
 
                 
             </div>
@@ -501,7 +605,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://jayleonc.github.io/2019/02/28/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0/">https://jayleonc.github.io/2019/02/28/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0/</a>
+                    <a href="https://jayleonc.github.io/2024/11/27/%E6%B7%B1%E5%85%A5-Kratos-%E4%BB%8E-Run-%E6%96%B9%E6%B3%95%E7%9C%8B-Context-%E5%92%8C%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6%E7%9A%84%E5%A6%99%E7%94%A8/">https://jayleonc.github.io/2024/11/27/%E6%B7%B1%E5%85%A5-Kratos-%E4%BB%8E-Run-%E6%96%B9%E6%B3%95%E7%9C%8B-Context-%E5%92%8C%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6%E7%9A%84%E5%A6%99%E7%94%A8/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -538,7 +642,15 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+                                    <span class="chip bg-color">并发编程</span>
+                                </a>
+                            
+                                <a href="/tags/Context/">
+                                    <span class="chip bg-color">Context</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -706,54 +818,18 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2019/03/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E4%B9%8B%E8%B7%AF/">
+                <a href="/2024/11/27/%E6%B7%B1%E5%85%A5-Kratos-%E4%BB%8E-Run-%E6%96%B9%E6%B3%95%E7%9C%8B-Context-%E5%92%8C%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6%E7%9A%84%E5%A6%99%E7%94%A8/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="搭建个人博客之路">
+                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="深入 Kratos: 从 Run 方法看 Context 和并发控制的妙用">
                         
-                        <span class="card-title">搭建个人博客之路</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2019-03-01
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            Jayleonc
-                            
-                        </span>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
-            </div>
-            <div class="card">
-                <a href="/2019/02/28/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="我的第一篇博客文章">
-                        
-                        <span class="card-title">我的第一篇博客文章</span>
+                        <span class="card-title">深入 Kratos: 从 Run 方法看 Context 和并发控制的妙用</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -764,7 +840,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2019-02-28
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-11-27
                             </span>
                         <span class="publish-author">
                             
@@ -775,6 +851,63 @@
                     </div>
                 </div>
 
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+                        <span class="chip bg-color">并发编程</span>
+                    </a>
+                    
+                    <a href="/tags/Context/">
+                        <span class="chip bg-color">Context</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/11/19/%E8%A2%AB%E8%A3%81%E5%91%98%E5%90%8E/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="被裁员后...">
+                        
+                        <span class="card-title">被裁员后...</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-11-19
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Jayleonc
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E7%94%9F%E6%B4%BB/">
+                        <span class="chip bg-color">生活</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>
