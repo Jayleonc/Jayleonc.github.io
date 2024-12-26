@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Go语言基础：Mutex和RWMutex, Jayleonc">
+    <meta name="keywords" content="Go语言并发编程：Mutex和RWMutex, Jayleonc">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Go语言基础：Mutex和RWMutex | Jayleonc</title>
+    <title>Go语言并发编程：Mutex和RWMutex | Jayleonc</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Go语言基础：Mutex和RWMutex</h1>
+                    <h1 class="description center-align post-title">Go语言并发编程：Mutex和RWMutex</h1>
                 </div>
             </div>
         </div>
@@ -439,6 +439,10 @@
                                 <span class="chip bg-color">Golang</span>
                             </a>
                         
+                            <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+                                <span class="chip bg-color">并发编程</span>
+                            </a>
+                        
                     </div>
                     
                 </div>
@@ -460,14 +464,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.2k
+                    3.1k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    8 分
+                    12 分
                 </div>
                 
 
@@ -520,22 +524,170 @@
 <li>写锁阻塞读和写锁，写入时保障数据完整性</li>
 <li>读锁不互相阻塞，提高读取性能</li>
 </ol>
-<h3 id="Mutex-步骤总结"><a href="#Mutex-步骤总结" class="headerlink" title="Mutex 步骤总结"></a>Mutex 步骤总结</h3><p><strong>步骤总结：</strong></p>
-<pre><code>1. **CAS 操作（Compare-And-Swap）：**
-    1. 首先尝试进行一次 CAS 操作。
-    2. 如果锁当前空闲且没有其他 goroutine 抢占，则直接加锁成功。
-2. **自旋：**
-    1. 如果第一次 CAS 失败，进行自旋（短暂尝试多次获取锁）。
-    2. 如果在自旋过程中成功，则无需进入等待队列。
-3. **加入队列：**
-    1. 如果自旋后仍然无法获取锁，goroutine 进入等待队列排队。
-4. **被唤醒（从队列中唤醒）：**
-    1. **正常模式：**
-        1. 和新来的 goroutine 一起竞争锁。
-        2. 但是，等待者大概率失败，锁可能被新来的 goroutine 抢走。
-    2. **饥饿模式：**
-        1. 唤醒的 goroutine **必定拿到锁**，锁将优先分配给队列中等待时间最长的 goroutine。
+<h3 id="sync-包——Mutex-细节（源码解析）"><a href="#sync-包——Mutex-细节（源码解析）" class="headerlink" title="sync 包——Mutex 细节（源码解析）"></a><strong>sync 包——Mutex 细节（源码解析）</strong></h3><hr>
+<p>接下来结合 <code>sync.Mutex</code> 的源码，为每个步骤添加相应的代码块，方便大家更直观地理解 Mutex 的加锁和唤醒过程。代码文件：<code>go/src/sync/mutex.go</code>，部份代码是伪代码，核心代码如判断是否自旋代码位于 Go 运行时，使用伪代码便于理解。</p>
+<h4 id="1-CAS-操作（Compare-And-Swap）"><a href="#1-CAS-操作（Compare-And-Swap）" class="headerlink" title="1. CAS 操作（Compare-And-Swap）"></a>1. <strong>CAS 操作（Compare-And-Swap）</strong></h4><ul>
+<li>原理：<ul>
+<li>通过 CAS（Compare-And-Swap）尝试加锁，如果锁当前空闲（state&#x3D;0），则直接获取锁。</li>
+<li>如果其他 goroutine 已经持有锁，CAS 操作会失败，进入下一步（自旋或等待）。</li>
+</ul>
+</li>
+<li><strong>源码：</strong></li>
+</ul>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">func</span> <span class="token punctuation">(</span>m <span class="token operator">*</span>Mutex<span class="token punctuation">)</span> <span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">// 快路径：如果锁空闲，直接加锁成功</span>
+    <span class="token keyword">if</span> atomic<span class="token punctuation">.</span><span class="token function">CompareAndSwapInt32</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>m<span class="token punctuation">.</span>state<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> mutexLocked<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> race<span class="token punctuation">.</span>Enabled <span class="token punctuation">{</span>
+            race<span class="token punctuation">.</span><span class="token function">Acquire</span><span class="token punctuation">(</span>unsafe<span class="token punctuation">.</span><span class="token function">Pointer</span><span class="token punctuation">(</span>m<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span>
+    <span class="token punctuation">}</span>
+    <span class="token comment" spellcheck="true">// 慢路径</span>
+    m<span class="token punctuation">.</span><span class="token function">lockSlow</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
 </code></pre>
+<ul>
+<li>解释：<ul>
+<li>这段代码展示了 <code>Mutex</code> 加锁的快路径逻辑。</li>
+<li><code>atomic.CompareAndSwapInt32</code> 是核心的 CAS 操作，尝试将 <code>state</code> 从 0 置为 <code>mutexLocked</code>。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-自旋"><a href="#2-自旋" class="headerlink" title="2. 自旋"></a>2. <strong>自旋</strong></h4><ul>
+<li>原理：<ul>
+<li>如果第一次 CAS 失败，goroutine 不会立即进入等待队列，而是尝试短暂自旋。</li>
+<li>自旋是在不释放 CPU 的情况下多次尝试获取锁，如果在此过程中锁释放，goroutine 可直接成功加锁，避免进入等待队列。</li>
+</ul>
+</li>
+<li><strong>源码：</strong></li>
+</ul>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">func</span> <span class="token punctuation">(</span>m <span class="token operator">*</span>Mutex<span class="token punctuation">)</span> <span class="token function">lockSlow</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> waitStartTime <span class="token builtin">int64</span>
+    <span class="token keyword">var</span> starved <span class="token builtin">bool</span>
+    iter <span class="token operator">:=</span> <span class="token number">0</span>
+
+    <span class="token keyword">for</span> <span class="token punctuation">{</span>
+        old <span class="token operator">:=</span> m<span class="token punctuation">.</span>state
+        <span class="token comment" spellcheck="true">// 自旋尝试再次 CAS</span>
+        <span class="token keyword">if</span> old<span class="token operator">&amp;</span>mutexLocked <span class="token operator">==</span> <span class="token number">0</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> atomic<span class="token punctuation">.</span><span class="token function">CompareAndSwapInt32</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>m<span class="token punctuation">.</span>state<span class="token punctuation">,</span> old<span class="token punctuation">,</span> old<span class="token operator">|</span>mutexLocked<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">break</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">continue</span>
+        <span class="token punctuation">}</span>
+        iter<span class="token operator">++</span>
+        <span class="token keyword">if</span> iter <span class="token operator">&lt;</span> <span class="token number">4</span> <span class="token punctuation">{</span>
+            runtime<span class="token punctuation">.</span><span class="token function">Gosched</span><span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">// 自旋几次后让出 CPU</span>
+            <span class="token keyword">continue</span>
+        <span class="token punctuation">}</span>
+        <span class="token comment" spellcheck="true">// 自旋失败后进入队列</span>
+        <span class="token keyword">if</span> <span class="token operator">!</span>starved <span class="token punctuation">{</span>
+            waitStartTime <span class="token operator">=</span> <span class="token function">runtimeNano</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            starved <span class="token operator">=</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<ul>
+<li>解释：<ul>
+<li>自旋最多进行 4 次，防止浪费过多 CPU 时间。</li>
+<li>如果自旋失败，goroutine 会进入慢路径，进入等待队列。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-加入队列"><a href="#3-加入队列" class="headerlink" title="3. 加入队列"></a>3. <strong>加入队列</strong></h4><ul>
+<li>原理：<ul>
+<li>如果自旋后仍然无法获取锁，goroutine 进入等待队列排队，等待锁释放后被唤醒。</li>
+<li>在等待期间，goroutine 被挂起，不再占用 CPU。</li>
+</ul>
+</li>
+<li><strong>源码：</strong></li>
+</ul>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">func</span> <span class="token punctuation">(</span>m <span class="token operator">*</span>Mutex<span class="token punctuation">)</span> <span class="token function">lockSlow</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token builtin">new</span> <span class="token operator">:=</span> old <span class="token operator">+</span> <span class="token number">1</span><span class="token operator">&lt;&lt;</span>mutexWaiterShift
+    <span class="token keyword">if</span> old<span class="token operator">&amp;</span>mutexStarving <span class="token operator">!=</span> <span class="token number">0</span> <span class="token punctuation">{</span>
+        <span class="token builtin">new</span> <span class="token operator">|=</span> mutexStarving
+    <span class="token punctuation">}</span>
+    <span class="token keyword">if</span> old<span class="token operator">&amp;</span><span class="token punctuation">(</span>mutexLocked<span class="token operator">|</span>mutexStarving<span class="token punctuation">)</span> <span class="token operator">==</span> mutexLocked <span class="token operator">&amp;&amp;</span> 
+        atomic<span class="token punctuation">.</span><span class="token function">CompareAndSwapInt32</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>m<span class="token punctuation">.</span>state<span class="token punctuation">,</span> old<span class="token punctuation">,</span> <span class="token builtin">new</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        runtime<span class="token punctuation">.</span><span class="token function">Semacquire</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>m<span class="token punctuation">.</span>sema<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<ul>
+<li>解释：<ul>
+<li><code>mutexWaiterShift</code> 记录等待者数量，每次有新 goroutine 进入队列，这个计数器会加一。</li>
+<li><code>runtime.Semacquire</code> 是挂起 goroutine 的核心函数，等待锁释放。</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-被唤醒（从队列中唤醒）"><a href="#4-被唤醒（从队列中唤醒）" class="headerlink" title="4. 被唤醒（从队列中唤醒）"></a>4. <strong>被唤醒（从队列中唤醒）</strong></h4><ul>
+<li>正常模式：<ul>
+<li>被唤醒的 goroutine 需要和新来的 goroutine 竞争锁，锁可能再次被插队的新 goroutine 抢走。</li>
+</ul>
+</li>
+<li>饥饿模式：<ul>
+<li>如果 goroutine 等待锁的时间超过 1ms，<code>Mutex</code> 切换到饥饿模式，唤醒的 goroutine 将直接获取锁，不再和新来的 goroutine 竞争。</li>
+</ul>
+</li>
+<li><strong>源码：</strong></li>
+</ul>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">func</span> <span class="token punctuation">(</span>m <span class="token operator">*</span>Mutex<span class="token punctuation">)</span> <span class="token function">unlockSlow</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token builtin">new</span> <span class="token operator">:=</span> old <span class="token operator">&amp;^</span> mutexLocked
+    <span class="token keyword">if</span> old<span class="token operator">&amp;</span>mutexStarving <span class="token operator">==</span> <span class="token number">0</span> <span class="token punctuation">{</span>
+        <span class="token builtin">new</span> <span class="token operator">-=</span> <span class="token number">1</span> <span class="token operator">&lt;&lt;</span> mutexWaiterShift
+    <span class="token punctuation">}</span>
+    <span class="token keyword">if</span> old<span class="token operator">&amp;</span><span class="token punctuation">(</span>mutexStarving<span class="token operator">|</span>mutexLocked<span class="token punctuation">)</span> <span class="token operator">==</span> mutexStarving <span class="token punctuation">{</span>
+        <span class="token builtin">new</span> <span class="token operator">|=</span> mutexStarving
+    <span class="token punctuation">}</span>
+    <span class="token comment" spellcheck="true">// 唤醒一个等待者</span>
+    <span class="token keyword">if</span> old<span class="token operator">>></span>mutexWaiterShift <span class="token operator">!=</span> <span class="token number">0</span> <span class="token punctuation">{</span>
+        runtime<span class="token punctuation">.</span><span class="token function">Semrelease</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>m<span class="token punctuation">.</span>sema<span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<ul>
+<li>解释：<ul>
+<li><code>mutexWaiterShift</code> 减少一个等待者数量。</li>
+<li>如果锁处于饥饿模式，锁会直接交给等待最久的 goroutine。</li>
+</ul>
+</li>
+</ul>
+<h4 id="完整逻辑流程总结"><a href="#完整逻辑流程总结" class="headerlink" title="完整逻辑流程总结"></a><strong>完整逻辑流程总结</strong></h4><ol>
+<li><strong>CAS 快路径尝试加锁</strong><ul>
+<li>如果锁空闲，直接加锁成功，返回。</li>
+<li>如果锁被持有，进入慢路径。</li>
+</ul>
+</li>
+<li><strong>自旋</strong><ul>
+<li>在自旋过程中尝试多次 CAS 获取锁，避免直接进入等待队列。</li>
+<li>自旋失败后，goroutine 进入等待队列，排队等待锁释放。</li>
+</ul>
+</li>
+<li><strong>队列等待</strong><ul>
+<li>锁释放后，唤醒等待队列中的 goroutine，进入竞争。</li>
+<li>在正常模式下，新来的 goroutine 也可以参与竞争，可能抢到锁。</li>
+</ul>
+</li>
+<li><strong>饥饿模式防止插队</strong><ul>
+<li>如果 goroutine 长时间未获取锁，锁进入饥饿模式，确保锁交给等待最久的 goroutine。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q &amp; A"></a><strong>Q &amp; A</strong></h3><ul>
+<li><p><strong>为什么 Mutex 会有正常模式和饥饿模式？</strong></p>
+<blockquote>
+<p>“Go 的 <code>Mutex</code> 采用正常模式和饥饿模式主要是为了在锁的吞吐量和公平性之间找到平衡。正常模式下优先追求高吞吐量，新来的 goroutine 可以在锁释放后插队。但如果等待时间过长（超过 1ms），锁切换到饥饿模式，确保最早等待的 goroutine 直接获取锁，防止长时间饥饿。”</p>
+</blockquote>
+</li>
+<li><p><strong>自旋和进入队列的逻辑如何工作？</strong></p>
+<blockquote>
+<p>“自旋是为了减少锁竞争导致的上下文切换，通过短时间多次尝试获取锁。如果自旋失败，goroutine 进入等待队列。等待锁释放时，goroutine 进入休眠，锁释放后被唤醒，再次竞争锁。”</p>
+</blockquote>
+</li>
+</ul>
+<hr>
 <h3 id="使用建议"><a href="#使用建议" class="headerlink" title="使用建议"></a>使用建议</h3><p><strong>将锁与资源放在同一结构体</strong>，目的是：</p>
 <ol>
 <li>保护数据一致性，防止竞态条件</li>
@@ -801,6 +953,10 @@ waiting <span class="token operator">:=</span> <span class="token number">0</spa
                                     <span class="chip bg-color">Golang</span>
                                 </a>
                             
+                                <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+                                    <span class="chip bg-color">并发编程</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -977,9 +1133,9 @@ waiting <span class="token operator">:=</span> <span class="token number">0</spa
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="Go语言基础：Mutex和RWMutex">
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="Go语言并发编程：Mutex和RWMutex">
                         
-                        <span class="card-title">Go语言基础：Mutex和RWMutex</span>
+                        <span class="card-title">Go语言并发编程：Mutex和RWMutex</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -1010,6 +1166,10 @@ waiting <span class="token operator">:=</span> <span class="token number">0</spa
                     
                     <a href="/tags/Golang/">
                         <span class="chip bg-color">Golang</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+                        <span class="chip bg-color">并发编程</span>
                     </a>
                     
                 </div>
@@ -1257,7 +1417,7 @@ waiting <span class="token operator">:=</span> <span class="token number">0</spa
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">15.5k</span>&nbsp;字
+                class="white-color">16.4k</span>&nbsp;字
             
             
             
