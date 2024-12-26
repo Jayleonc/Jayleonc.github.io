@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Kubernetes 学习笔记, Jayleonc">
+    <meta name="keywords" content="Go语言基础：Mutex和RWMutex, Jayleonc">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Kubernetes 学习笔记 | Jayleonc</title>
+    <title>Go语言基础：Mutex和RWMutex | Jayleonc</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Kubernetes 学习笔记</h1>
+                    <h1 class="description center-align post-title">Go语言基础：Mutex和RWMutex</h1>
                 </div>
             </div>
         </div>
@@ -431,23 +431,18 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Kubernetes/">
-                                <span class="chip bg-color">Kubernetes</span>
+                            <a href="/tags/%E6%8A%80%E6%9C%AF/">
+                                <span class="chip bg-color">技术</span>
+                            </a>
+                        
+                            <a href="/tags/Golang/">
+                                <span class="chip bg-color">Golang</span>
                             </a>
                         
                     </div>
                     
                 </div>
                 <div class="col s5 right-align">
-                    
-                    <div class="post-cate">
-                        <i class="fas fa-bookmark fa-fw icon-category"></i>
-                        
-                            <a href="/categories/Kubernetes/" class="post-category">
-                                Kubernetes
-                            </a>
-                        
-                    </div>
                     
                 </div>
             </div>
@@ -456,7 +451,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-04-06
+                    2024-12-26
                 </div>
                 
 
@@ -465,14 +460,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    70
+                    2.2k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    8 分
                 </div>
                 
 
@@ -487,7 +482,253 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="Kubernetes-学习笔记"><a href="#Kubernetes-学习笔记" class="headerlink" title="Kubernetes 学习笔记"></a>Kubernetes 学习笔记</h1><p>最近为了进一步学习 Kube，使用《Kubernetes 权威指南 – 从Docker到Kubernetes实践全接触 第五版》进行学习，该文章是我的学习笔记，我会记录我认为值得记录的内容，希望也可以帮助到你。</p>
+                <h3 id="Mutex-基础"><a href="#Mutex-基础" class="headerlink" title="Mutex 基础"></a>Mutex 基础</h3><p>sync.Mutex 是 Go 提供的互斥锁，在多 goroutine 环境下用来保护共享资源。可以确保同一时刻只有一个 goroutine 能执行锁边界内的代码段，防止数据竞争。</p>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">var</span> mu sync<span class="token punctuation">.</span>Mutex
+<span class="token keyword">var</span> count <span class="token builtin">int</span>
+
+<span class="token keyword">func</span> <span class="token function">increment</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    mu<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>   <span class="token comment" spellcheck="true">// 加锁，防止其他 goroutine 进入临界区，直到当前 goroutine 释放锁</span>
+    count<span class="token operator">++</span>
+    mu<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// 解锁，允许其他 goroutine 继续</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>特点：</p>
+<ol>
+<li>完全互斥，同一时刻只有一个 goroutine 能执行</li>
+<li>阻塞行为，如果一个 goroutine 已加锁，其他尝试加锁的 goroutine 会阻塞</li>
+<li>简单易用，但在读多写少的场景下性能较差</li>
+</ol>
+<h3 id="RWMutex-基础"><a href="#RWMutex-基础" class="headerlink" title="RWMutex 基础"></a>RWMutex 基础</h3><p>sync.RWMutex 是 Go 提供的读写锁，允许多个 goroutine 同时读取，但写操作互斥。读锁允许并发读取，期间其他 goroutine 尝试获取写锁会阻塞，写锁阻止其他 goroutine 的读和写。</p>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">var</span> rw sync<span class="token punctuation">.</span>RWMutex
+<span class="token keyword">var</span> data <span class="token operator">=</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span>
+
+<span class="token keyword">func</span> <span class="token function">readData</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">string</span> <span class="token punctuation">{</span>
+    rw<span class="token punctuation">.</span><span class="token function">RLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>             <span class="token comment" spellcheck="true">// 加读锁，允许多个 goroutine 同时读取</span>
+    <span class="token keyword">defer</span> rw<span class="token punctuation">.</span><span class="token function">RUnlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>     <span class="token comment" spellcheck="true">// 解读锁</span>
+    <span class="token keyword">return</span> data<span class="token punctuation">[</span>key<span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">writeData</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> value <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    rw<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>              <span class="token comment" spellcheck="true">// 加写锁，阻止其他所有读写操作，确保数据一致性</span>
+    data<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> value
+    rw<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>            <span class="token comment" spellcheck="true">// 解写锁</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>特点：</p>
+<ol>
+<li>读写分离，适合读多写少的场景，提高并发性能</li>
+<li>写锁阻塞读和写锁，写入时保障数据完整性</li>
+<li>读锁不互相阻塞，提高读取性能</li>
+</ol>
+<h3 id="Mutex-步骤总结"><a href="#Mutex-步骤总结" class="headerlink" title="Mutex 步骤总结"></a>Mutex 步骤总结</h3><p><strong>步骤总结：</strong></p>
+<pre><code>1. **CAS 操作（Compare-And-Swap）：**
+    1. 首先尝试进行一次 CAS 操作。
+    2. 如果锁当前空闲且没有其他 goroutine 抢占，则直接加锁成功。
+2. **自旋：**
+    1. 如果第一次 CAS 失败，进行自旋（短暂尝试多次获取锁）。
+    2. 如果在自旋过程中成功，则无需进入等待队列。
+3. **加入队列：**
+    1. 如果自旋后仍然无法获取锁，goroutine 进入等待队列排队。
+4. **被唤醒（从队列中唤醒）：**
+    1. **正常模式：**
+        1. 和新来的 goroutine 一起竞争锁。
+        2. 但是，等待者大概率失败，锁可能被新来的 goroutine 抢走。
+    2. **饥饿模式：**
+        1. 唤醒的 goroutine **必定拿到锁**，锁将优先分配给队列中等待时间最长的 goroutine。
+</code></pre>
+<h3 id="使用建议"><a href="#使用建议" class="headerlink" title="使用建议"></a>使用建议</h3><p><strong>将锁与资源放在同一结构体</strong>，目的是：</p>
+<ol>
+<li>保护数据一致性，防止竞态条件</li>
+<li>封装性强，减少直接访问数据的机会</li>
+<li>防止锁的误用或泄漏，提高代码安全性</li>
+<li>符合面向对象的设计原则，提高代码的可维护性和可读性</li>
+</ol>
+<h2 id="双重检查锁"><a href="#双重检查锁" class="headerlink" title="双重检查锁"></a>双重检查锁</h2><p>一种优化的并发设计模式，通常用于懒加载或减少锁的竞争。它结合了读锁和写锁，确保在多 goroutine 环境下，只有在必要时才加锁，从而提升性能。</p>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><ol>
+<li>第一次检查：加读锁快速判断资源是否存在，存在则直接返回</li>
+<li>第二次检查：在资源不存在的情况下，加写锁并再次检查，防止并发写入</li>
+<li>插入数据，只有在第二次检查后数据仍不存在，才执行写操作</li>
+</ol>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">type</span> SafeMap <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+    data  <span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+    mutex sync<span class="token punctuation">.</span>RWMutex
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>s <span class="token operator">*</span>SafeMap<span class="token punctuation">)</span> <span class="token function">LoadOrStore</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> value <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token builtin">string</span><span class="token punctuation">,</span> <span class="token builtin">bool</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">// 第一次检查，尝试加读锁</span>
+    s<span class="token punctuation">.</span>mutex<span class="token punctuation">.</span><span class="token function">RLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    res<span class="token punctuation">,</span> ok <span class="token operator">:=</span> s<span class="token punctuation">.</span>data<span class="token punctuation">[</span>key<span class="token punctuation">]</span>
+    s<span class="token punctuation">.</span>mutex<span class="token punctuation">.</span><span class="token function">RUnlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> ok <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> res<span class="token punctuation">,</span> <span class="token boolean">true</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token comment" spellcheck="true">// 第二次检查，加写锁</span>
+    s<span class="token punctuation">.</span>mutex<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">defer</span> s<span class="token punctuation">.</span>mutex<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    res<span class="token punctuation">,</span> ok <span class="token operator">=</span> s<span class="token punctuation">.</span>data<span class="token punctuation">[</span>key<span class="token punctuation">]</span>
+    <span class="token keyword">if</span> ok <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> res<span class="token punctuation">,</span> <span class="token boolean">true</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token comment" spellcheck="true">// 数据不存在，插入新值</span>
+    s<span class="token punctuation">.</span>data<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> value
+    <span class="token keyword">return</span> value<span class="token punctuation">,</span> <span class="token boolean">false</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>特点和优势：</p>
+<ol>
+<li>减少不必要的写锁，如果数据已经存在，读锁可以快速返回结果，避免频繁加写锁，提升性能</li>
+<li>线程安全，即使在第一次检查和加写锁之间存在竞态条件，第二次检查能确保数据一致性</li>
+<li>使用场景：适合在读多写少的场景，例如缓存加载或初始化操作</li>
+</ol>
+<h2 id="Mutex-细节"><a href="#Mutex-细节" class="headerlink" title="Mutex 细节"></a>Mutex 细节</h2><p>Mutex 是一种二元状态，0 是解锁，1 是锁定。Mutex 有两种路径，快路径和慢路径。</p>
+<ol>
+<li><p>快路径</p>
+<ol>
+<li><p>场景：当锁当前是空闲状态时，goroutine 尝试获取锁，不会阻塞，直接成功。</p>
+</li>
+<li><p>细节：</p>
+<ol>
+<li>快路径通过 CAS 原子操作完成，速度非常快。</li>
+<li>当多个 goroutine 并发访问时，只有一个 goroutine 能够成功获取锁，其他 goroutine 进入慢路径等待。</li>
+</ol>
+<pre class=" language-go"><code class="language-go">    <span class="token keyword">if</span> atomic<span class="token punctuation">.</span><span class="token function">CompareAndSwapInt32</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>m<span class="token punctuation">.</span>state<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> mutexLocked<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> race<span class="token punctuation">.</span>Enabled <span class="token punctuation">{</span>
+            race<span class="token punctuation">.</span><span class="token function">Acquire</span><span class="token punctuation">(</span>unsafe<span class="token punctuation">.</span><span class="token function">Pointer</span><span class="token punctuation">(</span>m<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span>
+    <span class="token punctuation">}</span>
+</code></pre>
+</li>
+</ol>
+</li>
+<li><p>慢路径</p>
+<ol>
+<li><p>场景：当锁已经被其他 goroutine 持有，goroutine获取锁失败后，进入慢路径并阻塞，等待锁释放。</p>
+</li>
+<li><p>细节：</p>
+<ol>
+<li>慢路径中，goroutine 会被加入到锁的等待队列中，并挂起阻塞。</li>
+<li>等待持有锁的  goroutine 调用 unlock() 后，系统会唤醒等待队列中的一个或多个 goroutine，重新竞争锁。</li>
+</ol>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">func</span> <span class="token punctuation">(</span>m <span class="token operator">*</span>Mutex<span class="token punctuation">)</span> <span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">// Fast path: grab unlocked mutex.</span>
+    <span class="token keyword">if</span> atomic<span class="token punctuation">.</span><span class="token function">CompareAndSwapInt32</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>m<span class="token punctuation">.</span>state<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> mutexLocked<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> race<span class="token punctuation">.</span>Enabled <span class="token punctuation">{</span>
+            race<span class="token punctuation">.</span><span class="token function">Acquire</span><span class="token punctuation">(</span>unsafe<span class="token punctuation">.</span><span class="token function">Pointer</span><span class="token punctuation">(</span>m<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span>
+    <span class="token punctuation">}</span>
+    <span class="token comment" spellcheck="true">// Slow path (outlined so that the fast path can be inlined)</span>
+    m<span class="token punctuation">.</span><span class="token function">lockSlow</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="正常模式和饥饿模式"><a href="#正常模式和饥饿模式" class="headerlink" title="正常模式和饥饿模式"></a>正常模式和饥饿模式</h3><h4 id="正常模式（Normal-Mode）"><a href="#正常模式（Normal-Mode）" class="headerlink" title="正常模式（Normal Mode）"></a>正常模式（Normal Mode）</h4><ol>
+<li>默认模式，所有锁的操作在初始状态下都是以正常模式运行的。</li>
+<li>在正常模式下，等待锁的 goroutine 被放入 FIFO 队列，但在解锁时，当前 goroutine 可以优先重新获取锁，即使有其他 goroutine 在等待队列中排队。</li>
+<li>这种方式更偏向于锁的吞吐量，因为持有锁的 goroutine 可以在释放后立即再次获取，减少上下文的切换。</li>
+<li>示例：<ol>
+<li>goroutine A 持有锁，goroutine B、C 在等待。</li>
+<li>A 解锁后，如果 A 需要再次加锁，A 可能优先于 B、C 获取锁，即使 B、C 先排队。</li>
+<li>还有一种情况是，A 释放锁后，D 立即调用了 Lock()，在 B 和 C还没来得及重新竞争锁时，D 成功加锁。这是由于 Go 的 Mutex 设计更偏向高吞吐量，而非严格的公平性。因此，D 在正确的时机（A 解锁后，B 和 C 还没来得及被唤醒）调用 Lock()，则 D 可以直接通过快路径的 CAS 操作获取到锁。</li>
+</ol>
+</li>
+</ol>
+<h4 id="饥饿模式（Starvation-Mode）"><a href="#饥饿模式（Starvation-Mode）" class="headerlink" title="饥饿模式（Starvation Mode）"></a>饥饿模式（Starvation Mode）</h4><ol>
+<li>如果一个 goroutine 长时间未能获取锁，即使排在等待队列的前面，它将触发饥饿模式。</li>
+<li>在饥饿模式下，锁的分配变得更加公平，锁的所有权严格按照等待队列的顺序分配，防止长时间的 goroutine 被饿死。</li>
+<li>饥饿模式触发条件：当一个 goroutine 在等待锁超过 1ms 并被其他 goroutine 插队时，锁会进入饥饿模式。</li>
+<li>处于饥饿模式的锁会持续保持，直到等待队列为空，然后回复到正常模式。</li>
+</ol>
+<h3 id="源码细节解析"><a href="#源码细节解析" class="headerlink" title="源码细节解析"></a>源码细节解析</h3><p>在 Go 的 src&#x2F;sync&#x2F;mutex.go 文件中，可以看到关于饥饿和正常模式的详细实现。核心代码片段（简化版）：</p>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">const</span> <span class="token punctuation">(</span>
+    mutexLocked <span class="token operator">=</span> <span class="token number">1</span> <span class="token operator">&lt;&lt;</span> <span class="token boolean">iota</span>  <span class="token comment" spellcheck="true">// 互斥锁已被锁定 (mutex is locked)</span>
+    mutexWoken               <span class="token comment" spellcheck="true">// 有 goroutine 被唤醒</span>
+    mutexStarving            <span class="token comment" spellcheck="true">// 锁进入饥饿模式</span>
+    mutexWaiterShift <span class="token operator">=</span> <span class="token boolean">iota</span>  <span class="token comment" spellcheck="true">// 等待者数量的偏移量</span>
+<span class="token punctuation">)</span>
+
+<span class="token keyword">func</span> <span class="token punctuation">(</span>m <span class="token operator">*</span>Mutex<span class="token punctuation">)</span> <span class="token function">lockSlow</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> starving <span class="token operator">||</span> queueNotEmpty <span class="token punctuation">{</span>
+        m<span class="token punctuation">.</span>state <span class="token operator">|=</span> mutexStarving  <span class="token comment" spellcheck="true">// 进入饥饿模式</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="锁饥饿的优化方案"><a href="#锁饥饿的优化方案" class="headerlink" title="锁饥饿的优化方案"></a>锁饥饿的优化方案</h3><p>在正常模式下，如果锁总是在 1ms 内被新的 goroutine 抢占，存在锁饥饿的风险。Go 默认不会强制进入饥饿模式，除非等待者超过 1ms 且持续未能获取锁。因此，为了避免每次都在 1ms 内被其他 goroutine 抢占锁，导致饥饿模式不会触发的极端情况，可以有以下方案：</p>
+<ol>
+<li><p><strong>缩小锁的粒度</strong></p>
+<ol>
+<li>将锁的临界区缩小，将长时间的逻辑移出临界区，尽量减少阻塞其他 goroutine 的时间。</li>
+<li>减少锁竞争和等待时间，提高系统吞吐量。</li>
+</ol>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">func</span> <span class="token punctuation">(</span>s <span class="token operator">*</span>SafeCounter<span class="token punctuation">)</span> <span class="token function">Increment</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    s<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">// 仅在临界区内加锁</span>
+    s<span class="token punctuation">.</span>count<span class="token operator">++</span>
+    s<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</li>
+<li><p><strong>读写分离（RWMutex）</strong></p>
+<ol>
+<li>在读多写少的场景下，使用 sync.RWMutex，允许多个 goroutine 同时读，只有写操作需要独占锁。</li>
+<li>写操作仍然需要独占锁，当减少了读锁的阻塞时间。</li>
+</ol>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">var</span> rw sync<span class="token punctuation">.</span>RWMutex
+data <span class="token operator">:=</span> <span class="token function">make</span><span class="token punctuation">(</span><span class="token keyword">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span>
+
+<span class="token keyword">func</span> <span class="token function">ReadData</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">string</span> <span class="token punctuation">{</span>
+    rw<span class="token punctuation">.</span><span class="token function">RLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">// 允许多个 goroutine 同时读取</span>
+    <span class="token keyword">defer</span> rw<span class="token punctuation">.</span><span class="token function">RUnlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> data<span class="token punctuation">[</span>key<span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">WriteData</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> value <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    rw<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">// 写操作独占锁</span>
+    <span class="token keyword">defer</span> rw<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    data<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> value
+<span class="token punctuation">}</span>
+</code></pre>
+</li>
+<li><p><strong>信号量与条件变量（sync.Cond）</strong></p>
+<ol>
+<li>使用 sync.Cond 实现<strong>公平锁</strong>机制，确保等待时间较长的 goroutine 优先获得锁。</li>
+<li>sync.Cond 允许 goroutine 在满足一定条件时被唤醒，从而减少锁饥饿问题。</li>
+</ol>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">var</span> cond <span class="token operator">=</span> sync<span class="token punctuation">.</span><span class="token function">NewCond</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>sync<span class="token punctuation">.</span>Mutex<span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+waiting <span class="token operator">:=</span> <span class="token number">0</span>
+
+<span class="token keyword">func</span> <span class="token function">Worker</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    cond<span class="token punctuation">.</span>L<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    waiting<span class="token operator">++</span>
+    cond<span class="token punctuation">.</span><span class="token function">Wait</span><span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">// 阻塞，直到被唤醒</span>
+    waiting<span class="token operator">--</span>
+    cond<span class="token punctuation">.</span>L<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</li>
+<li><p><strong>乐观锁与 CAS 机制</strong></p>
+<ol>
+<li>通过 sync&#x2F;atomic 包实现乐观锁机制，减少对互斥锁的依赖，提升并发性能。</li>
+<li>如果 CAS 操作失败，可以主动重试，而不是阻塞等待。</li>
+</ol>
+<pre class=" language-go"><code class="language-go"><span class="token keyword">var</span> count <span class="token builtin">int32</span>
+
+<span class="token keyword">func</span> <span class="token function">Increment</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">for</span> <span class="token punctuation">{</span>
+        old <span class="token operator">:=</span> atomic<span class="token punctuation">.</span><span class="token function">LoadInt32</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>count<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> atomic<span class="token punctuation">.</span><span class="token function">CompareAndSwapInt32</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>count<span class="token punctuation">,</span> old<span class="token punctuation">,</span> old<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">break</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</li>
+</ol>
 
                 
             </div>
@@ -514,7 +755,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://jayleonc.github.io/2023/04/06/Kubernetes-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">https://jayleonc.github.io/2023/04/06/Kubernetes-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</a>
+                    <a href="https://jayleonc.github.io/2024/12/26/Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%EF%BC%9AMutex%E5%92%8CRWMutex/">https://jayleonc.github.io/2024/12/26/Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%EF%BC%9AMutex%E5%92%8CRWMutex/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -552,8 +793,12 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Kubernetes/">
-                                    <span class="chip bg-color">Kubernetes</span>
+                                <a href="/tags/%E6%8A%80%E6%9C%AF/">
+                                    <span class="chip bg-color">技术</span>
+                                </a>
+                            
+                                <a href="/tags/Golang/">
+                                    <span class="chip bg-color">Golang</span>
                                 </a>
                             
                         </div>
@@ -723,17 +968,18 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2023/04/12/Linux-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+                <a href="/2024/12/26/Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%EF%BC%9AMutex%E5%92%8CRWMutex/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="Linux 学习笔记">
+                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="Go语言基础：Mutex和RWMutex">
                         
-                        <span class="card-title">Linux 学习笔记</span>
+                        <span class="card-title">Go语言基础：Mutex和RWMutex</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -743,26 +989,27 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-04-12
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-12-26
+                            </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/Linux/" class="post-category">
-                                    Linux
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Jayleonc
                             
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Linux/">
-                        <span class="chip bg-color">Linux</span>
+                    <a href="/tags/%E6%8A%80%E6%9C%AF/">
+                        <span class="chip bg-color">技术</span>
+                    </a>
+                    
+                    <a href="/tags/Golang/">
+                        <span class="chip bg-color">Golang</span>
                     </a>
                     
                 </div>
@@ -776,13 +1023,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2023/03/28/kube-%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/">
+                <a href="/2024/12/03/%E5%9F%BA%E4%BA%8EKratos%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E6%99%BA%E8%83%BD%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%99%A8/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="kube 集群安装">
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="基于Kratos实现一个智能负载均衡器">
                         
-                        <span class="card-title">kube 集群安装</span>
+                        <span class="card-title">基于Kratos实现一个智能负载均衡器</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -793,16 +1040,12 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-03-28
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-12-03
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/Kubernetes/" class="post-category">
-                                    Kubernetes
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Jayleonc
                             
                         </span>
                     </div>
@@ -810,8 +1053,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Kubernetes/">
-                        <span class="chip bg-color">Kubernetes</span>
+                    <a href="/tags/%E6%8A%80%E6%9C%AF/">
+                        <span class="chip bg-color">技术</span>
                     </a>
                     
                 </div>
