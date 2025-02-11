@@ -1,0 +1,1431 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="读《日志：每个软件工程师都应该知道的有关实时数据的统一抽象》有感》, Jayleonc">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>读《日志：每个软件工程师都应该知道的有关实时数据的统一抽象》有感》 | Jayleonc</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+
+    <script src="/libs/jquery/jquery.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">Jayleonc</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">Jayleonc</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/Jayleonc" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/Jayleonc" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/20.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">读《日志：每个软件工程师都应该知道的有关实时数据的统一抽象》有感》</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        padding: 35px 0 15px 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        padding-bottom: 30px;
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+
+        position: absolute;
+        right: 23.5vw;
+        display: block;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/%E6%8A%80%E6%9C%AF/">
+                                <span class="chip bg-color">技术</span>
+                            </a>
+                        
+                            <a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">
+                                <span class="chip bg-color">消息队列</span>
+                            </a>
+                        
+                            <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">
+                                <span class="chip bg-color">分布式</span>
+                            </a>
+                        
+                            <a href="/tags/Kafka/">
+                                <span class="chip bg-color">Kafka</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2025-01-11
+                </div>
+                
+
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    8.9k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                    30 分
+                </div>
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>最近在玩的同时，整理了一些之前的工作的内容，在重新翻看之前写的关于秒杀活动的代码，里面关键性的使用到了 Kafka 进行流量削峰，这是一个常规操作。我认为程序员的技术栈，不能只有“增删改查”，掌握 更多的底层技术，是一个非常明智的选择，这是我在刚入行时就知道的一个道理。从我进入大学开始，技术圈的风向似乎一直在变，大数据、云的热度似乎已经慢慢消退，现在当红的是 AI 和 loT。那不变的是什么，我想无论是大数据还是 AI，都是一个分布式系统，都要处理海量的数据，面对海量并发，它们需要解决的底层问题是一样的。所以我重新学习了 Kafka，或者说是 消息队列。</p>
+<p>对于任何牛叉的项目，它的背后都离不开论文&#x2F;博文的支持，比如当红的 ChatGPT，它的开山论文就是这篇<a target="_blank" rel="noopener" href="https://www.mikecaptain.com/resources/pdf/GPT-1.pdf">《Improving Language Understanding by Generative Pre-Training》</a> 。那对于 Kafka 来说，它的灵魂是这篇博客：<a target="_blank" rel="noopener" href="https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying">The Log: What every software engineer should know about real-time data’s unifying abstraction</a>，对应的中文译稿在这里：<a target="_blank" rel="noopener" href="https://www.kancloud.cn/kancloud/log-real-time-datas-unifying/58708">《日志：每个软件工程是都应该知道的有关实时数据的统一抽象》</a>。这篇博客是 Kafka 的创始人 Jay Kreps 在 LinkedIn 工作时写的，他考虑将日志抽象作为任何分布式系统的关键部分。这不是 Kafka 的设计论文、实现或教程，而是导致其诞生的想法的酝酿过程，非常有意思。这篇博文被评为程序员史诗般必读文章，我花了一些时间去阅读并试图理解，结果收益匪浅，这篇文章可以看作我阅读这篇博文的笔记。</p>
+<h2 id="日志在数据管理中的核心角色：从概念到实用"><a href="#日志在数据管理中的核心角色：从概念到实用" class="headerlink" title="日志在数据管理中的核心角色：从概念到实用"></a>日志在数据管理中的核心角色：从概念到实用</h2><p>在第一部份，作者聊到了<a target="_blank" rel="noopener" href="https://www.kancloud.cn/kancloud/log-real-time-datas-unifying/58709">日志是什么？</a>。日志，是一种最简单的存储抽象，但在数据库和分布式系统中，它确实核心工具之一。本文探讨了日志在这两个重要领域中的应用，我将结合 Redis 和 MySQL 中的实例进行说明，并涉及相关的一致性算法。</p>
+<h3 id="数据库中的日志"><a href="#数据库中的日志" class="headerlink" title="数据库中的日志"></a>数据库中的日志</h3><p>日志在数据库系统中起到了保持数据一致性和支持数据恢复的重要作用。它记录了数据库中的所有变更操作，使数据库即使在崩溃后，也可以通过重放这些日志来恢复数据状态。数据库日志不仅实现了 ACID 特性的持久性，还支持数据库之间的数据复制。</p>
+<p>例如，MySQL 的 Binlog 就是记录数据变更的重要工具。通过将所有的写操作记录下来，MySQL 能够在发生故障时重建数据，也能够实现主从复制，在主从架构中，主库通过 Binlog 同步数据变更到从库，从而在多个数据库实例之间保持一致性。所以，当我们在讨论 MySQL 的高可用时，离不开主从复制，也就离不开日志。此外，MySQL 的事务也以来日志来实现 ACID 特性： Rede Log 提供数据持久化保障，Undo Log 支持事务回滚和多版本并发控制。日志不仅让数据库具备了强大的容错能力，还未复杂的分布式系统提供了可靠的底层支持。</p>
+<h3 id="分布式系统中的日志"><a href="#分布式系统中的日志" class="headerlink" title="分布式系统中的日志"></a>分布式系统中的日志</h3><p>在分布式系统中，日志解决了变更操作的排序和数据分发，这是分布式系统的一大核心问题。在这种环境中，日志充当了时间流的角色。根据状态机复制原理，当相同的输入以相同的顺序被分发到多个节点时，这些节点会保持一致的状态。这种原理在实现系统一致性中至关重要。</p>
+<p>在这一趴中，有几个关键点和基础概念需要重点理解。</p>
+<ol>
+<li>日志的作用：日志用于解决分布式系统中的两个重要问题：变更操作的排序和数据的分发。确定变更操作的顺序是分布式系统设计的核心问题之一，因为多个节点（应用实例）可能同时对同一份数据进行修改。</li>
+<li>状态机复制原理：文章提到了一个称为“状态机复制原理”的概念，它指出<u>如果两个进程是<em><strong>确定性</strong></em>的（即相同的输入和初始状态总能产生相同的输出和最终<em><strong>状态</strong></em>），那么它们只需获得相同的有序输入，就能保持一致性。</u>是不是很难懂？简单理解就是：<strong>两个或多个相同的程序或应用实例，它们遵循相同的逻辑和操作步骤，比如 MySQL 主从架构。</strong></li>
+<li>确定性和状态：<ol>
+<li>确定性意味着进程的执行不会因为外部因素（如当前时间或线程调度）而改变。</li>
+<li>进程的状态是指，在执行过程中存储的数据，可以保存在内存或磁盘上。</li>
+</ol>
+</li>
+<li>两种日志应用模型：<ol>
+<li>主-主模型：每个副本独立处理输入请求，并记录输入请求的日志。</li>
+<li>主备模型：一个主节点（leader）按顺序处理请求并记录状态变化日志，其他副本应用这些变化以确保同步。</li>
+<li>文章写了一个不太严谨的例子，说的是要将一个变量进行加法和乘法计算。比如对 0 进行 +1 和 *2。主-主模型的做法是每个副本（这次说是副本，其实就是应用实例&#x2F;进程&#x2F;节点，都可以啦，理解就好）都执行一遍 +1 和 *2，从而经过一系列相同的值，并得到相同的结果。而主备模式，会有一个单独的节点（leader 或 master）执行 +1 和 *2，得到结果后同步给其他副本。</li>
+</ol>
+</li>
+<li>一致性协议和日志：文章提到了一些一致性协议，如 Paxos、ZAB 和 RAFT，这些协议常用于维护分布式一致的日志。日志在这些协议中的角色是 存储决策序列，从而实现一直的状态。</li>
+</ol>
+<p>对于后面提到的一致性算法，如Paxos和Raft 以日志为基础，帮助系统在网络不稳定或节点故障的情况下保持数据一致性。这里我相对熟悉的是 Raft 协议，Raft 被广泛应用于 etcd 等系统中，通过日志记录于处理，实现系统的高可靠性和一致性。相对于 Paxos 协议，Raft 相对易于理解和实现，并且提供了类似的功能和一致性保障。</p>
+<p>一句话总结：<strong>分布式系统中，日志通过排序和分发变更操作，结合状态机复制原理和一致性协议，确保多个节点在不确定的网络环境中实现数据的一致性和系统的高可靠性。</strong></p>
+<h3 id="变更日志101：表与事件的二象性"><a href="#变更日志101：表与事件的二象性" class="headerlink" title="变更日志101：表与事件的二象性"></a>变更日志101：表与事件的二象性</h3><p>光看标题，就够抽象的了。</p>
+<p>好在文章不算难懂，总结起来便是，日志与数据库表之间，有着一种迷人的二象性：日志记录的是所有变更（如银行流水），而表表示数据在某一时刻的状态（如账户余额）。通过变更日志，系统可以重建任何过去的状态，也可以支持准实时的数据复制。日志不仅在数据库中重要，在版本控制系统中同样如此。</p>
+<p>Redis 的 AOF 日志就是一个具体的例子，MongoDB 也有类似机制：通过记录对数据的所有命令，Redis 可以在系统重启后恢复数据，确保数据的一致性和持久性。在 AOF 模式下，Redis 会将每一个写操作（如增加、修改或删除键值对）记录为一条命令，并追加到一个日志文件中。AOF 日志中的这些命令可以在 Redis 重启时被重新执行，以重建数据集。不过与此同时，使用 AOF 会引入一定的写入开销，这是题外话了。</p>
+<p>这里我借用 Redis 来解释了我对 变更日志 的理解，Redis 的 AOF 是变更日志概念在实用中的一个具体实现。它利用变更日志的方法来确保数据在高性能的内存数据库中的安全性和一致性。</p>
+<h2 id="数据集成：从可靠数据流到-Kafka-的核心角色"><a href="#数据集成：从可靠数据流到-Kafka-的核心角色" class="headerlink" title="数据集成：从可靠数据流到 Kafka 的核心角色"></a>数据集成：从可靠数据流到 Kafka 的核心角色</h2><p>在第二部分，作者认为，<a target="_blank" rel="noopener" href="https://www.kancloud.cn/kancloud/log-real-time-datas-unifying/58711">数据集成</a>是指将一个组织的所有数据对其所有服务和系统可用。一个组织必须先拥有可靠和完整的数据流，否则无论多强大的数据处理工具，如 Hadoop 都无济于事。如果缺乏这些基础，组织直接尝试高级数据技术是本末倒置的。</p>
+<h3 id="两个难题"><a href="#两个难题" class="headerlink" title="两个难题"></a>两个难题</h3><p>接着讨论了数据集成变得更加复杂的两个主要趋势，即 事件数据管道 和 专用数据系统 的爆发，这两个趋势导致了数据集成复杂性的大幅增加，需要新的解决方案来应对这些变化。</p>
+<ol>
+<li><p>事件数据管道：记录发生的每一件事</p>
+<p>想象一下，我们每天上网浏览、点击广告、购物，这些行为都会被记录下来，称为“事件数据”。和传统的数据库记录（比如一个订单信息）不同，事件数据更像是一种实时的行为跟踪，比如“某人点击了这个页面”“某台机器出现了警报”等。</p>
+<ul>
+<li>举个例子：像谷歌这样的公司会记录用户的点击和广告展示数据，用来优化广告投放和相关性推荐。</li>
+<li>这种趋势不仅在互联网公司里常见，也开始在其他领域扩展，比如记录股票交易的金融数据，或者通过 RFID（射频识别）技术跟踪物流中的包裹位置。</li>
+<li>难点在于，这种事件数据量非常大，远远超过传统数据库能轻松处理的范围。这就让处理和集成这些数据变得越来越困难。</li>
+</ul>
+</li>
+<li><p>专用数据系统的爆发：每个问题都有专门的工具</p>
+<p>另一个趋势是，用于不同用途的 “专用数据系统” 越来越多。</p>
+<ul>
+<li>举个例子：如果你需要做报表分析，会用专门的分析系统（OLAP）；如果你想做搜索功能，可能会用 Elasticsearch；而存储普通数据可能会用简单的数据库；再比如处理超大量数据可能用到批处理工具（像 Hadoop）。</li>
+<li>这些系统就像是各种各样的电器，每个都有它的专长，但问题是，当数据需要在这些系统之间流转时，就会变得非常复杂。比如，从记录用户点击的事件数据系统中提取数据，再同步到做报表分析的系统中，就像要让洗衣机和烤箱配合工作一样复杂。</li>
+</ul>
+</li>
+</ol>
+<p>也就是说，随着越来越多的行为被记录成事件数据，加上各种 “专用工具” 的出现，数据集成就像一场复杂的 “数据搬运工” 工作。它需要把这些数据从一个系统搬到另一个系统，还得保证快速、高效和准确，这无疑是对当时的技术提出了巨大的挑战。</p>
+<h3 id="日志结构化的数据流"><a href="#日志结构化的数据流" class="headerlink" title="日志结构化的数据流"></a>日志结构化的数据流</h3><blockquote>
+<p><strong>提取所有组织的数据，并放到一个用于实时订阅的中心日志中</strong>。</p>
+</blockquote>
+<p>为了应对两个难题带来的复杂性，作者提出了一种策略：用<strong>日志结构化的数据流</strong>来解决数据集成的问题。这种方法的核心是用日志集中管理数据流，从而实现系统间的高效同步和异步处理。这背后正是 Kafka 的设计理念。这部分作者使用的篇幅并不多，我进行了一些总结，下面我用通俗的方式讲解，并结合 Kafka 的应用来说明。</p>
+<ol>
+<li>日志作为自然的数据结构：日志就像一本时间顺序记录事件的账簿，可以用来提取和汇总所有数据，提供给需要的系统做实时订阅。每个数据源（如用户操作、订单记录）都对应自己的日志，订阅方只需从日志中获取数据更新自身状态。 <strong>在 Kafka 中，主题（Topic）就是这种日志结构的具体实现，所有事件按顺序写入主题，消费者从主题订阅数据更新自己。</strong></li>
+<li>一致性与时间点：每个数据变更都被日志记录下来，附带逻辑顺序（像时间戳），订阅系统可以根据顺序判断自己的状态是否与其他系统一致。通过日志可以追溯到任何时间点，避免数据遗漏。<strong>在 Kafka 中， 使用 Offset（位移）记录消费者处理到的日志位置，支持从任意时间点读取数据，实现一致性恢复。</strong></li>
+<li>异步处理与灵活性：日志可以作为“缓冲区”，解耦数据生产和消费速度。即使数据生成很快，慢速处理的系统也可以按自己的节奏消费数据，避免系统压力过大。即允许系统中不同的服务可以按照自己的节奏处理数据，无需同步更新。<strong>在 Kafka中，生产者可以快速写入数据，消费者则根据自己的能力按需消费。即使消费者掉线，Kafka 仍然保留数据，确保不会丢失。关联 “流量削峰”。</strong></li>
+<li>简化数据集成：通过日志，生产系统与订阅系统解耦，订阅系统无需了解数据源的细节，只需读取日志即可完成集成。这让系统扩展更简单，添加或移除系统时不会影响整体流程。<strong>Kafka 的主题将数据源与消费者解耦，一个主题可以同时支持多个订阅者（如报表生成系统和实时监控系统），且互不干扰。</strong></li>
+<li>日志与消息队列比较：相比传统的消息队列，作者使用 “日志” 这个术语，作者认为 “日志” 是一种持久化且有序的消息模型，消费者可以随时从任何位置读取历史数据，而不仅仅是处理最新消息。这种模型更适合分布式数据集成和数据复制场景。<strong>Kafka 允许配置日志的保留策略，数据可以保存数天甚至永久，支持消费者重读和数据回溯，远比传统消息队列灵活。</strong></li>
+</ol>
+<p>不过，尽管日志是数据流集成的基础，但它只是整个数据管理故事的一部分。其他重要部分包括元数据、schemas、兼容性等，旨在处理数据结构及演变。</p>
+<p>这一小节，作者强调 <strong>日志结构化的数据流可以作为构建可靠数据集成基础设施的有效方法，提供一种标准化的方式就可以处理组织内庞大的数据流，确保各种数据订阅系统顺畅地获取和处理处理。</strong></p>
+<h3 id="在-LinkedIn"><a href="#在-LinkedIn" class="headerlink" title="在 LinkedIn"></a>在 LinkedIn</h3><p>在 LinkedIn 的实践中，日志结构化的数据流被证明是解决分布式系统数据集成复杂性的有效方法。随着 LinkedIn 从集中式数据库向分布式系统（如 Voldemort、Espresso 和 Hadoop）转型，数据集成的难度显著增加，尤其是在多源多目标的数据加载中，传统方式因管道复杂性爆发（O(N²)）而难以为继。通过开发 Kafka，LinkedIn 将日志结构化的理念具体化，构建了一个统一、可靠的异步数据流平台，简化了系统间的集成，减少了直接访问数据库的负担，并支持了多种实时和批处理场景。Kafka 成为了数据系统的中心管道，大大提升了系统扩展性和操作的自动化水平，也为行业提供了一个成功的实践样本。</p>
+<p>LinkedIn 的经验表明，通过中心化的数据流管理和日志架构设计（也就是 Kafka），可以大大简化数据集成过程，并支持系统的灵活扩展。</p>
+<h3 id="ETL-与数据仓库的关系"><a href="#ETL-与数据仓库的关系" class="headerlink" title="ETL 与数据仓库的关系"></a>ETL 与数据仓库的关系</h3><p>这部分讨论了传统数据仓库的理念和局限性，以及如何通过重型化日志的方式来优化整个数据集成流程。我也是第一次在这里听说数据仓库的概念，传统的数据仓库让我们可以把所有数据规整化，集中存储，用于分析和报表。作者表示这个方式有点过时，尤其是面对实时数据需求的时候，显得力不从心。</p>
+<p>这里我专门去学习了这个概念，原来传统的数据仓库是以前（但也没有特别久远）的主流技术理念，它解决了数据分析的一个核心需求：把分散在不同系统里的数据整合起来，存储在一个中心位置，用于报表和分析。数据仓库本身不是一个单一的产品，而是一种系统架构或者技术理念，用来解决数据集成、存储和分析的问题。</p>
+<h4 id="以前的场景是怎么样的？"><a href="#以前的场景是怎么样的？" class="headerlink" title="以前的场景是怎么样的？"></a>以前的场景是怎么样的？</h4><p>业务数据分散，难以分析。比如一个企业，它的业务系统可能有多个：一个负责销售订单管理，一个负责库存管理，一个负责客户关系管理（CRM），甚至还有一些历史遗留的手工系统或 Excel 表格。这些系统之间数据完全独立，彼此不通，想要从整体上了解企业的运营情况，比如 “哪个产品卖得最好” 或 “库存周转是否正常”，非常困难。</p>
+<p>数据仓库的出现解决了这个问题：它会从不同的业务系统中定期抽取数据（通常是每天或每周一次），清洗和规整这些数据，比如统一格式、去掉无用字段，然后以适合分析的方式存储到中心仓库里。这个仓库的数据通常是只读的，专门为复杂的报表和分析设计。</p>
+<p>举个例子：销售系统的数据会被抽取到数据仓库中，用来统计销售额。客户管理系统的数据也会被抽取过来，用来分析客户的购买习惯。最后，这些数据可以被其他工具利用，比如用来生成销售趋势图，生成预测行为模型等等。</p>
+<h4 id="数据仓库过时的原因"><a href="#数据仓库过时的原因" class="headerlink" title="数据仓库过时的原因"></a>数据仓库过时的原因</h4><p>文章指出了一些仓库的缺点和局限性：</p>
+<ol>
+<li>实时机制过时，数据仓库中基于 ETL 的批处理系统，没有很好的支持实时数据处理，也就是说数据是 “过期” 的，比如今天的报表只能分析到昨天的数据。如果企业需要实时查看销售请求或者库存变化，传统的数据仓库就没有办法实现。</li>
+<li>批处理的局限性，数据仓库一般是基于批处理查询的基础设施，只适合处理报表和临时性分析，尤其是简单的技术、聚合与过滤。这种结构不支持实时处理需求，例如实时搜索引擎和监控。</li>
+<li>此外文章还提到了 ETL 过程的复杂性和不对称性，以及扩展性的问题。</li>
+</ol>
+<blockquote>
+<p>ETL 是 <strong>Extract, Transform, Load</strong> 的缩写，中文可以翻译为 <strong>提取、转换、加载</strong>。它是一种数据集成过程，广泛用于 <strong>数据仓库</strong>、<strong>数据集成</strong> 和 <strong>数据分析</strong> 场景。</p>
+</blockquote>
+<p>为了克服这些局限性，作者提出使用 中心化日志管道和数据规范化策略作为改进方案。</p>
+<ol>
+<li>引入一个中心日志系统（其实就是 Kafka）作为整个数据流的核心管道。（这样我想到 Go 中的 channel 也有类似的效果，不过颗粒度小很多就是了）。数据生产者通过结构化的数据通过 API 推送到 Kafka（这里我直接使用 Kafka 代替了，原文用的是中央日志系统）。这样，所有数据就能在一个标准化的环境中被访问和处理。</li>
+<li>数据生产者负责确保其数输出数据的规范化和结构化。这个策略确保了数据在进入 Kafka 之前已经被处理为标准形式，避免了将系统特定的负责遗留到后面的系统，比如数据仓库，或者其他消费系统。（这个策略在如今看来，已经是行业标准，但相信在当时的情景下，这是一个相对新颖且具有挑战性的观点。）</li>
+</ol>
+<h3 id="日志文件与事件"><a href="#日志文件与事件" class="headerlink" title="日志文件与事件"></a>日志文件与事件</h3><p>这一部分讨论了通过中心化日志系统实现事件驱动架构的优点，特别是在解耦复杂系统中的重要性。从我的理解来看，这种架构方法能够显著提升灵活性和可扩展性。在传统的批处理模式下，数据流通常紧密耦合于特定的处理计划，这限制了系统的动态响应能力。通过将事件数据发布到一个中心化的日志系统（Kafka），不同的系统可以独立于数据生产者来订阅所需的信息，实现了真正的解耦。这就意味着，像职位显示这样的简单功能可以保持简单，因为额外的复杂逻辑被推迟到订阅数据的消费者中处理。这样不仅简化了代码维护，也减少了系统间耦合带来的理解和协作的困难。这种事件驱动的模式有效地支持了多终端和多功能需求，同时能快速适应变化，增强了系统的韧性。</p>
+<p>作者举了一个在 LinkedIn 的例子展示了中心化日志系统如何支持事件驱动架构，使复杂的系统得以解耦。</p>
+<blockquote>
+<ol>
+<li>发送数据到<code>Hadoop</code>和数据仓库中，以做离线数据处理</li>
+<li>浏览计数，确保查看者不是一个内容爬虫</li>
+<li>聚合浏览信息，在职位提交者的分析页面显示</li>
+<li>记录浏览信息，确保合适地设置了用户的推荐职位的展示上限（不想重复地展示同样内容给用户）</li>
+<li>推荐系统可能需要记录浏览，以正确的跟踪职位的流行程度</li>
+<li>等等</li>
+</ol>
+</blockquote>
+<p>这里我举一个更常见的案例，例如，在电商平台的购物车系统中，用户添加商品到购物车这一行为可以作为一个事件被记录到日志系统。不同的消费者系统如库存管理系统、推荐系统和分析系统可以订阅这些事件进行相应的操作。库存系统可以实时更新库存信息，推荐系统可以基于用户的购物偏好调整推荐商品，而分析系统可以在后台进行消费行为分析。购物车系统不需要关心这些消费者的实现细节，只专注于自身的核心功能。</p>
+<p>事件驱动架构的优势在于它提供了一种高效、灵活的方式来处理复杂的业务逻辑，使每个组件可以独立发展，并通过松耦合的设计实现更高的可扩展性和维护性。</p>
+<h3 id="构建可伸缩的日志"><a href="#构建可伸缩的日志" class="headerlink" title="构建可伸缩的日志"></a>构建可伸缩的日志</h3><p>在第二部分的最后一小节，作者分享了 Kafka 可伸缩性的一些核心技术和设计思想。作者提出，把发布者和订阅者分离不是什么新鲜事，但是如果要给一个需要按用户扩展的（<code>consumer-scale</code>）网站提供多个订阅者的实时提交日志， 那么可伸缩性就会成为你所面临的首要挑战。 也就是说，但用户量越来越多，数据越来越庞大的时候，可扩展性（可伸缩性）就必须要得以突破。LinkedIn 的案例展示了 Kafka 如何处理每天超过 600 亿条消息，体现了强大的处理能力和效率。</p>
+<p>Kafka 的关键策略包括，</p>
+<ol>
+<li>日志分片</li>
+<li>通过批量读出和写入来优化吞吐量</li>
+<li>规避无用的数据拷贝</li>
+</ol>
+<p>如今我们都知道，Kafka 是不支持全局顺序的，这看似是一个局限，但在实际应用中，并没有对系统效率和功能产生重大负面影响，因为大多数处理和消费流程主要依赖于每个分区内部的顺序性。并通过保证同一键的消息到达同一分区，确保了这些消息的顺序交付。Kafka 通过为每个分区实现多个副本来确保数据的高可用性。具体而言，每个分区的日志都有一个主副本 leader，负责处理读写请求，而其他副本（followers）则复制 leader 的数据。在主节点出现故障时， Kafka 会自动选举一个新的主副本，以确保系统的连续性。此外，leader 和 followers 之间，不会部署在同一个 Broker（可以视为一个服务器），从而避免 Broker 出现故障时，该主题的所有副本失效。这种机制提供了强大的容错性，使得 Kafka 可以在硬件或网络故障的情况下维持服务。</p>
+<p>Kafka 还通过对顺序读写的优化和批处理操作来提高吞吐量。通过将小的读写操作合并成更大的顺序读写，Kafka 减少了系统的 I&#x2F;O 开销。而通过 0 拷贝技术等优化措施，Kafka 在网络和磁盘读写时也能保持高效，即便数据量远超内存大小。这些优化措施确保 Kafka 在处理大量数据时既迅速又可靠。</p>
+<h4 id="Kafka-的高性能-I-x2F-O-是如何实现的？"><a href="#Kafka-的高性能-I-x2F-O-是如何实现的？" class="headerlink" title="Kafka 的高性能 I&#x2F;O 是如何实现的？"></a>Kafka 的高性能 I&#x2F;O 是如何实现的？</h4><p>这是我另外扩展的内容，不属于原文，但却是 Kafka 实现高性能 I&#x2F;O 的关键。</p>
+<p>前面说了，Kafka 通过批量处理和顺序读写来提升服务端的处理能力。</p>
+<p>在服务端，Kafka 不会把一批消息再还原成多条消息，再一条一条地处理，这样太慢了。Kafka 这块儿处理的非常聪明，每批消息都会被当做一个“批消息”来处理。也就是说，在 Broker 整个处理流程中，无论是写入磁盘、从磁盘读出来、还是复制到其他副本这些流程中，批消息都不会被解开，一直是作为一条“批消息”来进行处理的。构建批消息和解开批消息分别在发送端和消费端的客户端完成，不仅减轻 Broker 的压力，最重要的是减少 Broker 处理请求的次数，提升了总体的处理能力。这就是 Kafka 用批量消息在网络 I&#x2F;O 方面提升性能的方法，那在磁盘 I&#x2F;O 这块，Kafka 是如何做的呢。</p>
+<p>对于磁盘来说，它有一个特性，就是顺序读写的性能要远远好于随机读写。因为顺序读写只需一次寻址操作即可连续读写数据，从而减少了繁重的寻址时间开销。这一点在传统机械硬盘上尤为突出，因为机械硬盘需要移动磁头来定位数据位置，而这种机械运动相对较慢。Kafka 利用这一特性，通过设计使其数据存储简单而高效。每个分区收到的消息被顺序地写入日志文件，当文件写满便切换到新文件继续顺序写入。消费者在读取消息时也是从某一位置开始顺序地读取。这样一个简单的设计，充分利用了顺序读写这个特性，极大提升了 Kafka 在使用磁盘时的 I&#x2F;O 性能。</p>
+<p>除了使用这两个方法，Kafka 还利用操作系统的 PageCache 来优化消息读写性能。PageCache 是操作系统用来在内存中缓存磁盘文件的机制，使得程序在读写文件时首先操作的是内存中的缓存副本，而非直接访问磁盘。当程序写入数据时，操作系统会先将数据写入 PageCache，然后再批量写入磁盘。这不仅加快了写操作，还帮助节省了磁盘 I&#x2F;O 资源。读操作则优先从 PageCache 中读取，如果缓存命中，就能直接返回结果，节省从磁盘读取的时间；否则，操作系统会触发缺页中断，将数据加载到 PageCache，再供应用取用。是不是觉得似曾相识，没错，我们常见的缓存方案也是这么回事儿，比如将数据放在缓存中（Redis、本地缓存），读取的时候先从缓存读取。更新数据的时候，就可以先更新缓存，后面再慢慢刷到数据库中。这个方案再很多地方都使用过，再比如：MySQL 的 Buffer Pool，当读取数据时，先从 Buffer Pool 读取，没有就去磁盘读取。修改数据时，先修改 Buffer Pool 中数据所在的页，然后将其页设置为脏页，最后异步将脏页写入磁盘。这个方案，虽然实现的细节各不相同，但整体的思路都一样，屡试不爽。这里我们有点飘了，回到正题来。Kafka 通过依赖操作系统的 PageCache 特性，大大优化了其消息读写效率，实现了更高的吞吐量和性能。</p>
+<p>最后，Kafka 还使用了另一个操作系统特性来提升性能，也就是文章提到的 0 拷贝技术。在传统的数据传输过程中，数据往往需要进行多次复制：从磁盘到 PageCache，从 PageCache 到应用程序内存，再从应用程序内存到 Socket 缓冲区。这种多次复制通常会消耗大量的 CPU 资源。通过零拷贝技术，Kafka 可以直接从 PageCache 将数据传输到 Socket 缓冲区，减少了一次内存复制操作。<strong>文章还特别说明 Kafka 是使用 二进制 格式进行编码的，也正是这个原因，Kafka 才可以使用包括 [0 拷贝技术] 在内的大量优化机制。</strong></p>
+<blockquote>
+<p>零拷贝在 Unix&#x2F;Linux 系统中通常通过 <code>sendfile</code> 系统调用来实现。这个调用允许直接将文件的数据传输到网络套接字，不经过应用程序层的处理。当面对从文件读取数据并发送到网络的操作，且无需对数据进行处理时，使用零拷贝技术可以显著提升性能。</p>
+</blockquote>
+<p>这里思维扩散的有点太多了，我们尽快回到<strong>《日志：每个软件工程师都应该知道的有关实时数据的统一抽象》</strong>中吧~</p>
+<h2 id="日志与实时流处理-｜-系统构建"><a href="#日志与实时流处理-｜-系统构建" class="headerlink" title="日志与实时流处理 ｜ 系统构建"></a>日志与实时流处理 ｜ 系统构建</h2><p>写到这里，我已经花了一两天的时间。下面我就不再大篇幅的进行细致的笔记了。我把第三部份《日志与实时流处理》和第四部份《系统构建（system building）》大致总结一下。</p>
+<p>在第三部份，讨论了流处理作为持续处理数据流的基础设施，强调其在现代数据集成中的重要性，并介绍如何通过 Kafka 实现高效的数据流管理与状态恢复。举个例子，我们在逛淘宝的时候，会有实时的推荐系统在工作。Kafka 可以在其中处理和传递用户的行为时间，比如在用户浏览或点击某个商品（一双鞋）时，这个事件就会被收集并立即发送到 Kafka。流处理引擎，比如 Apache Storm 从 Kafka 中消费这个流数据事件，实时分析用户的行为，并生成个性化的商品推荐。你继续逛的时候会发现，类似的商品又一次出现了，大数据杀熟哈哈～ 那通过 Kafka，系统就能够高效、低延迟地传递大量事件数据，确保推荐系统能够迅速响应用户的实时行为变化，提升用户体验。不知道你还记得前面我们讨论到的 “数据仓库” 吗。在上面逛淘宝这个案例过程中，流处理系统可以持续地接受事件流，进行快速的处理和分析，而不需要等到数据成批后进行批量处理。这就是 Kafka 的一个实际应用。（当然，淘宝应该不是用 Kafka，而是用阿里自家的 RocketMQ 或RabbitMQ）</p>
+<p>在第四部份，探讨了 Kafka 在 在线数据系统 中的作用，强调其在数据流、一致性与可恢复性中的关键角色。Kafka 类似于大型组织中的数据集成工具，将分布式系统的复杂性简化为可共享的数据流管理。作者通过 LinkedIn 的实时查询系统进行举例，Kafka 作为日志系统用于捕获数据变化。这些变化被不同的服务节点订阅并索引。例如，用户活动数据通过Kafka 流入系统，各个服务节点根据需要将这些数据索引为快速查询结构，如全文搜索索引或图数据库结构，提供给搜索和推荐系统。这种方式使得日志既是数据传输的中枢，也简化了服务节点数据的管理与恢复。</p>
+<p>这两个应用都充分利用了 Kafka 处理大量实时数据的高吞吐量、低延迟和高可靠性，在文章中，作者都是以 “日志系统” 来指代 Kafka。虽然其被描述成一种分布式日志系统，但它的核心功能其实更偏向于消息传递和数据流的管理。通过将数据更新和事件记录到主题中，Kafka 允许多个消费者订阅并处理这些日志流。</p>
+<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><p>感谢你能读到这里，关于这篇文章的分享就到这里就要结束了。</p>
+<p>最后我们总结一下，文章的核心观点是：<strong>日志不仅是记录数据变更的工具，更是一种强大的系统抽象，用于统一管理分布式系统中的数据流与一致性问题</strong>。作者通过日志的应用，展示了它如何解决数据集成的复杂性，支持实时和批处理场景，同时推动像 Kafka 这样的工具成为当前数据架构的基础。简单来说，日志是连接系统、流动数据的 “中枢神经”。</p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">Jayleonc</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://jayleonc.github.io/2025/01/11/%E8%AF%BB%E3%80%8A%E6%97%A5%E5%BF%97%EF%BC%9A%E6%AF%8F%E4%B8%AA%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E5%B8%88%E9%83%BD%E5%BA%94%E8%AF%A5%E7%9F%A5%E9%81%93%E7%9A%84%E6%9C%89%E5%85%B3%E5%AE%9E%E6%97%B6%E6%95%B0%E6%8D%AE%E7%9A%84%E7%BB%9F%E4%B8%80%E6%8A%BD%E8%B1%A1%E3%80%8B%E6%9C%89%E6%84%9F%E3%80%8B/">https://jayleonc.github.io/2025/01/11/%E8%AF%BB%E3%80%8A%E6%97%A5%E5%BF%97%EF%BC%9A%E6%AF%8F%E4%B8%AA%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E5%B8%88%E9%83%BD%E5%BA%94%E8%AF%A5%E7%9F%A5%E9%81%93%E7%9A%84%E6%9C%89%E5%85%B3%E5%AE%9E%E6%97%B6%E6%95%B0%E6%8D%AE%E7%9A%84%E7%BB%9F%E4%B8%80%E6%8A%BD%E8%B1%A1%E3%80%8B%E6%9C%89%E6%84%9F%E3%80%8B/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">Jayleonc</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/%E6%8A%80%E6%9C%AF/">
+                                    <span class="chip bg-color">技术</span>
+                                </a>
+                            
+                                <a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">
+                                    <span class="chip bg-color">消息队列</span>
+                                </a>
+                            
+                                <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">
+                                    <span class="chip bg-color">分布式</span>
+                                </a>
+                            
+                                <a href="/tags/Kafka/">
+                                    <span class="chip bg-color">Kafka</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2025/01/11/%E8%AF%BB%E3%80%8A%E6%97%A5%E5%BF%97%EF%BC%9A%E6%AF%8F%E4%B8%AA%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E5%B8%88%E9%83%BD%E5%BA%94%E8%AF%A5%E7%9F%A5%E9%81%93%E7%9A%84%E6%9C%89%E5%85%B3%E5%AE%9E%E6%97%B6%E6%95%B0%E6%8D%AE%E7%9A%84%E7%BB%9F%E4%B8%80%E6%8A%BD%E8%B1%A1%E3%80%8B%E6%9C%89%E6%84%9F%E3%80%8B/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="读《日志：每个软件工程师都应该知道的有关实时数据的统一抽象》有感》">
+                        
+                        <span class="card-title">读《日志：每个软件工程师都应该知道的有关实时数据的统一抽象》有感》</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2025-01-11
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Jayleonc
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%8A%80%E6%9C%AF/">
+                        <span class="chip bg-color">技术</span>
+                    </a>
+                    
+                    <a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">
+                        <span class="chip bg-color">消息队列</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">
+                        <span class="chip bg-color">分布式</span>
+                    </a>
+                    
+                    <a href="/tags/Kafka/">
+                        <span class="chip bg-color">Kafka</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/12/26/Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%EF%BC%9AMutex%E5%92%8CRWMutex/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="Go语言并发编程：Mutex和RWMutex">
+                        
+                        <span class="card-title">Go语言并发编程：Mutex和RWMutex</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-12-26
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Jayleonc
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%8A%80%E6%9C%AF/">
+                        <span class="chip bg-color">技术</span>
+                    </a>
+                    
+                    <a href="/tags/Golang/">
+                        <span class="chip bg-color">Golang</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+                        <span class="chip bg-color">并发编程</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+        <link rel="stylesheet" href="/libs/aplayer/APlayer.min.css">
+<style>
+    .aplayer .aplayer-lrc p {
+        
+        display: none;
+        
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 16px !important;
+    }
+
+    .aplayer .aplayer-lrc p.aplayer-lrc-current {
+        
+        display: none;
+        
+        font-size: 15px;
+        color: #42b983;
+    }
+
+    
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+        left: -66px !important;
+    }
+
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+        left: 0px !important;
+    }
+
+    
+</style>
+<div class="">
+    
+    <div class="row">
+        <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
+                   server="netease"
+                   type="playlist"
+                   id="503838841"
+                   fixed='true'
+                   autoplay='false'
+                   theme='#42b983'
+                   loop='all'
+                   order='random'
+                   preload='auto'
+                   volume='0.7'
+                   list-folded='true'
+        >
+        </meting-js>
+    </div>
+</div>
+
+<script src="/libs/aplayer/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+
+    
+    <div class="container row center-align" style="margin-bottom: 15px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2019-2025</span>
+            
+            <span id="year">2019</span>
+            <a href="/about" target="_blank">Jayleonc</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                class="white-color">25.3k</span>&nbsp;字
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <span id="sitetime">载入运行时间...</span>
+            <script>
+                function siteTime() {
+                    var seconds = 1000;
+                    var minutes = seconds * 60;
+                    var hours = minutes * 60;
+                    var days = hours * 24;
+                    var years = days * 365;
+                    var today = new Date();
+                    var startYear = "2019";
+                    var startMonth = "2";
+                    var startDate = "28";
+                    var startHour = "0";
+                    var startMinute = "0";
+                    var startSecond = "0";
+                    var todayYear = today.getFullYear();
+                    var todayMonth = today.getMonth() + 1;
+                    var todayDate = today.getDate();
+                    var todayHour = today.getHours();
+                    var todayMinute = today.getMinutes();
+                    var todaySecond = today.getSeconds();
+                    var t1 = Date.UTC(startYear, startMonth, startDate, startHour, startMinute, startSecond);
+                    var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+                    var diff = t2 - t1;
+                    var diffYears = Math.floor(diff / years);
+                    var diffDays = Math.floor((diff / days) - diffYears * 365);
+                    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+                    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) /
+                        minutes);
+                    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours -
+                        diffMinutes * minutes) / seconds);
+                    if (startYear == todayYear) {
+                        document.getElementById("year").innerHTML = todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffDays + " 天 " + diffHours +
+                            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    } else {
+                        document.getElementById("year").innerHTML = startYear + " - " + todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffYears + " 年 " + diffDays +
+                            " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    }
+                }
+                setInterval(siteTime, 1000);
+            </script>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/Jayleonc" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+<!-- 
+    <a href="mailto:jayleonc@163.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+ -->
+
+<!--  -->
+
+<!--  -->
+
+<!-- 
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=471511932" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 471511932" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+ -->
+<!-- 
+ -->
+
+<!--  -->
+
+<!-- 
+    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
+        <i class="fas fa-rss"></i>
+    </a>
+ -->
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+	
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>
