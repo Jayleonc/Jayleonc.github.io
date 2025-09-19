@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="搭建个人博客之路, Jayleonc">
+    <meta name="keywords" content="神经网络核心概念, Jayleonc">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>搭建个人博客之路 | Jayleonc</title>
+    <title>神经网络核心概念 | Jayleonc</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -310,12 +310,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/1.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">搭建个人博客之路</h1>
+                    <h1 class="description center-align post-title">神经网络核心概念</h1>
                 </div>
             </div>
         </div>
@@ -429,9 +429,17 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">
+                                <span class="chip bg-color">神经网络</span>
+                            </a>
+                        
+                            <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BF%85%E5%A4%87%E5%9F%BA%E7%A1%80/">
+                                <span class="chip bg-color">大模型必备基础</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
@@ -443,7 +451,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2019-03-01
+                    2025-09-19
                 </div>
                 
 
@@ -452,14 +460,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    365
+                    993
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    3 分
                 </div>
                 
 
@@ -474,13 +482,82 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="个人博客搭建之路"><a href="#个人博客搭建之路" class="headerlink" title="个人博客搭建之路"></a>个人博客搭建之路</h1><h2 id="2019-3-1-更新"><a href="#2019-3-1-更新" class="headerlink" title="2019.3.1 更新"></a>2019.3.1 更新</h2><hr>
-<p>昨天，我在哔哩哔哩看到某 up 主的搭建个人博客的教程，深深被吸引，于是走上了搭建之路！</p>
-<p>这里由是 Hexo + Github 搭建的，一开始选用的是 yilia 主题，在然后用了 next，这个主题很好看，很多人使用，网上也比较多关于这个主题的帖子，但是有一个问题就是分类和标签页没办法链接上，网上的教程也千篇一律没什么用，于是就放弃了。</p>
-<p>在昨晚到今天的现在，我遇到了非常多的问题，有时候一句命令出错了，报错提示全是英文，翻译出来有时也难以理解，会让你折腾很久，心烦意乱！但是当它突然不报错了，你会很开心，心里想着，终于好了！有时候会觉得如果能一开始就知道问题的源头以及解决的方法，就好了！但是这就是一个学习的过程，慢慢的积累，慢慢的进步，慢慢的变成大神哈哈哈…</p>
-<p>还有两天就开学了，回校就不会有一整天的时间去继续搭建个人博客了，但我不会放弃，加油！</p>
-<hr>
-<h2 id="2019-3-1-晚上更新"><a href="#2019-3-1-晚上更新" class="headerlink" title="2019.3.1 晚上更新"></a>2019.3.1 晚上更新</h2><p>我决定日积月累，不再把全部精力都进去了，怎么说我也是后端的…前端太累了！bye.</p>
+                <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>我一直是做应用开发的，幸运的是，平时在工作里我能经常和 AI 打交道。最近一年，我主导或参与了一些 AI 应用的落地实践，比如 RAG 系统、智能客服的工作流编排；在一些传统业务场景里，我也常常借助 AI 来提升效率。可以说，我已经在实际项目里尝到了 AI 的“甜头”，或者说我认为自己算是赶上了风口，非常幸运的进入了 AI 领域的开发，得到过一些真实的经验。</p>
+<p>但 <strong>光会调 API 是远远不够的</strong>。如果想真正把 AI 用好、用深，就需要对它的底层机制有更多理解。过去看别人讲神经网络，满屏的公式和符号，像天书一样，常常让我打退堂鼓。直到最近，我硬着头皮重新学了一下，换个角度去理解，才发现里面其实挺有意思。</p>
+<p>这篇文章就记录一下我对 神经网络五个核心概念 的理解：前向传播、损失函数、反向传播、梯度下降、激活函数。希望你看了之后有所收获。</p>
+<p>我们可以把神经网络想象成一个“学徒工”：</p>
+<ol>
+<li>前向传播：学徒先尝试做一道题，比如输入 [2, 3]，随便给出一个答案。</li>
+<li>损失函数：师傅告诉他，答案和标准答案差多少。</li>
+<li>反向传播：学徒复盘自己步骤里哪一步错了。</li>
+<li>梯度下降：根据复盘，学徒改进一点点做法。</li>
+<li>激活函数：这相当于给学徒增加更复杂的思维方式，不然他只会算直线问题。</li>
+</ol>
+<p>日复一日，学徒就能越来越接近正确答案。</p>
+<p>如果你和我一样是后端出身，可以把训练过程类比成 接口压测和自动调优：</p>
+<ol>
+<li>前向传播 &#x3D; 一次请求调用（输入 → 输出）。</li>
+<li>损失函数 &#x3D; 压测报告（预测和真实差多少）。</li>
+<li>反向传播 &#x3D; 日志分析（哪一步出了问题）。</li>
+<li>梯度下降 &#x3D; 自动改配置（调优参数）。</li>
+<li>多轮训练 &#x3D; 压测 → 调整 → 再压测，直到指标下降。</li>
+</ol>
+<h4 id="代码示例：让网络学会加法"><a href="#代码示例：让网络学会加法" class="headerlink" title="代码示例：让网络学会加法"></a>代码示例：让网络学会加法</h4><p>下面是一个最小可运行的 PyTorch 示例。我让网络去学“两个数相加”的规律，最后它能预测出接近正确的结果。</p>
+<pre class=" language-python"><code class="language-python"><span class="token keyword">import</span> torch
+<span class="token keyword">import</span> torch<span class="token punctuation">.</span>nn <span class="token keyword">as</span> nn
+<span class="token keyword">import</span> torch<span class="token punctuation">.</span>optim <span class="token keyword">as</span> optim
+
+<span class="token comment" spellcheck="true"># 1. 定义一个小网络：输入2个数 -> 输出1个数</span>
+<span class="token keyword">class</span> <span class="token class-name">TinyAddNN</span><span class="token punctuation">(</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        super<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>fc1 <span class="token operator">=</span> nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">)</span>   <span class="token comment" spellcheck="true"># 2维 -> 4维</span>
+        self<span class="token punctuation">.</span>relu <span class="token operator">=</span> nn<span class="token punctuation">.</span>ReLU<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>fc2 <span class="token operator">=</span> nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>   <span class="token comment" spellcheck="true"># 4维 -> 1维</span>
+
+    <span class="token keyword">def</span> <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        x <span class="token operator">=</span> self<span class="token punctuation">.</span>relu<span class="token punctuation">(</span>self<span class="token punctuation">.</span>fc1<span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        x <span class="token operator">=</span> self<span class="token punctuation">.</span>fc2<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+        <span class="token keyword">return</span> x
+
+<span class="token comment" spellcheck="true"># 2. 准备数据：希望学会 y = x1 + x2</span>
+X <span class="token operator">=</span> torch<span class="token punctuation">.</span>randn<span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span>   <span class="token comment" spellcheck="true"># 100行，每行2个数</span>
+y <span class="token operator">=</span> X<span class="token punctuation">.</span>sum<span class="token punctuation">(</span>dim<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span> keepdim<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 3. 定义模型、损失函数和优化器</span>
+model <span class="token operator">=</span> TinyAddNN<span class="token punctuation">(</span><span class="token punctuation">)</span>
+loss_fn <span class="token operator">=</span> nn<span class="token punctuation">.</span>MSELoss<span class="token punctuation">(</span><span class="token punctuation">)</span>
+optimizer <span class="token operator">=</span> optim<span class="token punctuation">.</span>SGD<span class="token punctuation">(</span>model<span class="token punctuation">.</span>parameters<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> lr<span class="token operator">=</span><span class="token number">0.1</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 4. 训练</span>
+<span class="token keyword">for</span> step <span class="token keyword">in</span> range<span class="token punctuation">(</span><span class="token number">30</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    pred <span class="token operator">=</span> model<span class="token punctuation">(</span>X<span class="token punctuation">)</span>          <span class="token comment" spellcheck="true"># 前向传播</span>
+    loss <span class="token operator">=</span> loss_fn<span class="token punctuation">(</span>pred<span class="token punctuation">,</span> y<span class="token punctuation">)</span>  <span class="token comment" spellcheck="true"># 计算损失</span>
+
+    optimizer<span class="token punctuation">.</span>zero_grad<span class="token punctuation">(</span><span class="token punctuation">)</span>    <span class="token comment" spellcheck="true"># 清空梯度</span>
+    loss<span class="token punctuation">.</span>backward<span class="token punctuation">(</span><span class="token punctuation">)</span>          <span class="token comment" spellcheck="true"># 反向传播</span>
+    optimizer<span class="token punctuation">.</span>step<span class="token punctuation">(</span><span class="token punctuation">)</span>         <span class="token comment" spellcheck="true"># 梯度下降</span>
+
+    <span class="token keyword">if</span> step <span class="token operator">%</span> <span class="token number">5</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span>f<span class="token string">"Step {step}, Loss={loss.item():.4f}"</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># 5. 测试一下：2+3 ≈ ?</span>
+test <span class="token operator">=</span> torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">[</span><span class="token number">2.0</span><span class="token punctuation">,</span> <span class="token number">3.0</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"预测结果 (应该接近5):"</span><span class="token punctuation">,</span> model<span class="token punctuation">(</span>test<span class="token punctuation">)</span><span class="token punctuation">.</span>item<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+</code></pre>
+<p><strong>运行效果</strong></p>
+<p>控制台输出类似这样：</p>
+<pre class=" language-sh"><code class="language-sh">Step 0, Loss=3.0751
+Step 5, Loss=1.8498
+Step 10, Loss=1.0602
+Step 15, Loss=0.2336
+Step 20, Loss=0.0624
+Step 25, Loss=0.0499
+预测结果 (应该接近5): 4.1164
+</code></pre>
+<p>可以看到 Loss（误差）一步步下降，说明网络在“学”。最后预测 [2,3] 得到 4.1，已经很接近标准答案 5 了。</p>
+<p>“神经网络就是一个自动调优的函数系统：输入数据，输出预测，算出误差后自动修正参数。”</p>
+<p>简单来说是学徒学手艺；严格来说是前向传播、损失函数、反向传播和梯度下降的循环。</p>
 
                 
             </div>
@@ -507,7 +584,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://jayleonc.github.io/2019/03/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E4%B9%8B%E8%B7%AF/">https://jayleonc.github.io/2019/03/01/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E4%B9%8B%E8%B7%AF/</a>
+                    <a href="https://jayleonc.github.io/2025/09/19/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/">https://jayleonc.github.io/2025/09/19/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -544,7 +621,15 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">
+                                    <span class="chip bg-color">神经网络</span>
+                                </a>
+                            
+                                <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BF%85%E5%A4%87%E5%9F%BA%E7%A1%80/">
+                                    <span class="chip bg-color">大模型必备基础</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -712,17 +797,18 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2019/03/03/Linux-SSR/">
+                <a href="/2025/09/19/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="Linux SSR">
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="神经网络核心概念">
                         
-                        <span class="card-title">Linux SSR</span>
+                        <span class="card-title">神经网络核心概念</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -732,20 +818,29 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2019-03-03
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2025-09-19
+                            </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/%E6%8A%80%E6%9C%AF/" class="post-category">
-                                    技术
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Jayleonc
                             
                         </span>
                     </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">
+                        <span class="chip bg-color">神经网络</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BF%85%E5%A4%87%E5%9F%BA%E7%A1%80/">
+                        <span class="chip bg-color">大模型必备基础</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -757,13 +852,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/02/28/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0/">
+                <a href="/2025/01/11/%E8%AF%BB%E3%80%8A%E6%97%A5%E5%BF%97%EF%BC%9A%E6%AF%8F%E4%B8%AA%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E5%B8%88%E9%83%BD%E5%BA%94%E8%AF%A5%E7%9F%A5%E9%81%93%E7%9A%84%E6%9C%89%E5%85%B3%E5%AE%9E%E6%97%B6%E6%95%B0%E6%8D%AE%E7%9A%84%E7%BB%9F%E4%B8%80%E6%8A%BD%E8%B1%A1%E3%80%8B%E6%9C%89%E6%84%9F%E3%80%8B/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="我的第一篇博客文章">
+                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="读《日志：每个软件工程师都应该知道的有关实时数据的统一抽象》有感》">
                         
-                        <span class="card-title">我的第一篇博客文章</span>
+                        <span class="card-title">读《日志：每个软件工程师都应该知道的有关实时数据的统一抽象》有感》</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -774,7 +869,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2019-02-28
+                                <i class="far fa-clock fa-fw icon-date"></i>2025-01-11
                             </span>
                         <span class="publish-author">
                             
@@ -783,6 +878,26 @@
                             
                         </span>
                     </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%8A%80%E6%9C%AF/">
+                        <span class="chip bg-color">技术</span>
+                    </a>
+                    
+                    <a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">
+                        <span class="chip bg-color">消息队列</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">
+                        <span class="chip bg-color">分布式</span>
+                    </a>
+                    
+                    <a href="/tags/Kafka/">
+                        <span class="chip bg-color">Kafka</span>
+                    </a>
+                    
                 </div>
                 
             </div>
