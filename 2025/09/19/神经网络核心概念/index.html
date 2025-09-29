@@ -460,14 +460,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    993
+                    1k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    3 分
+                    4 分
                 </div>
                 
 
@@ -485,6 +485,7 @@
                 <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>我一直是做应用开发的，幸运的是，平时在工作里我能经常和 AI 打交道。最近一年，我主导或参与了一些 AI 应用的落地实践，比如 RAG 系统、智能客服的工作流编排；在一些传统业务场景里，我也常常借助 AI 来提升效率。可以说，我已经在实际项目里尝到了 AI 的“甜头”，或者说我认为自己算是赶上了风口，非常幸运的进入了 AI 领域的开发，得到过一些真实的经验。</p>
 <p>但 <strong>光会调 API 是远远不够的</strong>。如果想真正把 AI 用好、用深，就需要对它的底层机制有更多理解。过去看别人讲神经网络，满屏的公式和符号，像天书一样，常常让我打退堂鼓。直到最近，我硬着头皮重新学了一下，换个角度去理解，才发现里面其实挺有意思。</p>
 <p>这篇文章就记录一下我对 神经网络五个核心概念 的理解：前向传播、损失函数、反向传播、梯度下降、激活函数。希望你看了之后有所收获。</p>
+<h4 id="神经网络"><a href="#神经网络" class="headerlink" title="神经网络"></a>神经网络</h4><p>先来做一句话总结，神经网络的训练过程，其实就是：<br> <strong>“机器先乱算 → 老师打分 → 机器自己改 → 慢慢学会规律”。</strong></p>
 <p>我们可以把神经网络想象成一个“学徒工”：</p>
 <ol>
 <li>前向传播：学徒先尝试做一道题，比如输入 [2, 3]，随便给出一个答案。</li>
@@ -556,8 +557,7 @@ Step 25, Loss=0.0499
 预测结果 (应该接近5): 4.1164
 </code></pre>
 <p>可以看到 Loss（误差）一步步下降，说明网络在“学”。最后预测 [2,3] 得到 4.1，已经很接近标准答案 5 了。</p>
-<p>“神经网络就是一个自动调优的函数系统：输入数据，输出预测，算出误差后自动修正参数。”</p>
-<p>简单来说是学徒学手艺；严格来说是前向传播、损失函数、反向传播和梯度下降的循环。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>神经网络就是一个自动调优的函数系统：输入数据，输出预测，算出误差后自动修正参数。简单来说是学徒学手艺；严格来说是前向传播、损失函数、反向传播和梯度下降的循环。</p>
 
                 
             </div>
@@ -797,18 +797,17 @@ Step 25, Loss=0.0499
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2025/09/19/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5/">
+                <a href="/2025/09/29/%E6%88%91%E5%A6%82%E4%BD%95%E4%B8%8EAI%E7%BB%93%E5%AF%B9%E7%BC%96%E7%A8%8B%EF%BC%9A%E4%BA%94%E4%B8%AA%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%B7%B1%E5%BA%A6%E5%A4%8D%E7%9B%98%E4%B8%8E%E6%80%9D%E8%80%83/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="神经网络核心概念">
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="我如何与AI结对编程：五个项目的深度复盘与思考">
                         
-                        <span class="card-title">神经网络核心概念</span>
+                        <span class="card-title">我如何与AI结对编程：五个项目的深度复盘与思考</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -818,9 +817,9 @@ Step 25, Loss=0.0499
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2025-09-19
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2025-09-29
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -829,16 +828,19 @@ Step 25, Loss=0.0499
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">
-                        <span class="chip bg-color">神经网络</span>
+                    <a href="/tags/%E6%8A%80%E6%9C%AF/">
+                        <span class="chip bg-color">技术</span>
                     </a>
                     
-                    <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BF%85%E5%A4%87%E5%9F%BA%E7%A1%80/">
-                        <span class="chip bg-color">大模型必备基础</span>
+                    <a href="/tags/%E6%80%9D%E8%80%83/">
+                        <span class="chip bg-color">思考</span>
+                    </a>
+                    
+                    <a href="/tags/AI/">
+                        <span class="chip bg-color">AI</span>
                     </a>
                     
                 </div>
@@ -1098,7 +1100,7 @@ Step 25, Loss=0.0499
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">26.3k</span>&nbsp;字
+                class="white-color">32.6k</span>&nbsp;字
             
             
             
