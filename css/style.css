@@ -1283,6 +1283,8 @@ a.tag-chip:hover,
 }
 
 .post-hero {
+  max-width: min(100%, calc(var(--measure) + 10rem));
+  width: min(100%, calc(var(--measure) + 10rem));
   padding-bottom: 2.4rem;
   margin-bottom: 2.4rem;
   border-bottom: 1px solid var(--line-strong);
@@ -1315,6 +1317,10 @@ a.tag-chip:hover,
 .post-content {
   width: 100%;
   max-width: var(--measure);
+}
+
+.post-main {
+  width: min(100%, calc(var(--measure) + 10rem));
 }
 
 .page-content {
@@ -1425,6 +1431,15 @@ a.tag-chip:hover,
   gap: 0.75rem;
 }
 
+.post-hero h1 {
+  max-width: none;
+  line-height: 1.08;
+  overflow-wrap: normal;
+  word-break: normal;
+  line-break: strict;
+  text-wrap: pretty;
+}
+
 .post-tags {
   margin-top: 1rem;
 }
@@ -1496,6 +1511,10 @@ a.tag-chip:hover,
   line-height: 1.9;
 }
 
+.post-content {
+  margin: 0 auto;
+}
+
 .prose > *:first-child {
   margin-top: 0;
 }
@@ -1519,13 +1538,15 @@ a.tag-chip:hover,
 }
 
 .prose h2::before {
-  content: "§";
+  content: "J";
   position: absolute;
   left: -1.6rem;
   top: 0.18em;
   color: var(--accent);
   font-style: italic;
   font-size: 0.78em;
+  font-family: var(--display-font);
+  font-weight: 500;
   font-variation-settings: "opsz" 144, "SOFT" 100;
   opacity: 0.7;
 }
@@ -1538,6 +1559,8 @@ a.tag-chip:hover,
 .prose li,
 .prose blockquote {
   margin: 0 0 1.35rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .prose a {
@@ -1545,6 +1568,7 @@ a.tag-chip:hover,
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
+  overflow-wrap: anywhere;
 }
 
 .prose ul,
@@ -1592,6 +1616,8 @@ a.tag-chip:hover,
 .prose pre,
 .prose pre[class*="language-"] {
   position: relative;
+  width: min(100%, var(--reading));
+  max-width: 100%;
   margin: 1.6rem 0;
   overflow: hidden;
   border-radius: 16px;
@@ -1641,6 +1667,7 @@ a.tag-chip:hover,
 
 .prose figure.highlight table {
   width: 100%;
+  max-width: 100%;
   display: block;
   border-spacing: 0;
   background: transparent;
@@ -1667,6 +1694,7 @@ a.tag-chip:hover,
 
 .prose figure.highlight .code {
   width: 100%;
+  max-width: 100%;
 }
 
 .prose figure.highlight .code pre {
@@ -1684,6 +1712,15 @@ a.tag-chip:hover,
   padding: 0;
   background: transparent;
   color: inherit;
+}
+
+.prose figure.highlight.shell .code pre,
+.prose figure.highlight.sh .code pre,
+.prose pre[data-language="shell"],
+.prose pre[data-language="sh"] {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .prose figure.highlight::-webkit-scrollbar,
@@ -1816,12 +1853,12 @@ a.tag-chip:hover,
 .archive-year {
   display: grid;
   grid-template-columns: 7rem minmax(0, 1fr);
-  gap: 1rem 1.4rem;
-  padding-top: 1.25rem;
+  gap: 0.7rem 1.15rem;
+  padding-top: 0.85rem;
 }
 
 .archive-year__label {
-  padding-top: 0.3rem;
+  padding-top: 0.18rem;
   color: var(--accent);
   font-family: var(--ui-font);
   font-size: 0.78rem;
@@ -1831,19 +1868,41 @@ a.tag-chip:hover,
 
 .archive-year__entries {
   display: grid;
-  gap: 0.8rem;
+  gap: 0.35rem;
 }
 
 .archive-entry {
   display: grid;
   grid-template-columns: 4.2rem minmax(0, 1fr);
-  gap: 1rem;
-  padding: 0.8rem 0;
+  gap: 0.8rem;
+  padding: 0.45rem 0;
 }
 
 .archive-entry strong {
   font-size: 1.05rem;
   line-height: 1.3;
+}
+
+.taxonomy-shell > .essay-list {
+  width: min(100%, calc(var(--measure) + 4rem));
+  margin: 0 auto;
+  gap: 0.75rem;
+}
+
+.taxonomy-shell .essay-row {
+  padding: 1.3rem 1.35rem;
+}
+
+.taxonomy-shell .essay-row__meta {
+  gap: 0.7rem;
+}
+
+.taxonomy-shell .essay-row__body h3 {
+  margin: 0.4rem 0 0.45rem;
+}
+
+.taxonomy-shell .essay-row__body p {
+  line-height: 1.74;
 }
 
 .resource-row {

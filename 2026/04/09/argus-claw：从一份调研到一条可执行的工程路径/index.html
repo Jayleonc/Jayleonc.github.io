@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>argus-claw：从一份调研到一条可执行的工程路径 · Jayleonc</title>
+<meta name="description" content="从调研文档、执行基线到 Wave 1，我如何借助 AI 把一个还很早期的项目压成一条真正能推进的工程路径。">
+<meta name="theme-color" content="#f3e8da">
+
+
+<link rel="canonical" href="https://jayleonc.github.io/2026/04/09/argus-claw%EF%BC%9A%E4%BB%8E%E4%B8%80%E4%BB%BD%E8%B0%83%E7%A0%94%E5%88%B0%E4%B8%80%E6%9D%A1%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%9A%84%E5%B7%A5%E7%A8%8B%E8%B7%AF%E5%BE%84/">
+
+<meta property="og:title" content="argus-claw：从一份调研到一条可执行的工程路径 · Jayleonc">
+<meta property="og:description" content="从调研文档、执行基线到 Wave 1，我如何借助 AI 把一个还很早期的项目压成一条真正能推进的工程路径。">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Jayleonc">
+<meta property="og:locale" content="zh-CN">
+
+<meta property="og:url" content="https://jayleonc.github.io/2026/04/09/argus-claw%EF%BC%9A%E4%BB%8E%E4%B8%80%E4%BB%BD%E8%B0%83%E7%A0%94%E5%88%B0%E4%B8%80%E6%9D%A1%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%9A%84%E5%B7%A5%E7%A8%8B%E8%B7%AF%E5%BE%84/">
+
+
+<meta property="og:image" content="https://jayleonc.github.io/images/1.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://jayleonc.github.io/images/1.png">
+
+<meta name="twitter:title" content="argus-claw：从一份调研到一条可执行的工程路径 · Jayleonc">
+<meta name="twitter:description" content="从调研文档、执行基线到 Wave 1，我如何借助 AI 把一个还很早期的项目压成一条真正能推进的工程路径。">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,30;0,9..144,400..900,100;1,9..144,400..900,30;1,9..144,400..900,100&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<body class="layout-post">
+  <header class="site-header" data-site-header>
+  <div class="shell site-header__inner">
+    
+    <a class="site-brand" href="/">
+      <span class="site-brand__mark">J<em>l</em></span>
+      <span class="site-brand__text">
+        <strong>Jayleonc</strong>
+        <small>用代码、AI 和写作记录成长</small>
+      </span>
+    </a>
+
+    <div class="site-header__actions">
+      <nav class="site-nav" id="site-nav" data-site-nav>
+        
+        <a href="/" class="">文章</a>
+        
+        <a href="/archives/" class="">归档</a>
+        
+        <a href="/about/" class="">关于</a>
+        
+        <a href="/friends/" class="">资源</a>
+        
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </nav>
+
+      <button class="theme-toggle" type="button" aria-label="切换主题" title="切换主题" data-theme-toggle>
+        <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m12.95 5.536 1.414 1.414M4.636 4.636 6.05 6.05m10.9-1.414L15.536 6.05M6.05 17.95l-1.414 1.414M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>
+          </svg>
+        </span>
+        <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M20 15.5A7.5 7.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
+          </svg>
+        </span>
+      </button>
+
+      <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+  <main class="site-main">
+    
+  <article class="post-shell shell">
+    <div class="post-layout">
+      <div class="post-main">
+        <header class="post-hero reveal">
+          
+            <p class="eyebrow">
+              AI工程</p>
+        
+        <h1>argus-claw：从一份调研到一条可执行的工程路径</h1>
+        <div class="post-hero__meta">
+          <span>2026-04-09</span>
+          <span>10 分钟阅读</span>
+          <span>4129 字</span>
+        </div>
+        
+        <p class="post-hero__summary">从调研文档、执行基线到 Wave 1，我如何借助 AI 把一个还很早期的项目压成一条真正能推进的工程路径。</p>
+        
+        
+        <div class="tag-list post-tags">
+          
+          <a class="tag-chip" href="/tags/AI/">AI</a>
+          
+          <a class="tag-chip" href="/tags/argus-claw/">argus-claw</a>
+          
+          <a class="tag-chip" href="/tags/vibe-coding/">vibe coding</a>
+          
+          <a class="tag-chip" href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">工程实践</a>
+          
+        </div>
+        
+      </header>
+
+      <div class="post-content prose">
+        <p>最近我开始做一个新项目，叫 <code>argus-claw</code>。</p>
+<p>我准备把它写成一个系列。因为这个项目后面大概率会分出好几条线：有些内容适合写成技术拆解，有些适合写成阶段记录，还有一些更像是方法上的复盘。项目还很早，我反而觉得现在动笔正合适。很多真正决定项目气质的东西，往往就发生在最开始的这几步里。</p>
+<p>到我写这篇文章的时候，<code>argus-claw</code> 还没有跑出第一条完整的 review 闭环。仓库里已经有路线图、有阶段文档、有实验目录，也有第一阶段的接线说明，但它还没有长成一个“已经证明自己”的系统。这个状态很真实，所以我想先把真实的起点写下来。</p>
+<p>如果直接看目录，其实会更有感觉：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── constitution.md</span><br><span class="line">├── docs</span><br><span class="line">│   ├── archive</span><br><span class="line">│   │   ├── chat-history.md</span><br><span class="line">│   │   ├── Product.md</span><br><span class="line">│   │   └── README.md</span><br><span class="line">│   └── argus-research</span><br><span class="line">│       └── deep-research.md</span><br><span class="line">├── roadmap.md</span><br><span class="line">└── waves.md</span><br></pre></td></tr></table></figure>
+
+<p>你会发现，现在的它连“半成品代码仓库”都还谈不上，更像是一套刚刚被压实的执行基线。也正因为这样，我更想先把这个阶段写下来。</p>
+<h2 id="我一开始想做的，到底是什么"><a href="#我一开始想做的，到底是什么" class="headerlink" title="我一开始想做的，到底是什么"></a>我一开始想做的，到底是什么</h2><p><code>argus-claw</code> 的方向其实并不复杂。我想做一个面向 self-hosted GitLab 的 AI code review 系统，先把最小闭环跑通，再一点点加深它对 Go 微服务场景的理解。后面是否要接 MCP、要不要做 RAG、是否要引入更强的上下文能力，这些都可以继续讨论。但这些都应该排在“先让它真的工作”之后。</p>
+<p>我现在越来越警惕一种很容易上头的项目启动方式：脑子里同时出现太多正确的词，结果每个词都想立刻做。GitLab、PR-Agent、Go reviewer、MCP、RAG、多 Agent，这些方向单拎出来都很有吸引力。问题在于，项目第一周承受不了这么多展开。你会觉得自己在快速推进，实际感受常常只是复杂度在快速上涨。</p>
+<p>所以 <code>argus-claw</code> 的第一步，被我压成了一句很朴素的话：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GitLab Merge Request -&gt; PR-Agent -&gt; LLM -&gt; Merge Request 评论</span><br></pre></td></tr></table></figure>
+
+<p>第一阶段只看这件事能不能跑通。只要这条链路还没通，别的内容都先往后放。</p>
+<h2 id="这次我最依赖-AI-的地方，是帮我收束"><a href="#这次我最依赖-AI-的地方，是帮我收束" class="headerlink" title="这次我最依赖 AI 的地方，是帮我收束"></a>这次我最依赖 AI 的地方，是帮我收束</h2><p>我这次和 AI 的协作，重点不在“让它多写一点代码”。代码当然也会写，但真正帮我省下大量时间的地方，是它可以很快帮我收束信息。</p>
+<p>我手里原本有一份调研文档，也有一些更早的白皮书式想法。它们有价值，但也会互相打架。只要这些材料同时摆在面前，项目就很容易陷入一种反复摇摆的状态。今天觉得应该先自己写 Go webhook 服务，明天又觉得先 fork 一个成熟项目更稳，后天看到 RAG 和多 Agent，又开始想把未来三个月的复杂度一起搬进来。</p>
+<p>我把这些材料丢给 AI，不是为了让它替我做决定。我更像是在拿它做一台高频运转的整理机：让它先读完整体上下文，再逼它回答一个更具体的问题，今天到底该从哪里开始。</p>
+<p>这个过程中，AI 很快帮我把一个关键判断收紧了：第一阶段别碰 RAG，别碰 LangGraph，别急着写自己的 Go reviewer 服务，也别急着证明一大堆“以后可能有价值”的系统能力。先拿现成的强基座把第一条 review 跑通，再决定后面哪里值得自己下场。</p>
+<p>这个判断最后当然是我自己拍板的，但 AI 确实把“收束”这件事做得很快。它能把一份很长的调研文档压出执行边界，也能把互相冲突的材料放在一起对照，让我更容易看清楚哪些内容会干扰当下推进。</p>
+<h2 id="我先让-AI-帮我把路修出来"><a href="#我先让-AI-帮我把路修出来" class="headerlink" title="我先让 AI 帮我把路修出来"></a>我先让 AI 帮我把路修出来</h2><p>于是，<code>argus-claw</code> 当前最扎实的进展，落在了文档和执行基线上。</p>
+<p>我先把项目宪章、路线图、Wave 文档和 Wave 1 的说明立起来，再把已经失去优先级的材料归档掉。这样的动作看起来并不华丽，甚至会让人觉得“你怎么还没开始写核心代码”。可我现在越来越相信，很多项目真正拖慢进度的地方，恰好就是前面没有把规则说清楚。</p>
+<p>一旦边界不清楚，后面的每一步都在重新理解项目。写两天代码，停下来想想方向；过两天看到一个新概念，又开始怀疑当前路线；再过几天回头看旧文档，发现自己当时根本没有把“第一阶段成功”定义清楚。真正消耗人的，很多时候是这种反复回退和重复判断，编码量反而显得没那么重。</p>
+<p>所以我宁愿先把这些东西钉住。</p>
+<p>现在仓库里已经有一个很明确的执行秩序：<code>constitution.md</code> 负责决策准则，<code>roadmap.md</code> 负责多阶段方向，<code>waves.md</code> 负责当前执行，<code>notes/wave-1.md</code> 负责把第一阶段的动作写具体。原来的材料没有消失，只是退出了当前决策链路。这样我每次回来继续推进时，脑子里不会重新打架。</p>
+<p>写到这里，我自己也会想到前面那篇《「下一步」，不是一个动作》。当时我写过 <code>knowledge-hub</code> 那种项目更适合走一套压得很细的执行链路，从 <code>/idea</code>、<code>/spec</code>、<code>/plan</code>、<code>/task</code> 一路收束到 <code>/execute</code>。那套方法我现在依然很认同，它很适合方向已经收紧、需求边界已经稳定的阶段。尤其是那种开放接口能力开发、要去对接底层接口、再往上提供能力的项目，你一旦把规格想清楚，后面的推进会非常顺，安全感也很强。</p>
+<p>但 <code>argus-claw</code> 现在还不在那个阶段。</p>
+<p>我现在手里有方向，有研究，有我自己很强的兴趣，也有几个已经很明确的技术锚点，可我还没有走到“可以认真写规格”的时候。这个项目当前最需要被拍板的东西，还是路线、阶段边界和验证顺序。这个时候如果硬把它塞进一套很完整的 SDD 流程里，文档表面上会显得很正式，心里其实知道很多内容还只是阶段性的猜测。那种稳定感是假的，后面一改方向，前面的规格就会一起松掉。</p>
+<p>所以这次我选了一个更适合当前阶段的推进方式：先用 <code>roadmap</code> 管远一点的路径，再用 <code>waves</code> 管眼前这一段。这个套路我以前也用过，在那类开放接口开发的项目里，它对我一直很有效。因为它允许我先把长期方向挂起来，再把当前阶段压得很窄。这样推进的时候，人会很稳。你知道自己暂时不碰什么，也知道这一波只验证什么。项目会沿着一个很安全的节奏往前走，不容易被中途冒出来的新想法带偏。</p>
+<h2 id="这大概就是我现在理解的-vibe-coding"><a href="#这大概就是我现在理解的-vibe-coding" class="headerlink" title="这大概就是我现在理解的 vibe coding"></a>这大概就是我现在理解的 vibe coding</h2><p>我对 vibe coding 的理解，这段时间也在变化。</p>
+<p>早一点的时候，我会更在意“AI 能不能尽快把东西写出来”。现在我更在意另一件事：AI 能不能帮我更低摩擦地试一条路径，然后再更低摩擦地把错误路径砍掉。</p>
+<p>如果只是想到什么就让它写什么，速度确实很快，项目也会很快长出一堆东西。问题在于，那些东西里面混着多少幻觉、多少时机不对的复杂度、多少因为兴奋而提前引入的系统层设计，只有走远一点才会看出来。那时再回头收拾，代价往往更大。</p>
+<p>而且我也知道，现在更流行的玩法，往往比我激进得多。开多个窗口，并行丢给多个 Agent，让它们各自推进，再开 subagent，把一部分工作继续拆下去；或者直接上像 openclaw 这种更强调代理协作的工具，让整条执行链路自己往前滚。这种方式我并不陌生，对某些任务也确实合适。边界清楚、验收标准明确的时候，它的效率会非常高。</p>
+<p>再往前走一步，其实还有更重的一层想象。比如把需求流转、任务编排、协作沟通、交付追踪这些东西，更多地接到像 Linear、Slack 这样的系统里，让 AI 更深地参与整个研发生命周期。这个方向我并不排斥，我甚至觉得它很值得认真做。真有企业愿意投入时间，把流程、权限、协作方式一起重构，我会觉得那是一件很好的事。</p>
+<p>只是这条路的风险也很高。它碰到的早就不只是编码效率，还会碰到组织习惯、责任边界、信息噪声、错误放大这些更难收拾的问题。所以它当然可以做，也值得做，只是需要时间，任重而道远。</p>
+<p>从这个角度看，<code>argus-claw</code> 对我来说也不只是一个 code review 项目。它更像是一次很具体的前哨实践：我想先在一个足够窄、又足够真实的环节里，验证 AI 到底该怎么进入研发现场，怎样才能真正带来增益，而不是只留下热闹。</p>
+<p>所以 <code>argus-claw</code> 现在我不想一上来就把自己抽离出去。原因也很简单：一旦我把太多动作直接外包给 Agent，我自己能得到的东西就会变少。我会失去一部分贴着问题往前想的过程，也会更少去反复确认那些决定项目方向的细节。我现在更在意的，并不只是把项目推快一点，我还想保留自己在里面思考、怀疑、收束和修正的空间。对我来说，这个阶段的 <code>argus-claw</code> 还值得我慢一点跟着走，而不是站到后面只做分发和验收。</p>
+<p>我现在更喜欢把 AI 放在两个位置上。</p>
+<p>第一个位置，是研究收束。让它读材料、做对照、帮我提炼第一阶段的边界。</p>
+<p>第二个位置，是工程执行。比如把执行文档落下来，把目录骨架搭出来，把 Wave 1 需要的基础物料先准备好，让我能直接从一个更稳定的起点继续往前走。</p>
+<p>至于那些真正决定项目方向的判断，还是得我自己负责。举个很具体的例子：<code>argus-claw</code> 现在先走 GitLab + PR-Agent 的闭环，后面再谈 Go 定制 skill、MCP 和 RAG。这个顺序本身就是判断。AI 可以帮我加速，也能帮我把判断写清楚，但它不替我承担取舍。</p>
+<h2 id="为什么第一篇我想先写“方法”"><a href="#为什么第一篇我想先写“方法”" class="headerlink" title="为什么第一篇我想先写“方法”"></a>为什么第一篇我想先写“方法”</h2><p>如果我等到第一条 MR 评论真正回写成功，再来写 <code>argus-claw</code> 的第一篇，文章会自然滑向结果汇报。那样当然也能写，但我反而会错过现在这个阶段最值得记录的部分。</p>
+<p>因为现在最有意思的东西，恰好就是“我怎么开始”。</p>
+<p>我怎么面对一堆彼此都很有道理的方向，又怎么把它们压回一个能执行的起点；我怎么借助 AI 去收束研究、剪掉干扰、固定阶段边界；我怎么提醒自己别在项目第一周就把未来几个月的复杂度一起请进来。这些东西写下来，后面再回头看，我会更容易知道哪些判断经得住时间，哪些判断只是当时的情绪。</p>
+<p>所以我想把这个系列的第一篇停在这里。它还没有讲到多成熟的系统，也没有展示什么漂亮的功能截图。它只是把一个项目真正开始成形的那个瞬间记下来。</p>
+<p>至于这个系列后面会先写什么，我其实也不想定得太死。也许是 Wave 1 里某个具体动作，也许是中途冒出来的一次判断，也许只是我在推进 <code>argus-claw</code> 时突然想明白的一个问题。对我来说，写博客一直都更像是思考、整理和分享。什么时候有值得说的东西，我就写一篇。</p>
+
+      </div>
+    </div>
+  </div>
+
+  
+  <nav class="post-nav">
+    
+    
+    <a class="post-nav__item post-nav__item--next" href="/2026/04/09/%E3%80%8C%E4%B8%8B%E4%B8%80%E6%AD%A5%E3%80%8D%EF%BC%8C%E4%B8%8D%E6%98%AF%E4%B8%80%E4%B8%AA%E5%8A%A8%E4%BD%9C/">
+      <span>下一篇</span>
+      <strong>「下一步」，不是一个动作</strong>
+    </a>
+    
+  </nav>
+  
+</article>
+  </main>
+  
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <div class="site-footer__links">
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </div>
+      <p class="site-footer__title">© 2026
+          Jayleonc
+      </p>
+      <p class="site-footer__meta">
+        自 2019 年起持续写作，本站已稳定运行 <span data-runtime data-since="2019-02-28T00:00:00+08:00">7 年</span>。
+        <span id="busuanzi_container_site_uv" style="display:none;">已与 <span id="busuanzi_value_site_uv"></span> 位访客在此相遇。</span>
+      </p>
+      <p class="site-footer__note">
+        Hexo 8 · Atelier 自定义主题
+      </p>
+    </div>
+  </footer>
+  <script async defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script src="/js/site.js"></script>
+</body>
+</html>
