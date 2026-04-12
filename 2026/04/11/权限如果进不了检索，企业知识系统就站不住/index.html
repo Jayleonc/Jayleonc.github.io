@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>权限如果进不了检索，企业知识系统就站不住 · Jayleonc</title>
+<meta name="description" content="企业级 RAG 系统的安全性基石在于权限一致性。本文深入探讨了 Knowledge Hub 如何通过下沉到 SQL 层的实时 ACL Scope 和 VFS 穿透逻辑，构建起坚不可摧的知识安全边界。">
+<meta name="theme-color" content="#f3e8da">
+
+
+<link rel="canonical" href="https://jayleonc.github.io/2026/04/11/%E6%9D%83%E9%99%90%E5%A6%82%E6%9E%9C%E8%BF%9B%E4%B8%8D%E4%BA%86%E6%A3%80%E7%B4%A2%EF%BC%8C%E4%BC%81%E4%B8%9A%E7%9F%A5%E8%AF%86%E7%B3%BB%E7%BB%9F%E5%B0%B1%E7%AB%99%E4%B8%8D%E4%BD%8F/">
+
+<meta property="og:title" content="权限如果进不了检索，企业知识系统就站不住 · Jayleonc">
+<meta property="og:description" content="企业级 RAG 系统的安全性基石在于权限一致性。本文深入探讨了 Knowledge Hub 如何通过下沉到 SQL 层的实时 ACL Scope 和 VFS 穿透逻辑，构建起坚不可摧的知识安全边界。">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Jayleonc">
+<meta property="og:locale" content="zh-CN">
+
+<meta property="og:url" content="https://jayleonc.github.io/2026/04/11/%E6%9D%83%E9%99%90%E5%A6%82%E6%9E%9C%E8%BF%9B%E4%B8%8D%E4%BA%86%E6%A3%80%E7%B4%A2%EF%BC%8C%E4%BC%81%E4%B8%9A%E7%9F%A5%E8%AF%86%E7%B3%BB%E7%BB%9F%E5%B0%B1%E7%AB%99%E4%B8%8D%E4%BD%8F/">
+
+
+<meta property="og:image" content="https://jayleonc.github.io/images/1.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://jayleonc.github.io/images/1.png">
+
+<meta name="twitter:title" content="权限如果进不了检索，企业知识系统就站不住 · Jayleonc">
+<meta name="twitter:description" content="企业级 RAG 系统的安全性基石在于权限一致性。本文深入探讨了 Knowledge Hub 如何通过下沉到 SQL 层的实时 ACL Scope 和 VFS 穿透逻辑，构建起坚不可摧的知识安全边界。">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,30;0,9..144,400..900,100;1,9..144,400..900,30;1,9..144,400..900,100&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<body class="layout-post">
+  <header class="site-header" data-site-header>
+  <div class="shell site-header__inner">
+    
+    <a class="site-brand" href="/">
+      <span class="site-brand__mark">J<em>l</em></span>
+      <span class="site-brand__text">
+        <strong>Jayleonc</strong>
+        <small>用代码、AI 和写作记录成长</small>
+      </span>
+    </a>
+
+    <div class="site-header__actions">
+      <nav class="site-nav" id="site-nav" data-site-nav>
+        
+        <a href="/" class="">文章</a>
+        
+        <a href="/archives/" class="">归档</a>
+        
+        <a href="/about/" class="">关于</a>
+        
+        <a href="/friends/" class="">资源</a>
+        
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </nav>
+
+      <button class="theme-toggle" type="button" aria-label="切换主题" title="切换主题" data-theme-toggle>
+        <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m12.95 5.536 1.414 1.414M4.636 4.636 6.05 6.05m10.9-1.414L15.536 6.05M6.05 17.95l-1.414 1.414M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>
+          </svg>
+        </span>
+        <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M20 15.5A7.5 7.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
+          </svg>
+        </span>
+      </button>
+
+      <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+  <main class="site-main">
+    
+  <article class="post-shell shell">
+    <div class="post-layout">
+      <div class="post-main">
+        <header class="post-hero reveal">
+          
+            <p class="eyebrow">
+              AI工程</p>
+        
+        <h1>权限如果进不了检索，企业知识系统就站不住</h1>
+        <div class="post-hero__meta">
+          <span>2026-04-11</span>
+          <span>5 分钟阅读</span>
+          <span>1965 字</span>
+        </div>
+        
+        <p class="post-hero__summary">企业级 RAG 系统的安全性基石在于权限一致性。本文深入探讨了 Knowledge Hub 如何通过下沉到 SQL 层的实时 ACL Scope 和 VFS 穿透逻辑，构建起坚不可摧的知识安全边界。</p>
+        
+        
+        <div class="tag-list post-tags">
+          
+          <a class="tag-chip" href="/tags/AI/">AI</a>
+          
+          <a class="tag-chip" href="/tags/knowledge-hub/">knowledge-hub</a>
+          
+          <a class="tag-chip" href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">工程实践</a>
+          
+          <a class="tag-chip" href="/tags/%E6%9D%83%E9%99%90/">权限</a>
+          
+        </div>
+        
+      </header>
+
+      <div class="post-content prose">
+        <p>在构建企业级 RAG（检索增强生成）系统时，一个不可逾越的核心设计准则是：<strong>用户的可见性边界在“内容管理视图”与“AI 检索视图”中必须保持原子级的强一致性。</strong></p>
+<p>如果在交互页面上不可见的内容，可以通过 AI 聊天对话被检索出来，说明系统的安全边界存在结构性缺陷。为了守住这条红线，<code>Knowledge Hub</code> (KH) 经历了一次从“应用层过滤”到“实时检索层 RLS（行级安全）”的重大架构演进。</p>
+<h2 id="一、为什么“应用层过滤”和“静态元数据”是不充分的？"><a href="#一、为什么“应用层过滤”和“静态元数据”是不充分的？" class="headerlink" title="一、为什么“应用层过滤”和“静态元数据”是不充分的？"></a>一、为什么“应用层过滤”和“静态元数据”是不充分的？</h2><p>在早期 RAG 实践中，开发者常采用两种方案：</p>
+<ol>
+<li><strong>Prompt 级拦截</strong>：在 System Prompt 中加入“请勿回答关于财务的内容”。这完全依赖模型的遵循能力，面对 Prompt 注入攻击时毫无防御力。</li>
+<li><strong>静态元数据过滤</strong>：将权限 Token 写入向量数据库的 Metadata。这看似安全，但存在“一致性空窗期”。当一个文件的权限变更时，更新上千万个向量切片的元数据可能需要数秒乃至数分钟，这在金融、军工等敏感领域是不可接受的。</li>
+</ol>
+<p>KH 的实现逻辑是：<strong>权限校验必须是检索动作的“前置条件”，且必须是实时的。</strong></p>
+<h2 id="二、底层进化：基于实时-SQL-Scope-的权限下沉"><a href="#二、底层进化：基于实时-SQL-Scope-的权限下沉" class="headerlink" title="二、底层进化：基于实时 SQL Scope 的权限下沉"></a>二、底层进化：基于实时 SQL Scope 的权限下沉</h2><p>在 KH 的 <code>internal/database/scope/acl.go</code> 中，我们实现了一套极其精密的 <strong>ACLScope</strong> 机制。它不再依赖预计算的 Token，而是将复杂的权限语义直接转化为检索时的 SQL 片段。</p>
+<h3 id="2-1-统一的-ACLScopeForTable"><a href="#2-1-统一的-ACLScopeForTable" class="headerlink" title="2.1 统一的 ACLScopeForTable"></a>2.1 统一的 ACLScopeForTable</h3><p>KH 利用 GORM 的 Scope 特性，通过 <code>ACLScopeForTable</code> 函数为所有数据库查询（包括向量检索时的 Segment 查询）强制注入 ACL 约束。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 核心逻辑简述</span></span><br><span class="line"><span class="keyword">return</span> scope.ACLScopeForTable(sp.PrincipalID, sp.RoleIDs, sp.IsSystemAdmin, sp.UsageScenario, <span class="string">&quot;document&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这个函数会动态构建出包含 <code>jsonb_array_elements_text</code> 的 SQL 条件，实时在 <code>document</code> 表的 <code>access_policy</code>（JSONB 字段）中匹配当前的 PrincipalID（用户）、RoleIDs（角色）、Groups（用户组）和 Departments（部门）。</p>
+<p>这意味着：<strong>无论查询的是文档列表还是向量分片，它们共享同一套权限逻辑。</strong> 只要 <code>document</code> 表里的 <code>access_policy</code> 发生变更，下一毫秒的检索结果就会立即响应。</p>
+<h2 id="三、VFS-目录穿透：安全性与用户体验的平衡"><a href="#三、VFS-目录穿透：安全性与用户体验的平衡" class="headerlink" title="三、VFS 目录穿透：安全性与用户体验的平衡"></a>三、VFS 目录穿透：安全性与用户体验的平衡</h2><p>在处理复杂的虚拟文件系统（VFS）时，权限逻辑面临一个棘手的问题：如果一个用户有权访问 <code>/Project/Secret/Report.pdf</code>，但他对父目录 <code>/Secret/</code> 没有显式权限，他能找到这个文件吗？</p>
+<p>KH 在 <code>ACLScopeForVFSNode</code> 中实现了一套 <strong>“穿透性可见性” (Directory Penetration)</strong> 逻辑：</p>
+<ol>
+<li><strong>文件节点</strong>：必须满足其关联 Document 的实时 ACL 校验。</li>
+<li><strong>目录节点</strong>：<ul>
+<li>若目录有显式策略，则按策略执行。</li>
+<li>若目录无显式策略，系统会执行一个 <code>EXISTS</code> 子查询：<strong>只要该目录下级存在任何一个用户可访问的文件，该目录即对该用户可见。</strong></li>
+</ul>
+</li>
+</ol>
+<p>这种设计既保证了权限的严密性（不可访问的文件绝不露头），又保证了导航的连贯性，解决了企业级知识库在深度层级下的访问障碍。</p>
+<h2 id="四、Fail-Safe：默认拒绝原则"><a href="#四、Fail-Safe：默认拒绝原则" class="headerlink" title="四、Fail-Safe：默认拒绝原则"></a>四、Fail-Safe：默认拒绝原则</h2><p>在 KH 的安全性哲学中，没有任何“模糊地带”。</p>
+<p><code>ACLScopeFromSpace</code> 函数的设计体现了极致的 <strong>Fail-Safe（安全失败）</strong> 原则：如果检索请求中没有提供有效的 Space 上下文（例如 Token 校验失败或上下文丢失），该函数会直接返回 <code>1 = 0</code> 的 SQL 片段。</p>
+<p>这意味着，一旦系统检测到安全性参数异常，检索结果将强制为空，而不是默认公开。这种“宁可错杀，绝不漏放”的逻辑，是系统承载核心业务数据的底气。</p>
+<h2 id="五、所有者单位（Owner-Unit）的兜底授权"><a href="#五、所有者单位（Owner-Unit）的兜底授权" class="headerlink" title="五、所有者单位（Owner Unit）的兜底授权"></a>五、所有者单位（Owner Unit）的兜底授权</h2><p>除了显式的 <code>access_policy</code>，KH 还引入了 <code>buildOwnerUnitCondition</code> 机制。</p>
+<p>在很多企业场景下，文档并没有设置复杂的权限规则，而是遵循“谁创建、谁所在部门可见”的朴素原则。KH 的 ACL Scope 会自动识别资源的 <code>owner_unit</code>。如果一份文档没有显式的 ACL 策略，系统会回退到组织架构关联逻辑，允许同部门的成员访问。这种显式策略与隐式授权的有机结合，极大降低了管理员的配置负担。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>权限控制不是 RAG 系统的外挂插件，而是系统内核的核心逻辑。</p>
+<p>一个可靠的企业级知识平台，必须确保前台展示事实与后台检索事实的高度对齐。通过将复杂的权限语义下沉到 SQL 层，并实现目录穿透与 Fail-Safe 机制，KH 在保证检索性能的同时，构建起了一道坚不可摧的知识安全红线。对于企业用户而言，<strong>看得见的安全性，才是真正的可用性。</strong></p>
+
+      </div>
+    </div>
+  </div>
+
+  
+  <nav class="post-nav">
+    
+    <a class="post-nav__item" href="/2026/04/11/Agent-first-%E4%BB%A5%E5%90%8E%EF%BC%8CRAG-%E5%9C%A8%E7%B3%BB%E7%BB%9F%E9%87%8C%E8%AF%A5%E7%AB%99%E4%BB%80%E4%B9%88%E4%BD%8D%E7%BD%AE/">
+      <span>上一篇</span>
+      <strong>Agent-first 以后，RAG 在系统里该站什么位置</strong>
+    </a>
+    
+    
+    <a class="post-nav__item post-nav__item--next" href="/2026/04/11/%E6%AD%A3%E5%BC%8F%E6%96%87%E6%A1%A3%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9B%B4%E9%80%82%E5%90%88%E4%BB%8E-Git-%E8%BF%9B%E5%85%A5-Knowledge-Hub/">
+      <span>下一篇</span>
+      <strong>正式文档为什么更适合从 Git 进入 Knowledge Hub</strong>
+    </a>
+    
+  </nav>
+  
+</article>
+  </main>
+  
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <div class="site-footer__links">
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </div>
+      <p class="site-footer__title">© 2026
+          Jayleonc
+      </p>
+      <p class="site-footer__meta">
+        自 2019 年起持续写作，本站已稳定运行 <span data-runtime data-since="2019-02-28T00:00:00+08:00">7 年</span>。
+        <span id="busuanzi_container_site_uv" style="display:none;">已与 <span id="busuanzi_value_site_uv"></span> 位访客在此相遇。</span>
+      </p>
+      <p class="site-footer__note">
+        Hexo 8 · Atelier 自定义主题
+      </p>
+    </div>
+  </footer>
+  <script async defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script src="/js/site.js"></script>
+</body>
+</html>

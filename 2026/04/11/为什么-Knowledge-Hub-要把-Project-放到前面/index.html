@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>为什么 Knowledge Hub 要把 Project 放到前面 · Jayleonc</title>
+<meta name="description" content="在 RAG 系统中，单纯的“数据集”模型正面临组织力和表达力的天花板。本文拆解了 Knowledge Hub 如何通过 Project 层解耦内容意图与检索物理，并以此构建起 RAPTOR 层级检索的坚实底座。">
+<meta name="theme-color" content="#f3e8da">
+
+
+<link rel="canonical" href="https://jayleonc.github.io/2026/04/11/%E4%B8%BA%E4%BB%80%E4%B9%88-Knowledge-Hub-%E8%A6%81%E6%8A%8A-Project-%E6%94%BE%E5%88%B0%E5%89%8D%E9%9D%A2/">
+
+<meta property="og:title" content="为什么 Knowledge Hub 要把 Project 放到前面 · Jayleonc">
+<meta property="og:description" content="在 RAG 系统中，单纯的“数据集”模型正面临组织力和表达力的天花板。本文拆解了 Knowledge Hub 如何通过 Project 层解耦内容意图与检索物理，并以此构建起 RAPTOR 层级检索的坚实底座。">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Jayleonc">
+<meta property="og:locale" content="zh-CN">
+
+<meta property="og:url" content="https://jayleonc.github.io/2026/04/11/%E4%B8%BA%E4%BB%80%E4%B9%88-Knowledge-Hub-%E8%A6%81%E6%8A%8A-Project-%E6%94%BE%E5%88%B0%E5%89%8D%E9%9D%A2/">
+
+
+<meta property="og:image" content="https://jayleonc.github.io/images/1.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://jayleonc.github.io/images/1.png">
+
+<meta name="twitter:title" content="为什么 Knowledge Hub 要把 Project 放到前面 · Jayleonc">
+<meta name="twitter:description" content="在 RAG 系统中，单纯的“数据集”模型正面临组织力和表达力的天花板。本文拆解了 Knowledge Hub 如何通过 Project 层解耦内容意图与检索物理，并以此构建起 RAPTOR 层级检索的坚实底座。">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,30;0,9..144,400..900,100;1,9..144,400..900,30;1,9..144,400..900,100&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<body class="layout-post">
+  <header class="site-header" data-site-header>
+  <div class="shell site-header__inner">
+    
+    <a class="site-brand" href="/">
+      <span class="site-brand__mark">J<em>l</em></span>
+      <span class="site-brand__text">
+        <strong>Jayleonc</strong>
+        <small>用代码、AI 和写作记录成长</small>
+      </span>
+    </a>
+
+    <div class="site-header__actions">
+      <nav class="site-nav" id="site-nav" data-site-nav>
+        
+        <a href="/" class="">文章</a>
+        
+        <a href="/archives/" class="">归档</a>
+        
+        <a href="/about/" class="">关于</a>
+        
+        <a href="/friends/" class="">资源</a>
+        
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </nav>
+
+      <button class="theme-toggle" type="button" aria-label="切换主题" title="切换主题" data-theme-toggle>
+        <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m12.95 5.536 1.414 1.414M4.636 4.636 6.05 6.05m10.9-1.414L15.536 6.05M6.05 17.95l-1.414 1.414M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>
+          </svg>
+        </span>
+        <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M20 15.5A7.5 7.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
+          </svg>
+        </span>
+      </button>
+
+      <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+  <main class="site-main">
+    
+  <article class="post-shell shell">
+    <div class="post-layout">
+      <div class="post-main">
+        <header class="post-hero reveal">
+          
+            <p class="eyebrow">
+              AI工程</p>
+        
+        <h1>为什么 Knowledge Hub 要把 Project 放到前面</h1>
+        <div class="post-hero__meta">
+          <span>2026-04-11</span>
+          <span>5 分钟阅读</span>
+          <span>2021 字</span>
+        </div>
+        
+        <p class="post-hero__summary">在 RAG 系统中，单纯的“数据集”模型正面临组织力和表达力的天花板。本文拆解了 Knowledge Hub 如何通过 Project 层解耦内容意图与检索物理，并以此构建起 RAPTOR 层级检索的坚实底座。</p>
+        
+        
+        <div class="tag-list post-tags">
+          
+          <a class="tag-chip" href="/tags/AI/">AI</a>
+          
+          <a class="tag-chip" href="/tags/knowledge-hub/">knowledge-hub</a>
+          
+          <a class="tag-chip" href="/tags/%E6%9E%B6%E6%9E%84/">架构</a>
+          
+          <a class="tag-chip" href="/tags/VFS/">VFS</a>
+          
+          <a class="tag-chip" href="/tags/RAPTOR/">RAPTOR</a>
+          
+        </div>
+        
+      </header>
+
+      <div class="post-content prose">
+        <p>在开发企业级 RAG（检索增强生成）系统的过程中，底层数据模型的合理性将直接决定系统的“天花板”。</p>
+<p>在 <code>Knowledge Hub</code> (KH) 的早期版本中，我们也曾遵循市面上主流的 <code>Dataset -&gt; Document -&gt; Segment</code> 扁平模型。但随着业务深入到 Git 同步、多级目录树及海量文档的层级检索时，这一模型开始显露疲态。于是，我们引入了 <strong>Project</strong> 层作为系统的核心上位概念。</p>
+<h2 id="一、扁平模型的瓶颈：当“检索容器”承载了过多的业务意图"><a href="#一、扁平模型的瓶颈：当“检索容器”承载了过多的业务意图" class="headerlink" title="一、扁平模型的瓶颈：当“检索容器”承载了过多的业务意图"></a>一、扁平模型的瓶颈：当“检索容器”承载了过多的业务意图</h2><p>在初版架构中，<code>Dataset</code> 是系统的一等公民。它既要负责管理向量化配置（Embedding Model, Chunk Size），又要负责组织文档目录。</p>
+<p>这种“全能型”设计在处理简单 RAG 场景时很方便，但在面对以下企业级诉求时，会出现严重的职责重叠（Responsibility Overlap）：</p>
+<ol>
+<li><strong>VFS（虚拟文件系统）还原</strong>：如何优雅地在 UI 上复现 Git 仓库的 <code>docs/api/v1/auth.md</code> 路径？</li>
+<li><strong>内容来源多样性</strong>：Git 同步的内容与在线编辑器产生的内容，在同一个 Dataset 下如何处理版本冲突？</li>
+<li><strong>层级权限继承</strong>：如果一个目录被设置为“仅财务部可见”，如何高效地让其下数千个切片实时生效？</li>
+</ol>
+<p>问题的根源在于：**<code>Dataset</code> 本质上是一个“检索物理容器”，它不具备承载“人类组织意图”的属性。**</p>
+<h2 id="二、架构升维：Project（内容轨道）与-Dataset（索引轨道）的解耦"><a href="#二、架构升维：Project（内容轨道）与-Dataset（索引轨道）的解耦" class="headerlink" title="二、架构升维：Project（内容轨道）与 Dataset（索引轨道）的解耦"></a>二、架构升维：Project（内容轨道）与 Dataset（索引轨道）的解耦</h2><p>为了彻底解决这一问题，KH 在 <code>internal/model/project.go</code> 中确立了 Project 层级。</p>
+<h3 id="2-1-职责分明：意图与物理的分离"><a href="#2-1-职责分明：意图与物理的分离" class="headerlink" title="2.1 职责分明：意图与物理的分离"></a>2.1 职责分明：意图与物理的分离</h3><ul>
+<li><strong>Project 定义“内容世界”</strong>：负责维护 <code>SourceType</code>（git 或 managed）、项目 VFS 树、展示门户及协作权限策略。</li>
+<li><strong>Dataset 定义“检索物理”</strong>：专注于 <code>RetrievalStrategy</code>（semantic, hybrid, keyword）、权重参数（VectorWeight, KeywordWeight）及向量库存储。</li>
+</ul>
+<p>在数据库实现上，<code>Project</code> 表通过 <code>BoundDatasetID</code> 与 <code>Dataset</code> 建立 <strong>1:1 强绑定</strong>。这种设计确保了：<strong>内容管理可以极尽复杂（多级目录、Git 分支），而 RAG 检索引擎始终保持极简和高性能。</strong></p>
+<h2 id="三、ProjectNode：构建层级化检索（RAPTOR）的基石"><a href="#三、ProjectNode：构建层级化检索（RAPTOR）的基石" class="headerlink" title="三、ProjectNode：构建层级化检索（RAPTOR）的基石"></a>三、ProjectNode：构建层级化检索（RAPTOR）的基石</h2><p>引入 Project 层最大的惊喜，在于它为 KH 实现 <strong>Hierarchical RAG (RAPTOR)</strong> 提供了天然的结构支撑。</p>
+<p>在 <code>internal/model/project_node.go</code> 中，每一个节点（目录或文件）都不仅仅是一个路径标记。我们为其设计了以下关键字段：</p>
+<ul>
+<li><strong>SummaryEmbedding &amp; SummaryContent</strong>：节点级别的递归摘要及其向量。</li>
+<li><strong>RaptorLevel</strong>：标记节点在 RAPTOR 树中的层级（0 为叶子节点，1 以上为摘要层）。</li>
+</ul>
+<h3 id="3-1-为什么-RAPTOR-需要-Project-树？"><a href="#3-1-为什么-RAPTOR-需要-Project-树？" class="headerlink" title="3.1 为什么 RAPTOR 需要 Project 树？"></a>3.1 为什么 RAPTOR 需要 Project 树？</h3><p>传统的 RAG 检索是基于“相似度”的点对点匹配。当用户问“这个项目的核心架构是什么？”时，系统很难通过单个切片回答，因为它需要跨越多个文档的宏观信息。</p>
+<p>通过 <code>ProjectNode</code> 的 <strong>邻接表 + 物化路径 (MaterializedPath)</strong> 设计，KH 能够沿着真实的目录结构进行递归摘要（Recursive Abstractive Processing）。</p>
+<ul>
+<li>目录节点会自动汇聚其子节点的知识，生成高层级的 <code>SummaryEmbedding</code>。</li>
+<li>检索时，Agent 可以先通过高层级节点定位“知识森林”，再逐步下钻到具体的“知识树叶”。</li>
+</ul>
+<p><strong>如果没有 Project 层的存在，RAPTOR 的树结构将只能依赖随机的语义聚类（Clustering），而那种聚类往往缺乏业务逻辑上的可解释性。</strong></p>
+<h2 id="四、工程层面的收益：解耦带来的红利"><a href="#四、工程层面的收益：解耦带来的红利" class="headerlink" title="四、工程层面的收益：解耦带来的红利"></a>四、工程层面的收益：解耦带来的红利</h2><ol>
+<li><strong>Git Sync 的原子化</strong>：<br>同步引擎现在只需要操作 <code>ProjectNode</code> 树。它通过校验 <code>BaseSha</code> 来更新树结构，而不必关心底层的向量存储。只有当树结构稳定后，才会触发异步的 <code>Dataset</code> 重新索引任务。</li>
+<li><strong>Agentic Traversal（智能遍历）的可能</strong>：<br>由于有了清晰的 VFS 树，Agent 可以像人类一样“浏览”项目。它可以通过 <code>list_folder</code> 工具查看目录结构，再决定读取哪一份文档。这种基于“人类组织意图”的检索，比纯粹的数学概率检索（Vector Search）要稳定得多。</li>
+<li><strong>权限继承的自然下沉</strong>：<br>权限逻辑可以顺着 <code>ProjectNode</code> 递归传播。这比在每一个 Segment 上手动标记 ACL 令牌要高效且易于维护。</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>架构设计的核心价值在于：<strong>让数据模型与真实的业务心智模型对齐。</strong></p>
+<p><code>Knowledge Hub</code> 将 Project 放到前面，本质上是承认了“知识的组织逻辑”独立于“知识的检索技术”。通过 Project 承载 VFS 和 RAPTOR 层级，KH 不仅解决了一个内容组织的问题，更是在 RAG 的下半场——层级检索与大模型推理领域，卡位了一个极具竞争力的技术基点。</p>
+
+      </div>
+    </div>
+  </div>
+
+  
+  <nav class="post-nav">
+    
+    <a class="post-nav__item" href="/2026/04/11/Knowledge-Hub%EF%BC%9A%E6%8A%8A%E4%BC%81%E4%B8%9A%E7%9F%A5%E8%AF%86%E5%81%9A%E6%88%90%E4%B8%80%E6%9D%A1%E5%8F%97%E6%8E%A7%E9%93%BE%E8%B7%AF/">
+      <span>上一篇</span>
+      <strong>Knowledge Hub：把企业知识做成一条受控链路</strong>
+    </a>
+    
+    
+    <a class="post-nav__item post-nav__item--next" href="/2026/04/11/Agent-first-%E4%BB%A5%E5%90%8E%EF%BC%8CRAG-%E5%9C%A8%E7%B3%BB%E7%BB%9F%E9%87%8C%E8%AF%A5%E7%AB%99%E4%BB%80%E4%B9%88%E4%BD%8D%E7%BD%AE/">
+      <span>下一篇</span>
+      <strong>Agent-first 以后，RAG 在系统里该站什么位置</strong>
+    </a>
+    
+  </nav>
+  
+</article>
+  </main>
+  
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <div class="site-footer__links">
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </div>
+      <p class="site-footer__title">© 2026
+          Jayleonc
+      </p>
+      <p class="site-footer__meta">
+        自 2019 年起持续写作，本站已稳定运行 <span data-runtime data-since="2019-02-28T00:00:00+08:00">7 年</span>。
+        <span id="busuanzi_container_site_uv" style="display:none;">已与 <span id="busuanzi_value_site_uv"></span> 位访客在此相遇。</span>
+      </p>
+      <p class="site-footer__note">
+        Hexo 8 · Atelier 自定义主题
+      </p>
+    </div>
+  </footer>
+  <script async defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script src="/js/site.js"></script>
+</body>
+</html>

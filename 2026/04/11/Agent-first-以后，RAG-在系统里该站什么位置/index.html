@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent-first 以后，RAG 在系统里该站什么位置 · Jayleonc</title>
+<meta name="description" content="传统的“一次性召回并回答”在处理复杂文档依赖时存在局限性。在 Knowledge Hub 中，我们将 RAG 重构为由 Agent 调度的“证据源”，通过 Scout（侦察）与 Deep Read（精读）的分层协议，彻底解决了检索片段的上下文断裂难题。">
+<meta name="theme-color" content="#f3e8da">
+
+
+<link rel="canonical" href="https://jayleonc.github.io/2026/04/11/Agent-first-%E4%BB%A5%E5%90%8E%EF%BC%8CRAG-%E5%9C%A8%E7%B3%BB%E7%BB%9F%E9%87%8C%E8%AF%A5%E7%AB%99%E4%BB%80%E4%B9%88%E4%BD%8D%E7%BD%AE/">
+
+<meta property="og:title" content="Agent-first 以后，RAG 在系统里该站什么位置 · Jayleonc">
+<meta property="og:description" content="传统的“一次性召回并回答”在处理复杂文档依赖时存在局限性。在 Knowledge Hub 中，我们将 RAG 重构为由 Agent 调度的“证据源”，通过 Scout（侦察）与 Deep Read（精读）的分层协议，彻底解决了检索片段的上下文断裂难题。">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Jayleonc">
+<meta property="og:locale" content="zh-CN">
+
+<meta property="og:url" content="https://jayleonc.github.io/2026/04/11/Agent-first-%E4%BB%A5%E5%90%8E%EF%BC%8CRAG-%E5%9C%A8%E7%B3%BB%E7%BB%9F%E9%87%8C%E8%AF%A5%E7%AB%99%E4%BB%80%E4%B9%88%E4%BD%8D%E7%BD%AE/">
+
+
+<meta property="og:image" content="https://jayleonc.github.io/images/1.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://jayleonc.github.io/images/1.png">
+
+<meta name="twitter:title" content="Agent-first 以后，RAG 在系统里该站什么位置 · Jayleonc">
+<meta name="twitter:description" content="传统的“一次性召回并回答”在处理复杂文档依赖时存在局限性。在 Knowledge Hub 中，我们将 RAG 重构为由 Agent 调度的“证据源”，通过 Scout（侦察）与 Deep Read（精读）的分层协议，彻底解决了检索片段的上下文断裂难题。">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,30;0,9..144,400..900,100;1,9..144,400..900,30;1,9..144,400..900,100&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<body class="layout-post">
+  <header class="site-header" data-site-header>
+  <div class="shell site-header__inner">
+    
+    <a class="site-brand" href="/">
+      <span class="site-brand__mark">J<em>l</em></span>
+      <span class="site-brand__text">
+        <strong>Jayleonc</strong>
+        <small>用代码、AI 和写作记录成长</small>
+      </span>
+    </a>
+
+    <div class="site-header__actions">
+      <nav class="site-nav" id="site-nav" data-site-nav>
+        
+        <a href="/" class="">文章</a>
+        
+        <a href="/archives/" class="">归档</a>
+        
+        <a href="/about/" class="">关于</a>
+        
+        <a href="/friends/" class="">资源</a>
+        
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </nav>
+
+      <button class="theme-toggle" type="button" aria-label="切换主题" title="切换主题" data-theme-toggle>
+        <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m12.95 5.536 1.414 1.414M4.636 4.636 6.05 6.05m10.9-1.414L15.536 6.05M6.05 17.95l-1.414 1.414M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>
+          </svg>
+        </span>
+        <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M20 15.5A7.5 7.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
+          </svg>
+        </span>
+      </button>
+
+      <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+  <main class="site-main">
+    
+  <article class="post-shell shell">
+    <div class="post-layout">
+      <div class="post-main">
+        <header class="post-hero reveal">
+          
+            <p class="eyebrow">
+              AI工程</p>
+        
+        <h1>Agent-first 以后，RAG 在系统里该站什么位置</h1>
+        <div class="post-hero__meta">
+          <span>2026-04-11</span>
+          <span>5 分钟阅读</span>
+          <span>1838 字</span>
+        </div>
+        
+        <p class="post-hero__summary">传统的“一次性召回并回答”在处理复杂文档依赖时存在局限性。在 Knowledge Hub 中，我们将 RAG 重构为由 Agent 调度的“证据源”，通过 Scout（侦察）与 Deep Read（精读）的分层协议，彻底解决了检索片段的上下文断裂难题。</p>
+        
+        
+        <div class="tag-list post-tags">
+          
+          <a class="tag-chip" href="/tags/AI/">AI</a>
+          
+          <a class="tag-chip" href="/tags/knowledge-hub/">knowledge-hub</a>
+          
+          <a class="tag-chip" href="/tags/Agent/">Agent</a>
+          
+          <a class="tag-chip" href="/tags/RAG/">RAG</a>
+          
+          <a class="tag-chip" href="/tags/MCP/">MCP</a>
+          
+        </div>
+        
+      </header>
+
+      <div class="post-content prose">
+        <p>在 RAG（检索增强生成）系统的演进过程中，很多开发者会发现：无论如何调优 Embedding 模型或切片策略，召回率的提升终究会遇到天花板。这往往是因为单一的检索逻辑难以承载复杂的、跨文档的业务推理。</p>
+<p>在 <code>Knowledge Hub</code> (KH) 的实践中，我们意识到：<strong>RAG 模块不应是直接生成答案的“大脑”，而应是支持 Agent 取证的“证据库”。</strong> 这种理念的转变，促使我们将整个系统架构推向了 <strong>Agent-first</strong> 模式。</p>
+<h2 id="一、标准化的武器库：基于-MCP-的工具链"><a href="#一、标准化的武器库：基于-MCP-的工具链" class="headerlink" title="一、标准化的武器库：基于 MCP 的工具链"></a>一、标准化的武器库：基于 MCP 的工具链</h2><p>在 KH 的 <code>internal/agent</code> 模块中，我们并没有随意编写 Agent 调用的函数，而是严格遵循了 <strong>MCP (Model Context Protocol)</strong> 这一行业标准。</p>
+<p>在 <code>pkg/mcp</code> 中，我们将所有的检索与内容获取能力封装为标准化的 Tool。这种设计让 Agent 具备了统一的交互界面：</p>
+<ul>
+<li><code>search_knowledge_base</code>：证据搜索与定位。</li>
+<li><code>read_document</code>：全文内容消费与理解。</li>
+<li><code>get_folder_info</code>：获取 VFS 目录树上下文。</li>
+</ul>
+<p>通过 MCP 协议，RAG 从一个封闭的查询接口，变成了一个可被 Agent 自由组合、按需调用的“标准武器库”。</p>
+<h2 id="二、双阶段取证协议：Scout（侦察）与-Deep-Read（精读）"><a href="#二、双阶段取证协议：Scout（侦察）与-Deep-Read（精读）" class="headerlink" title="二、双阶段取证协议：Scout（侦察）与 Deep Read（精读）"></a>二、双阶段取证协议：Scout（侦察）与 Deep Read（精读）</h2><p>在 KH 的 <code>internal/agent/service.go</code> 中，我们通过 <code>toolUsagePrompt</code> 固化了一套名为 <strong>“渐进式披露 (Progressive Disclosure)”</strong> 的工作流。这套工作流将检索过程拆解为三个优先级极高的阶段：</p>
+<h3 id="2-1-阶段零：记忆扫描-Memory-Scan"><a href="#2-1-阶段零：记忆扫描-Memory-Scan" class="headerlink" title="2.1 阶段零：记忆扫描 (Memory Scan)"></a>2.1 阶段零：记忆扫描 (Memory Scan)</h3><p>Agent 被强制要求先核对对话历史（History）。如果历史上下文中已存在答案，严禁再次调用检索工具。这极大地降低了 Token 消耗并提升了响应速度。</p>
+<h3 id="2-2-阶段一：Scout（广泛侦察）"><a href="#2-2-阶段一：Scout（广泛侦察）" class="headerlink" title="2.2 阶段一：Scout（广泛侦察）"></a>2.2 阶段一：Scout（广泛侦察）</h3><p>当历史记忆不足时，Agent 启动侦察阶段。此阶段调用 <code>search_knowledge_base</code>。它不追求直接获取结论，而是通过语义搜索“侦察”出可能包含答案的 <code>doc_id</code> 及其关键片段。<br><strong>强制规则</strong>：如果第一次搜索结果为空，Agent 被严禁直接回复“找不到”，必须至少重试 2 次（改写 Query 或精简关键词）后才能放弃。</p>
+<h3 id="2-3-阶段二：Deep-Read（定向精读）"><a href="#2-3-阶段二：Deep-Read（定向精读）" class="headerlink" title="2.3 阶段二：Deep Read（定向精读）"></a>2.3 阶段二：Deep Read（定向精读）</h3><p>这是解决 RAG 片段化问题的核心。我们告诉 Agent：<strong>检索返回的只是片段，不是完整事实。</strong><br>如果片段不足以支撑结论，Agent 必须从片段头部提取 <code>doc_id</code>，并主动调用 <code>read_document</code> 读取全文。在充分理解全文上下文后，再给出最终回答。这种“两段式”取证，彻底消除了传统 RAG 因片段截断导致的“脑补”和“幻觉”现象。</p>
+<h2 id="三、Strict-Grounding：坚不可摧的“硬约束”"><a href="#三、Strict-Grounding：坚不可摧的“硬约束”" class="headerlink" title="三、Strict Grounding：坚不可摧的“硬约束”"></a>三、Strict Grounding：坚不可摧的“硬约束”</h2><p>在企业级问答中，AI 的“聪明”有时是致命的危险。我们通过 <code>strictGroundingPrompt</code> 为 Agent 戴上了沉重的枷锁：</p>
+<ol>
+<li><strong>事实归正</strong>：回答必须严格基于知识库内容，不得使用任何外部常识。</li>
+<li><strong>证据优先</strong>：没有检索到支撑证据时，必须诚实回复“知识库中未找到相关信息”，严禁编造流程、时间或政策。</li>
+<li><strong>可追溯性</strong>：每一个回答都必须能映射回 <code>pkg/mcp</code> 工具链返回的原始路径。</li>
+</ol>
+<p>这种硬约束将 RAG 的功能定位从“生成器”降级为“校验器”，但却极大地提升了系统的业务鲁棒性。</p>
+<h2 id="四、Agentic-Traversal：控制权与确定性的博弈"><a href="#四、Agentic-Traversal：控制权与确定性的博弈" class="headerlink" title="四、Agentic Traversal：控制权与确定性的博弈"></a>四、Agentic Traversal：控制权与确定性的博弈</h2><p>为了防止 Agent 在复杂的目录树中“迷路”或无限循环，我们在 <code>dataset.go</code> 的 <code>AgenticConfig</code> 中引入了关键参数：</p>
+<ul>
+<li><code>max_steps</code> &amp; <code>max_depth</code>：限制 Agent 取证的深度和步数，防止死循环。</li>
+<li><code>max_context_tokens</code>：动态管理 Agent 的“阅读容量”，在精读与性能之间寻找平衡。</li>
+</ul>
+<p>在 <code>adapter.go</code> 的底层实现中，我们将中间的取证过程（即工具调用的 JSON 报文）进行了“静默处理”。用户在前台看到的是流畅的、经过深度思考后的结论，而系统内部则经历了一场严密的、基于 MCP 协议的取证长征。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>Agent-first</code> 架构的本质是：<strong>承认检索是不完美的，并用大模型的推理能力来补偿这种不完美。</strong></p>
+<p>通过将 RAG 模块重构为受控的、标准化的证据源，并引入 Scout&#x2F;Deep Read 协议与 Strict Grounding 约束，KH 成功地将 RAG 从一个单纯的技术点，升级为了一个具备自愈能力和工程确定性的知识治理体系。在这个体系下，RAG 依然重要，但它已不再是孤军作战，而是 Agent 指挥下的精锐尖兵。</p>
+
+      </div>
+    </div>
+  </div>
+
+  
+  <nav class="post-nav">
+    
+    <a class="post-nav__item" href="/2026/04/11/%E4%B8%BA%E4%BB%80%E4%B9%88-Knowledge-Hub-%E8%A6%81%E6%8A%8A-Project-%E6%94%BE%E5%88%B0%E5%89%8D%E9%9D%A2/">
+      <span>上一篇</span>
+      <strong>为什么 Knowledge Hub 要把 Project 放到前面</strong>
+    </a>
+    
+    
+    <a class="post-nav__item post-nav__item--next" href="/2026/04/11/%E6%9D%83%E9%99%90%E5%A6%82%E6%9E%9C%E8%BF%9B%E4%B8%8D%E4%BA%86%E6%A3%80%E7%B4%A2%EF%BC%8C%E4%BC%81%E4%B8%9A%E7%9F%A5%E8%AF%86%E7%B3%BB%E7%BB%9F%E5%B0%B1%E7%AB%99%E4%B8%8D%E4%BD%8F/">
+      <span>下一篇</span>
+      <strong>权限如果进不了检索，企业知识系统就站不住</strong>
+    </a>
+    
+  </nav>
+  
+</article>
+  </main>
+  
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <div class="site-footer__links">
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </div>
+      <p class="site-footer__title">© 2026
+          Jayleonc
+      </p>
+      <p class="site-footer__meta">
+        自 2019 年起持续写作，本站已稳定运行 <span data-runtime data-since="2019-02-28T00:00:00+08:00">7 年</span>。
+        <span id="busuanzi_container_site_uv" style="display:none;">已与 <span id="busuanzi_value_site_uv"></span> 位访客在此相遇。</span>
+      </p>
+      <p class="site-footer__note">
+        Hexo 8 · Atelier 自定义主题
+      </p>
+    </div>
+  </footer>
+  <script async defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script src="/js/site.js"></script>
+</body>
+</html>
