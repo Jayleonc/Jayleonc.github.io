@@ -86,9 +86,16 @@ if (navToggle && siteNav) {
 
 if (siteHeader) {
   let ticking = false;
+  let lastScrolledState = null;
   const syncHeader = () => {
-    siteHeader.classList.toggle('is-scrolled', window.scrollY > 8);
-    syncAnchorOffset();
+    const isScrolled = window.scrollY > 8;
+    siteHeader.classList.toggle('is-scrolled', isScrolled);
+
+    if (lastScrolledState !== isScrolled) {
+      syncAnchorOffset();
+      lastScrolledState = isScrolled;
+    }
+
     ticking = false;
   };
 
