@@ -1717,6 +1717,16 @@ a.tag-chip:hover,
   word-break: break-word;
 }
 
+.prose strong {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.prose strong code {
+  font-weight: inherit;
+  color: inherit;
+}
+
 .prose a {
   color: var(--accent);
   text-decoration: underline;

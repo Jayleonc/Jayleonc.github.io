@@ -5,15 +5,15 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>权限如果进不了检索，企业知识系统就站不住 · Jayleonc</title>
-<meta name="description" content="企业级 RAG 系统的安全性基石在于权限一致性。本文深入探讨了 Knowledge Hub 如何通过下沉到 SQL 层的实时 ACL Scope 和 VFS 穿透逻辑，构建起坚不可摧的知识安全边界。">
+<title>权限如果进不了检索，企业知识系统就站不住：从实时 SQL Scope 看安全底线 · Jayleonc</title>
+<meta name="description" content="在企业级场景下，数据越权是致命的灾难。本文深度还原了 Knowledge Hub 如何通过 GORM Scope、EXISTS 子查询与 1=0 硬熔断机制，在底层 SQL 实现权限的物理级隔离。">
 <meta name="theme-color" content="#f3e8da">
 
 
 <link rel="canonical" href="https://jayleonc.github.io/2026/04/11/%E6%9D%83%E9%99%90%E5%A6%82%E6%9E%9C%E8%BF%9B%E4%B8%8D%E4%BA%86%E6%A3%80%E7%B4%A2%EF%BC%8C%E4%BC%81%E4%B8%9A%E7%9F%A5%E8%AF%86%E7%B3%BB%E7%BB%9F%E5%B0%B1%E7%AB%99%E4%B8%8D%E4%BD%8F/">
 
-<meta property="og:title" content="权限如果进不了检索，企业知识系统就站不住 · Jayleonc">
-<meta property="og:description" content="企业级 RAG 系统的安全性基石在于权限一致性。本文深入探讨了 Knowledge Hub 如何通过下沉到 SQL 层的实时 ACL Scope 和 VFS 穿透逻辑，构建起坚不可摧的知识安全边界。">
+<meta property="og:title" content="权限如果进不了检索，企业知识系统就站不住：从实时 SQL Scope 看安全底线 · Jayleonc">
+<meta property="og:description" content="在企业级场景下，数据越权是致命的灾难。本文深度还原了 Knowledge Hub 如何通过 GORM Scope、EXISTS 子查询与 1=0 硬熔断机制，在底层 SQL 实现权限的物理级隔离。">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Jayleonc">
 <meta property="og:locale" content="zh-CN">
@@ -25,8 +25,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://jayleonc.github.io/images/1.png">
 
-<meta name="twitter:title" content="权限如果进不了检索，企业知识系统就站不住 · Jayleonc">
-<meta name="twitter:description" content="企业级 RAG 系统的安全性基石在于权限一致性。本文深入探讨了 Knowledge Hub 如何通过下沉到 SQL 层的实时 ACL Scope 和 VFS 穿透逻辑，构建起坚不可摧的知识安全边界。">
+<meta name="twitter:title" content="权限如果进不了检索，企业知识系统就站不住：从实时 SQL Scope 看安全底线 · Jayleonc">
+<meta name="twitter:description" content="在企业级场景下，数据越权是致命的灾难。本文深度还原了 Knowledge Hub 如何通过 GORM Scope、EXISTS 子查询与 1=0 硬熔断机制，在底层 SQL 实现权限的物理级隔离。">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -99,14 +99,14 @@
             <p class="eyebrow">
               AI工程</p>
         
-        <h1>权限如果进不了检索，企业知识系统就站不住</h1>
+        <h1>权限如果进不了检索，企业知识系统就站不住：从实时 SQL Scope 看安全底线</h1>
         <div class="post-hero__meta">
           <span>2026-04-11</span>
-          <span>5 分钟阅读</span>
-          <span>1965 字</span>
+          <span>7 分钟阅读</span>
+          <span>2810 字</span>
         </div>
         
-        <p class="post-hero__summary">企业级 RAG 系统的安全性基石在于权限一致性。本文深入探讨了 Knowledge Hub 如何通过下沉到 SQL 层的实时 ACL Scope 和 VFS 穿透逻辑，构建起坚不可摧的知识安全边界。</p>
+        <p class="post-hero__summary">在企业级场景下，数据越权是致命的灾难。本文深度还原了 Knowledge Hub 如何通过 GORM Scope、EXISTS 子查询与 1=0 硬熔断机制，在底层 SQL 实现权限的物理级隔离。</p>
         
         
         <div class="tag-list post-tags">
@@ -117,45 +117,49 @@
           
           <a class="tag-chip" href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">工程实践</a>
           
-          <a class="tag-chip" href="/tags/%E6%9D%83%E9%99%90/">权限</a>
+          <a class="tag-chip" href="/tags/GORM/">GORM</a>
+          
+          <a class="tag-chip" href="/tags/%E6%9D%83%E9%99%90%E9%9A%94%E7%A6%BB/">权限隔离</a>
           
         </div>
         
       </header>
 
       <div class="post-content prose">
-        <p>在构建企业级 RAG（检索增强生成）系统时，一个不可逾越的核心设计准则是：<strong>用户的可见性边界在“内容管理视图”与“AI 检索视图”中必须保持原子级的强一致性。</strong></p>
-<p>如果在交互页面上不可见的内容，可以通过 AI 聊天对话被检索出来，说明系统的安全边界存在结构性缺陷。为了守住这条红线，<code>Knowledge Hub</code> (KH) 经历了一次从“应用层过滤”到“实时检索层 RLS（行级安全）”的重大架构演进。</p>
-<h2 id="一、为什么“应用层过滤”和“静态元数据”是不充分的？"><a href="#一、为什么“应用层过滤”和“静态元数据”是不充分的？" class="headerlink" title="一、为什么“应用层过滤”和“静态元数据”是不充分的？"></a>一、为什么“应用层过滤”和“静态元数据”是不充分的？</h2><p>在早期 RAG 实践中，开发者常采用两种方案：</p>
+        <p>在构建企业级 RAG（检索增强生成）系统时，你可以对界面的简陋保持克制，可以对偶尔的 AI 幻觉进行补救，但有一个绝对不能逾越的红线：<strong>数据安全</strong>。</p>
+<p>在一次内部架构审计中，我曾向 AI 搭档提出过一个极其极端的 Case：“如果一个没有任何核心权限的外包实习生，在 AI 的对话框里问‘本季度的核心高管薪酬优化方案是什么？’，底层的向量库会不会因为语义相似度过高，直接把机密文件的切片吐出来？”</p>
+<p>AI 当时的回答显得非常“天真”：“我们可以在 System Prompt 里加上一句‘请严格检查用户的权限，不要回答未授权内容’。”</p>
+<p>作为一个有着多年后端经验、对“漏洞”有着天然警觉的架构师，我看着这行建议，感到一阵不寒而栗。这种依赖大模型“自觉性”的防线，在稍微复杂一点的 Prompt 注入攻击（Prompt Injection）面前简直就是纸糊的。</p>
+<p>为了掐灭这个隐患，在主导 <code>Knowledge Hub</code> (KH) 的研发时，我确立了一个不可辩驳的原则：<strong>权限校验必须是检索动作的物理前置条件，且必须发生在数据库最底层的 SQL 层面。</strong> </p>
+<h2 id="一、架构的清醒：为什么应用层过滤是“皇帝的新衣”？"><a href="#一、架构的清醒：为什么应用层过滤是“皇帝的新衣”？" class="headerlink" title="一、架构的清醒：为什么应用层过滤是“皇帝的新衣”？"></a>一、架构的清醒：为什么应用层过滤是“皇帝的新衣”？</h2><p>很多开发团队在处理 RAG 权限时，为了追求上线速度，习惯于采用“后置过滤”方案：先从向量库里搜出相似度最高的 Top 10 结果，然后用 Go 或 Python 代码遍历这些结果，通过 <code>if user.HasAccess(doc) { ... }</code> 的逻辑把没权限的切片剔除掉。</p>
+<p>这种做法在小规模 Demo 里可行，但在企业级环境下存在两个致命缺陷：</p>
 <ol>
-<li><strong>Prompt 级拦截</strong>：在 System Prompt 中加入“请勿回答关于财务的内容”。这完全依赖模型的遵循能力，面对 Prompt 注入攻击时毫无防御力。</li>
-<li><strong>静态元数据过滤</strong>：将权限 Token 写入向量数据库的 Metadata。这看似安全，但存在“一致性空窗期”。当一个文件的权限变更时，更新上千万个向量切片的元数据可能需要数秒乃至数分钟，这在金融、军工等敏感领域是不可接受的。</li>
+<li><strong>召回截断（Recall Truncation）</strong>：如果底层召回的 Top 10 结果全是不具备权限的机密文档，被应用层剔除后，最终留给大模型的证据就是 0 个！哪怕排名第 11 的是一个高度相关且完全公开的合法文档，大模型也“看”不到了。这直接摧毁了 RAG 的召回质量。</li>
+<li><strong>不可控的维护黑洞</strong>：随着业务逻辑变复杂（比如引入了 VFS 目录穿透、跨租户搜索），一旦某位开发者在写新的检索接口时漏掉了那行 <code>HasAccess</code> 判断，整个系统的安全底座就彻底崩溃了。</li>
 </ol>
-<p>KH 的实现逻辑是：<strong>权限校验必须是检索动作的“前置条件”，且必须是实时的。</strong></p>
-<h2 id="二、底层进化：基于实时-SQL-Scope-的权限下沉"><a href="#二、底层进化：基于实时-SQL-Scope-的权限下沉" class="headerlink" title="二、底层进化：基于实时 SQL Scope 的权限下沉"></a>二、底层进化：基于实时 SQL Scope 的权限下沉</h2><p>在 KH 的 <code>internal/database/scope/acl.go</code> 中，我们实现了一套极其精密的 <strong>ACLScope</strong> 机制。它不再依赖预计算的 Token，而是将复杂的权限语义直接转化为检索时的 SQL 片段。</p>
-<h3 id="2-1-统一的-ACLScopeForTable"><a href="#2-1-统一的-ACLScopeForTable" class="headerlink" title="2.1 统一的 ACLScopeForTable"></a>2.1 统一的 ACLScopeForTable</h3><p>KH 利用 GORM 的 Scope 特性，通过 <code>ACLScopeForTable</code> 函数为所有数据库查询（包括向量检索时的 Segment 查询）强制注入 ACL 约束。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 核心逻辑简述</span></span><br><span class="line"><span class="keyword">return</span> scope.ACLScopeForTable(sp.PrincipalID, sp.RoleIDs, sp.IsSystemAdmin, sp.UsageScenario, <span class="string">&quot;document&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>安全，绝对不能依赖开发者的“好习惯”。</strong> </p>
+<h2 id="二、Vibe-驱动：基于-Scope-的-SQL-实时注入引擎"><a href="#二、Vibe-驱动：基于-Scope-的-SQL-实时注入引擎" class="headerlink" title="二、Vibe 驱动：基于 Scope 的 SQL 实时注入引擎"></a>二、Vibe 驱动：基于 Scope 的 SQL 实时注入引擎</h2><p>在明确了“权限下沉”的意图后，我开始指挥 AI 进行底层的硬核重构。我给出的 Vibe 指令非常直接：</p>
+<blockquote>
+<p>“我要你利用 GORM 的 <strong>Scope 机制</strong>，实现一套‘查询注入 (Query Injection)’引擎。只要系统发起了任何数据库查询，不管是在哪个业务模块，底层必须自动拼接上严密的 ACL（访问控制列表）逻辑。这套逻辑必须像空气一样无孔不入，且对业务代码零侵入。”</p>
+</blockquote>
+<p>在我的调度下，AI 在 <code>internal/database/scope/acl.go</code> 中构建了核心的 <code>applyACLScope</code> 函数。</p>
+<h3 id="2-1-解决-SQL-别名的“歧义陷阱”"><a href="#2-1-解决-SQL-别名的“歧义陷阱”" class="headerlink" title="2.1 解决 SQL 别名的“歧义陷阱”"></a>2.1 解决 SQL 别名的“歧义陷阱”</h3><p>在实操中，AI 很快遇到了阻碍。企业级的 RAG 检索绝不是单表查询，它往往需要对 <code>document_segment</code>（切片表）和 <code>document</code>（文档表）进行复杂的多表 JOIN。</p>
+<p>如果只是生硬地在 SQL 后面追加 <code>WHERE tenant_id = 'xxx'</code>，数据库会立即报 <code>column ambiguity</code>（列名歧义）错误。面对 AI 提出的“硬编码表名”这种丑陋的妥协方案，我再次进行了<strong>决策剪枝</strong>。</p>
+<p>我引导 AI 去钻研 GORM 的底层运行机制，利用 <code>db.Statement.Table</code> 动态捕获当前查询的主表别名，并将其作为前缀注入到所有的权限条件中。这套极其健壮的“别名探针”代码，确保了在多表联查下，权限过滤依然能精准指向正确的字段。</p>
+<h2 id="三、硬核实战：VFS-目录穿透与-EXISTS-子查询"><a href="#三、硬核实战：VFS-目录穿透与-EXISTS-子查询" class="headerlink" title="三、硬核实战：VFS 目录穿透与 EXISTS 子查询"></a>三、硬核实战：VFS 目录穿透与 EXISTS 子查询</h2><p>在 KH 中，最变态的权限挑战来自于 VFS（虚拟文件系统）的层级展示。<br>我们有一个硬性的业务规则：<strong>“只要用户有权限看某个深层的文件（如 <code>/docs/secret/api.md</code>），哪怕他没有上级 <code>/docs/secret/</code> 目录的显式权限，这个目录也必须对他可见，否则文件树就断链了。”</strong></p>
+<p>这在工程上被称为<strong>目录穿透 (Directory Penetration)</strong>。</p>
+<p>AI 曾提议维护一张“冗余权限宽表”，在后台用异步任务算好每个人的最终可见目录。<br>这种方案查起来快，但我一眼就识破了其“状态不一致”的巨大运维风险。如果权限变更频繁，异步任务的几秒钟延迟，就会导致严重的越权泄露。作为独自一人承担所有压力、甚至没有测试团队支持的开发者，我绝对不能给未来的自己留下这种隐蔽的“定时炸弹”。</p>
+<p>我选择了最硬核的实时计算路线。我指挥 AI 在 <code>ACLScopeForVFSNode</code> 中，利用 <code>EXISTS</code> 子查询写出了堪称暴力美学的 SQL 逻辑：</p>
+<figure class="highlight sql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 核心逻辑还原：</span></span><br><span class="line"><span class="keyword">OR</span> (type <span class="operator">=</span> <span class="string">'directory'</span> <span class="keyword">AND</span> <span class="keyword">EXISTS</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="number">1</span> <span class="keyword">FROM</span> project_node c </span><br><span class="line">    <span class="keyword">JOIN</span> document d2 <span class="keyword">ON</span> d2.id <span class="operator">=</span> c.document_id </span><br><span class="line">    <span class="keyword">WHERE</span> c.materialized_path <span class="keyword">LIKE</span> current_node.materialized_path <span class="operator">||</span> <span class="string">'%'</span> </span><br><span class="line">    <span class="keyword">AND</span> (d2 具备用户的访问权限)</span><br><span class="line">))</span><br></pre></td></tr></tbody></table></figure>
+<p>这不仅考验了数据库的 B-Tree 索引性能（利用了物化路径的前缀匹配），更彻底根除了状态不同步的风险。<strong>在性能和绝对一致性之间，我作为架构师，坚定地选择了“实时物理隔离”，并通过底层的索引优化兜住了性能的底。</strong></p>
+<h2 id="四、Fail-Safe：那个让我晚上睡得踏实的“1-x3D-0”"><a href="#四、Fail-Safe：那个让我晚上睡得踏实的“1-x3D-0”" class="headerlink" title="四、Fail-Safe：那个让我晚上睡得踏实的“1=0”"></a>四、Fail-Safe：那个让我晚上睡得踏实的“1=0”</h2><p>在 <code>internal/database/scope/acl.go</code> 的最顶层，有一段非常简单、甚至看起来有些突兀的代码：</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> sp == <span class="literal">nil</span> || sp.TenantID == <span class="string">""</span> {</span><br><span class="line">    <span class="comment">// 身份或租户上下文丢失，直接拉死闸</span></span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(db *gorm.DB)</span></span> *gorm.DB { <span class="keyword">return</span> db.Where(<span class="string">"1 = 0"</span>) }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 
-<p>这个函数会动态构建出包含 <code>jsonb_array_elements_text</code> 的 SQL 条件，实时在 <code>document</code> 表的 <code>access_policy</code>（JSONB 字段）中匹配当前的 PrincipalID（用户）、RoleIDs（角色）、Groups（用户组）和 Departments（部门）。</p>
-<p>这意味着：<strong>无论查询的是文档列表还是向量分片，它们共享同一套权限逻辑。</strong> 只要 <code>document</code> 表里的 <code>access_policy</code> 发生变更，下一毫秒的检索结果就会立即响应。</p>
-<h2 id="三、VFS-目录穿透：安全性与用户体验的平衡"><a href="#三、VFS-目录穿透：安全性与用户体验的平衡" class="headerlink" title="三、VFS 目录穿透：安全性与用户体验的平衡"></a>三、VFS 目录穿透：安全性与用户体验的平衡</h2><p>在处理复杂的虚拟文件系统（VFS）时，权限逻辑面临一个棘手的问题：如果一个用户有权访问 <code>/Project/Secret/Report.pdf</code>，但他对父目录 <code>/Secret/</code> 没有显式权限，他能找到这个文件吗？</p>
-<p>KH 在 <code>ACLScopeForVFSNode</code> 中实现了一套 <strong>“穿透性可见性” (Directory Penetration)</strong> 逻辑：</p>
-<ol>
-<li><strong>文件节点</strong>：必须满足其关联 Document 的实时 ACL 校验。</li>
-<li><strong>目录节点</strong>：<ul>
-<li>若目录有显式策略，则按策略执行。</li>
-<li>若目录无显式策略，系统会执行一个 <code>EXISTS</code> 子查询：<strong>只要该目录下级存在任何一个用户可访问的文件，该目录即对该用户可见。</strong></li>
-</ul>
-</li>
-</ol>
-<p>这种设计既保证了权限的严密性（不可访问的文件绝不露头），又保证了导航的连贯性，解决了企业级知识库在深度层级下的访问障碍。</p>
-<h2 id="四、Fail-Safe：默认拒绝原则"><a href="#四、Fail-Safe：默认拒绝原则" class="headerlink" title="四、Fail-Safe：默认拒绝原则"></a>四、Fail-Safe：默认拒绝原则</h2><p>在 KH 的安全性哲学中，没有任何“模糊地带”。</p>
-<p><code>ACLScopeFromSpace</code> 函数的设计体现了极致的 <strong>Fail-Safe（安全失败）</strong> 原则：如果检索请求中没有提供有效的 Space 上下文（例如 Token 校验失败或上下文丢失），该函数会直接返回 <code>1 = 0</code> 的 SQL 片段。</p>
-<p>这意味着，一旦系统检测到安全性参数异常，检索结果将强制为空，而不是默认公开。这种“宁可错杀，绝不漏放”的逻辑，是系统承载核心业务数据的底气。</p>
-<h2 id="五、所有者单位（Owner-Unit）的兜底授权"><a href="#五、所有者单位（Owner-Unit）的兜底授权" class="headerlink" title="五、所有者单位（Owner Unit）的兜底授权"></a>五、所有者单位（Owner Unit）的兜底授权</h2><p>除了显式的 <code>access_policy</code>，KH 还引入了 <code>buildOwnerUnitCondition</code> 机制。</p>
-<p>在很多企业场景下，文档并没有设置复杂的权限规则，而是遵循“谁创建、谁所在部门可见”的朴素原则。KH 的 ACL Scope 会自动识别资源的 <code>owner_unit</code>。如果一份文档没有显式的 ACL 策略，系统会回退到组织架构关联逻辑，允许同部门的成员访问。这种显式策略与隐式授权的有机结合，极大降低了管理员的配置负担。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>权限控制不是 RAG 系统的外挂插件，而是系统内核的核心逻辑。</p>
-<p>一个可靠的企业级知识平台，必须确保前台展示事实与后台检索事实的高度对齐。通过将复杂的权限语义下沉到 SQL 层，并实现目录穿透与 Fail-Safe 机制，KH 在保证检索性能的同时，构建起了一道坚不可摧的知识安全红线。对于企业用户而言，<strong>看得见的安全性，才是真正的可用性。</strong></p>
+<p>很多人第一次看这段代码时，不理解为什么要写这么笨的 <code>1 = 0</code>。<br>因为在复杂的微服务流转中，身份上下文（Space）丢失是一个隐蔽的毒瘤。一旦发生，底层的 GORM 查询可能就会退化为“无条件的全表扫描”，全公司的机密会瞬间暴露。</p>
+<p>而 <code>1 = 0</code> 相当于在数据库层拉了一道死闸。只要你的身份标识有任何瑕疵，这个查询在数据库端执行的结果集永远是零。这种“宁可杀错、绝不放过”的硬核熔断，才是我心中企业级系统该有的底气。</p>
+<h2 id="五、结语：看不见的安全屏障，才是真安全"><a href="#五、结语：看不见的安全屏障，才是真安全" class="headerlink" title="五、结语：看不见的安全屏障，才是真安全"></a>五、结语：看不见的安全屏障，才是真安全</h2><p>在构建 Knowledge Hub 的过程中，AI 帮我扛下了海量的代码生成，但支撑起这套系统脊梁的，是对安全边界近乎偏执的执着。</p>
+<p>多租户与权限隔离，从来都不应该是一个需要业务开发者在每一行代码里去小心翼翼维护的功能，它必须沉淀为系统的<strong>基础设施</strong>。</p>
+<p>通过 GORM Scope 的底层注入、动态别名的智能捕获以及 <code>1=0</code> 的硬核熔断，我们建立起了一道物理级的隔离墙。在 AI 狂奔的时代，我们虽然把键盘交给了机器，但作为<strong>“系统导演”</strong>，我们对数据安全的敬畏心不仅不能少，反而必须通过更严密的架构治理来被放大。这才是企业级知识系统真正能“站得住”的基石。</p>
 
       </div>
     </div>
@@ -166,13 +170,13 @@
     
     <a class="post-nav__item" href="/2026/04/11/Agent-first-%E4%BB%A5%E5%90%8E%EF%BC%8CRAG-%E5%9C%A8%E7%B3%BB%E7%BB%9F%E9%87%8C%E8%AF%A5%E7%AB%99%E4%BB%80%E4%B9%88%E4%BD%8D%E7%BD%AE/">
       <span>上一篇</span>
-      <strong>Agent-first 以后，RAG 在系统里该站什么位置</strong>
+      <strong>Agent-first 以后，RAG 在系统里该站什么位置：从“大脑”退位为“取证中枢”</strong>
     </a>
     
     
     <a class="post-nav__item post-nav__item--next" href="/2026/04/11/%E6%AD%A3%E5%BC%8F%E6%96%87%E6%A1%A3%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9B%B4%E9%80%82%E5%90%88%E4%BB%8E-Git-%E8%BF%9B%E5%85%A5-Knowledge-Hub/">
       <span>下一篇</span>
-      <strong>正式文档为什么更适合从 Git 进入 Knowledge Hub</strong>
+      <strong>正式文档为什么更适合从 Git 接入：把“数据上传”重塑为“受控发布流”</strong>
     </a>
     
   </nav>

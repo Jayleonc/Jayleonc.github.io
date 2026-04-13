@@ -5,15 +5,15 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent-first 以后，RAG 在系统里该站什么位置 · Jayleonc</title>
-<meta name="description" content="传统的“一次性召回并回答”在处理复杂文档依赖时存在局限性。在 Knowledge Hub 中，我们将 RAG 重构为由 Agent 调度的“证据源”，通过 Scout（侦察）与 Deep Read（精读）的分层协议，彻底解决了检索片段的上下文断裂难题。">
+<title>Agent-first 以后，RAG 在系统里该站什么位置：从“大脑”退位为“取证中枢” · Jayleonc</title>
+<meta name="description" content="当单次向量检索无法解答跨文档的宏观命题时，RAG 必须退位。本文深度复盘 Knowledge Hub 如何通过 Agent-first 架构与“侦察/精读”两段式协议，将 RAG 重塑为严谨的取证中枢。">
 <meta name="theme-color" content="#f3e8da">
 
 
 <link rel="canonical" href="https://jayleonc.github.io/2026/04/11/Agent-first-%E4%BB%A5%E5%90%8E%EF%BC%8CRAG-%E5%9C%A8%E7%B3%BB%E7%BB%9F%E9%87%8C%E8%AF%A5%E7%AB%99%E4%BB%80%E4%B9%88%E4%BD%8D%E7%BD%AE/">
 
-<meta property="og:title" content="Agent-first 以后，RAG 在系统里该站什么位置 · Jayleonc">
-<meta property="og:description" content="传统的“一次性召回并回答”在处理复杂文档依赖时存在局限性。在 Knowledge Hub 中，我们将 RAG 重构为由 Agent 调度的“证据源”，通过 Scout（侦察）与 Deep Read（精读）的分层协议，彻底解决了检索片段的上下文断裂难题。">
+<meta property="og:title" content="Agent-first 以后，RAG 在系统里该站什么位置：从“大脑”退位为“取证中枢” · Jayleonc">
+<meta property="og:description" content="当单次向量检索无法解答跨文档的宏观命题时，RAG 必须退位。本文深度复盘 Knowledge Hub 如何通过 Agent-first 架构与“侦察/精读”两段式协议，将 RAG 重塑为严谨的取证中枢。">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Jayleonc">
 <meta property="og:locale" content="zh-CN">
@@ -25,8 +25,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://jayleonc.github.io/images/1.png">
 
-<meta name="twitter:title" content="Agent-first 以后，RAG 在系统里该站什么位置 · Jayleonc">
-<meta name="twitter:description" content="传统的“一次性召回并回答”在处理复杂文档依赖时存在局限性。在 Knowledge Hub 中，我们将 RAG 重构为由 Agent 调度的“证据源”，通过 Scout（侦察）与 Deep Read（精读）的分层协议，彻底解决了检索片段的上下文断裂难题。">
+<meta name="twitter:title" content="Agent-first 以后，RAG 在系统里该站什么位置：从“大脑”退位为“取证中枢” · Jayleonc">
+<meta name="twitter:description" content="当单次向量检索无法解答跨文档的宏观命题时，RAG 必须退位。本文深度复盘 Knowledge Hub 如何通过 Agent-first 架构与“侦察/精读”两段式协议，将 RAG 重塑为严谨的取证中枢。">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -99,14 +99,14 @@
             <p class="eyebrow">
               AI工程</p>
         
-        <h1>Agent-first 以后，RAG 在系统里该站什么位置</h1>
+        <h1>Agent-first 以后，RAG 在系统里该站什么位置：从“大脑”退位为“取证中枢”</h1>
         <div class="post-hero__meta">
           <span>2026-04-11</span>
-          <span>5 分钟阅读</span>
-          <span>1838 字</span>
+          <span>6 分钟阅读</span>
+          <span>2394 字</span>
         </div>
         
-        <p class="post-hero__summary">传统的“一次性召回并回答”在处理复杂文档依赖时存在局限性。在 Knowledge Hub 中，我们将 RAG 重构为由 Agent 调度的“证据源”，通过 Scout（侦察）与 Deep Read（精读）的分层协议，彻底解决了检索片段的上下文断裂难题。</p>
+        <p class="post-hero__summary">当单次向量检索无法解答跨文档的宏观命题时，RAG 必须退位。本文深度复盘 Knowledge Hub 如何通过 Agent-first 架构与“侦察/精读”两段式协议，将 RAG 重塑为严谨的取证中枢。</p>
         
         
         <div class="tag-list post-tags">
@@ -121,40 +121,42 @@
           
           <a class="tag-chip" href="/tags/MCP/">MCP</a>
           
+          <a class="tag-chip" href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">工程实践</a>
+          
         </div>
         
       </header>
 
       <div class="post-content prose">
-        <p>在 RAG（检索增强生成）系统的演进过程中，很多开发者会发现：无论如何调优 Embedding 模型或切片策略，召回率的提升终究会遇到天花板。这往往是因为单一的检索逻辑难以承载复杂的、跨文档的业务推理。</p>
-<p>在 <code>Knowledge Hub</code> (KH) 的实践中，我们意识到：<strong>RAG 模块不应是直接生成答案的“大脑”，而应是支持 Agent 取证的“证据库”。</strong> 这种理念的转变，促使我们将整个系统架构推向了 <strong>Agent-first</strong> 模式。</p>
-<h2 id="一、标准化的武器库：基于-MCP-的工具链"><a href="#一、标准化的武器库：基于-MCP-的工具链" class="headerlink" title="一、标准化的武器库：基于 MCP 的工具链"></a>一、标准化的武器库：基于 MCP 的工具链</h2><p>在 KH 的 <code>internal/agent</code> 模块中，我们并没有随意编写 Agent 调用的函数，而是严格遵循了 <strong>MCP (Model Context Protocol)</strong> 这一行业标准。</p>
-<p>在 <code>pkg/mcp</code> 中，我们将所有的检索与内容获取能力封装为标准化的 Tool。这种设计让 Agent 具备了统一的交互界面：</p>
+        <p>如果你正在折腾企业级 RAG（检索增强生成）系统，你迟早会撞上一面让人沮丧的“叹息之墙”：<strong>无论你怎么砸钱换更好的 Embedding 模型，怎么精雕细琢 Chunk 切块策略，那个该死的召回准确率到了 80% 左右的临界点之后，就像是焊死了一样，再也上不去了。</strong></p>
+<p>在过去一年的研发实战中，我吃过太多次这种亏。<br>当用户问出一个极其明确的单点知识（比如“API 报错 401 意味着什么？”）时，传统的 RAG 表现得像个天才。但当用户问出一个需要跨越三份文档、结合多步逻辑推演的复杂业务流时，传统的“一次性查库 -&gt; 把切片塞进 Prompt -&gt; 让模型总结”的单线模式，简直就是一场灾难。</p>
+<p>模型看着几块互不关联的代码切片，就像拿着三片拼图去猜《清明上河图》，出来的结果除了“幻觉”就是“一本正经地胡说八道”。</p>
+<p>这种现状驱使我对 <code>Knowledge Hub</code> (KH) 进行了彻底的架构重塑：<strong>剥夺 RAG 模块作为“核心大脑”的权力，将系统全面升级为 Agent-first（智能体优先）架构。</strong></p>
+<h2 id="一、权力的切割：让算法只管搜索，让模型去管推理"><a href="#一、权力的切割：让算法只管搜索，让模型去管推理" class="headerlink" title="一、权力的切割：让算法只管搜索，让模型去管推理"></a>一、权力的切割：让算法只管搜索，让模型去管推理</h2><p>在传统的视角里，RAG 是主角，大模型只是一个文字总结器（Summarizer）。但这违背了系统设计的底层逻辑：检索系统擅长的是“寻找”，它不应该被赋予理解的重担；大模型擅长的是“推理”，它不应该被强迫在信息缺失的情况下瞎编。</p>
+<p>在 KH 的重构中，我把整个系统的主导权交给了由 <strong><code>pkg/mcp</code></strong> 驱动的 Agent。而 RAG 模块（即底层那个庞大的向量检索和召回库）被冷酷地降级为：<strong>一个只能提供精准事实的“取证武器库”。</strong></p>
+<p>我不允许 RAG 自己去做任何逻辑合并。我只要求它干好一件事：当 Agent 问“关于鉴权接口的报错原因有哪些？”时，RAG 必须在毫秒级内，带着严密的 VFS 路径，把高度相关的原文片段原封不动地交出来。这种对工具边界的冷酷切割，是系统走向工业级稳健性的第一步。</p>
+<h2 id="二、两段式取证协议：Scout（侦察）与-Deep-Read（精读）"><a href="#二、两段式取证协议：Scout（侦察）与-Deep-Read（精读）" class="headerlink" title="二、两段式取证协议：Scout（侦察）与 Deep Read（精读）"></a>二、两段式取证协议：Scout（侦察）与 Deep Read（精读）</h2><p>把 RAG 降级后，接下来的挑战是如何指挥 Agent 去高效地使用这个武器库。如果任由大模型乱查，Token 的消耗会瞬间爆炸，且回答质量依然不可控。</p>
+<p>在 <code>internal/agent/service.go</code> 中，我通过一套严厉的指令协议设计了 <strong>Scout（侦察）与 Deep Read（精读）两段式打法</strong>。</p>
+<h3 id="2-1-阶段一：Scout（广泛侦察）"><a href="#2-1-阶段一：Scout（广泛侦察）" class="headerlink" title="2.1 阶段一：Scout（广泛侦察）"></a>2.1 阶段一：Scout（广泛侦察）</h3><p>这是“探路”。当历史记忆里没有答案时，Agent 会调用 <code>search_knowledge_base</code> 工具。<br>我给 AI 下了死命令：<strong>“搜索返回的只是局部片段，绝不是完整事实。如果片段信息不足，你绝对不准给我脑补！”</strong><br>并且，如果在第一轮搜索中没找到理想的切片，Agent 必须强制通过改写关键词、增加上下文限制等方式，至少重试 2 次。这种“不拿到证据不撤退”的纪律，强行堵住了大模型想要“偷懒”的后路。</p>
+<h3 id="2-2-阶段二：Deep-Read（定向精读）"><a href="#2-2-阶段二：Deep-Read（定向精读）" class="headerlink" title="2.2 阶段二：Deep Read（定向精读）"></a>2.2 阶段二：Deep Read（定向精读）</h3><p>这是解决 RAG“上下文断裂”的绝杀技。<br>在侦察阶段，Agent 拿到了一堆切片。它会通过自身的逻辑判断，挑出最有价值的一个。然后，它必须从切片头部提取出 <code>doc_id</code>，并主动挂载 <code>read_document</code> 工具。</p>
+<p>这个工具会绕过向量库，直接根据 <code>ProjectNode</code> 的真实路径去拉取该文档的完整上下文（或者是包含那个切片的巨大内容块）。<br><strong>这就是人类专家的思考方式：先通过目录和摘要找到大概位置，然后翻开那页仔细精读。</strong> </p>
+<p>通过这套两段式协议，我们彻底让 AI 告别了“断章取义”的毛病。大模型不再是在几百个字的碎片里拼凑答案，而是在阅读完整的业务文档后进行专业级推理。</p>
+<h2 id="三、Strict-Grounding：那个戴着镣铐的“严谨者”"><a href="#三、Strict-Grounding：那个戴着镣铐的“严谨者”" class="headerlink" title="三、Strict Grounding：那个戴着镣铐的“严谨者”"></a>三、Strict Grounding：那个戴着镣铐的“严谨者”</h2><p>企业级知识库里，最怕的不是 AI 说“我不知道”，而是它因为“过度热心”而编造了一个不存在的凭证。哪怕它有 99% 的时间是准的，只要有 1% 的概率出现这种幻觉，系统在严肃场景下就会被一票否决。</p>
+<p>我在指令集里注入了一段被命名为 <strong><code>strictGroundingPrompt</code></strong> 的硬约束：</p>
+<blockquote>
+<p>“你当前处于客户模式，回答必须严格基于知识库内容。没有检索到可支撑结论的证据时，必须明确回复‘知识库中未找到相关信息’。严禁使用外部常识，严禁编造任何未出现在检索结果中的逻辑。”</p>
+</blockquote>
+<p>这段 Prompt 配合着 Agent 的工具调用轨迹（Trace），在系统底层织起了一张密不透风的铁网。</p>
+<p>用户在前台看到的，是一个经过深思熟虑、引用清晰的完美回答；而在后台的 Trace 日志里，你看到的是系统发起了一次历史扫描、三次向量侦察、一次全文精读，最后才落笔成文的严谨跋涉。</p>
+<h2 id="四、基于-MCP-的标准化：让能力可插拔"><a href="#四、基于-MCP-的标准化：让能力可插拔" class="headerlink" title="四、基于 MCP 的标准化：让能力可插拔"></a>四、基于 MCP 的标准化：让能力可插拔</h2><p>为了支撑这套 Agent-first 架构，我并没有采用那些臃肿的框架，而是直接拥抱了 <strong>MCP (Model Context Protocol)</strong> 这一行业标准。</p>
+<p>在 <code>pkg/mcp</code> 的定义下，KH 的所有核心能力（如 <code>search_knowledge_base</code>、<code>read_document</code>）都被抽象为了标准化的 <code>Tool</code>。<br>这种做法的工程收益在于：</p>
 <ul>
-<li><code>search_knowledge_base</code>：证据搜索与定位。</li>
-<li><code>read_document</code>：全文内容消费与理解。</li>
-<li><code>get_folder_info</code>：获取 VFS 目录树上下文。</li>
+<li><strong>一致的交互界面</strong>：大模型不需要学习不同接口的调用方式，它只需要通过 MCP 协议进行统一调度。</li>
+<li><strong>能力的横向扩展</strong>：如果明天我想加一个“查询实时日志”的功能，我只需要封装一个新的 MCP Tool，Agent 就能在现有的 Scout&#x2F;Deep Read 逻辑中无缝使用它。</li>
 </ul>
-<p>通过 MCP 协议，RAG 从一个封闭的查询接口，变成了一个可被 Agent 自由组合、按需调用的“标准武器库”。</p>
-<h2 id="二、双阶段取证协议：Scout（侦察）与-Deep-Read（精读）"><a href="#二、双阶段取证协议：Scout（侦察）与-Deep-Read（精读）" class="headerlink" title="二、双阶段取证协议：Scout（侦察）与 Deep Read（精读）"></a>二、双阶段取证协议：Scout（侦察）与 Deep Read（精读）</h2><p>在 KH 的 <code>internal/agent/service.go</code> 中，我们通过 <code>toolUsagePrompt</code> 固化了一套名为 <strong>“渐进式披露 (Progressive Disclosure)”</strong> 的工作流。这套工作流将检索过程拆解为三个优先级极高的阶段：</p>
-<h3 id="2-1-阶段零：记忆扫描-Memory-Scan"><a href="#2-1-阶段零：记忆扫描-Memory-Scan" class="headerlink" title="2.1 阶段零：记忆扫描 (Memory Scan)"></a>2.1 阶段零：记忆扫描 (Memory Scan)</h3><p>Agent 被强制要求先核对对话历史（History）。如果历史上下文中已存在答案，严禁再次调用检索工具。这极大地降低了 Token 消耗并提升了响应速度。</p>
-<h3 id="2-2-阶段一：Scout（广泛侦察）"><a href="#2-2-阶段一：Scout（广泛侦察）" class="headerlink" title="2.2 阶段一：Scout（广泛侦察）"></a>2.2 阶段一：Scout（广泛侦察）</h3><p>当历史记忆不足时，Agent 启动侦察阶段。此阶段调用 <code>search_knowledge_base</code>。它不追求直接获取结论，而是通过语义搜索“侦察”出可能包含答案的 <code>doc_id</code> 及其关键片段。<br><strong>强制规则</strong>：如果第一次搜索结果为空，Agent 被严禁直接回复“找不到”，必须至少重试 2 次（改写 Query 或精简关键词）后才能放弃。</p>
-<h3 id="2-3-阶段二：Deep-Read（定向精读）"><a href="#2-3-阶段二：Deep-Read（定向精读）" class="headerlink" title="2.3 阶段二：Deep Read（定向精读）"></a>2.3 阶段二：Deep Read（定向精读）</h3><p>这是解决 RAG 片段化问题的核心。我们告诉 Agent：<strong>检索返回的只是片段，不是完整事实。</strong><br>如果片段不足以支撑结论，Agent 必须从片段头部提取 <code>doc_id</code>，并主动调用 <code>read_document</code> 读取全文。在充分理解全文上下文后，再给出最终回答。这种“两段式”取证，彻底消除了传统 RAG 因片段截断导致的“脑补”和“幻觉”现象。</p>
-<h2 id="三、Strict-Grounding：坚不可摧的“硬约束”"><a href="#三、Strict-Grounding：坚不可摧的“硬约束”" class="headerlink" title="三、Strict Grounding：坚不可摧的“硬约束”"></a>三、Strict Grounding：坚不可摧的“硬约束”</h2><p>在企业级问答中，AI 的“聪明”有时是致命的危险。我们通过 <code>strictGroundingPrompt</code> 为 Agent 戴上了沉重的枷锁：</p>
-<ol>
-<li><strong>事实归正</strong>：回答必须严格基于知识库内容，不得使用任何外部常识。</li>
-<li><strong>证据优先</strong>：没有检索到支撑证据时，必须诚实回复“知识库中未找到相关信息”，严禁编造流程、时间或政策。</li>
-<li><strong>可追溯性</strong>：每一个回答都必须能映射回 <code>pkg/mcp</code> 工具链返回的原始路径。</li>
-</ol>
-<p>这种硬约束将 RAG 的功能定位从“生成器”降级为“校验器”，但却极大地提升了系统的业务鲁棒性。</p>
-<h2 id="四、Agentic-Traversal：控制权与确定性的博弈"><a href="#四、Agentic-Traversal：控制权与确定性的博弈" class="headerlink" title="四、Agentic Traversal：控制权与确定性的博弈"></a>四、Agentic Traversal：控制权与确定性的博弈</h2><p>为了防止 Agent 在复杂的目录树中“迷路”或无限循环，我们在 <code>dataset.go</code> 的 <code>AgenticConfig</code> 中引入了关键参数：</p>
-<ul>
-<li><code>max_steps</code> &amp; <code>max_depth</code>：限制 Agent 取证的深度和步数，防止死循环。</li>
-<li><code>max_context_tokens</code>：动态管理 Agent 的“阅读容量”，在精读与性能之间寻找平衡。</li>
-</ul>
-<p>在 <code>adapter.go</code> 的底层实现中，我们将中间的取证过程（即工具调用的 JSON 报文）进行了“静默处理”。用户在前台看到的是流畅的、经过深度思考后的结论，而系统内部则经历了一场严密的、基于 MCP 协议的取证长征。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>Agent-first</code> 架构的本质是：<strong>承认检索是不完美的，并用大模型的推理能力来补偿这种不完美。</strong></p>
-<p>通过将 RAG 模块重构为受控的、标准化的证据源，并引入 Scout&#x2F;Deep Read 协议与 Strict Grounding 约束，KH 成功地将 RAG 从一个单纯的技术点，升级为了一个具备自愈能力和工程确定性的知识治理体系。在这个体系下，RAG 依然重要，但它已不再是孤军作战，而是 Agent 指挥下的精锐尖兵。</p>
+<h2 id="结语：重新定义智能的边界"><a href="#结语：重新定义智能的边界" class="headerlink" title="结语：重新定义智能的边界"></a>结语：重新定义智能的边界</h2><p>Agent-first 以后，RAG 没有死，它只是被安放到了它最擅长的位置上。</p>
+<p>通过把“检索”和“推理”彻底解耦，把“侦察”和“阅读”物理分离，我们在 Knowledge Hub 中构建起了一个极具工业美感的智能取证网络。<br>在这个网络里，大模型终于不再是一个被动等待指令并强行编造答案的“搜索引擎包装壳”，而进化成了一个拿着放大镜、在知识迷宫中步步为营的“探案专家”。</p>
+<p>作为一个负责人，我不负责写出完美的答案，我只负责<strong>设计规则、建立约束、分配权力</strong>。这，才是通往企业级 AI 系统的正确姿势。</p>
 
       </div>
     </div>
@@ -165,13 +167,13 @@
     
     <a class="post-nav__item" href="/2026/04/11/%E4%B8%BA%E4%BB%80%E4%B9%88-Knowledge-Hub-%E8%A6%81%E6%8A%8A-Project-%E6%94%BE%E5%88%B0%E5%89%8D%E9%9D%A2/">
       <span>上一篇</span>
-      <strong>为什么 Knowledge Hub 要把 Project 放到前面</strong>
+      <strong>为什么 Knowledge Hub 要把 Project 放到前面：论检索物理与业务意图的彻底解耦</strong>
     </a>
     
     
     <a class="post-nav__item post-nav__item--next" href="/2026/04/11/%E6%9D%83%E9%99%90%E5%A6%82%E6%9E%9C%E8%BF%9B%E4%B8%8D%E4%BA%86%E6%A3%80%E7%B4%A2%EF%BC%8C%E4%BC%81%E4%B8%9A%E7%9F%A5%E8%AF%86%E7%B3%BB%E7%BB%9F%E5%B0%B1%E7%AB%99%E4%B8%8D%E4%BD%8F/">
       <span>下一篇</span>
-      <strong>权限如果进不了检索，企业知识系统就站不住</strong>
+      <strong>权限如果进不了检索，企业知识系统就站不住：从实时 SQL Scope 看安全底线</strong>
     </a>
     
   </nav>
