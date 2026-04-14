@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从 Claude Code 源码到 Go Agent Kernel：Turnmesh 的四层重构与 Vibe Coding 实践 · Jayleonc</title>
+<meta name="description" content="记录后端工程、AI 编程、项目复盘与长期学习，也整理一个软件工程师在真实世界里的思考与实践。">
+<meta name="theme-color" content="#f3e8da">
+
+
+<link rel="canonical" href="https://jayleonc.github.io/2026/04/14/%E4%BB%8E-Claude-Code-%E6%BA%90%E7%A0%81%E5%88%B0-Go-Agent-Kernel%EF%BC%9ATurnmesh-%E7%9A%84%E5%9B%9B%E5%B1%82%E9%87%8D%E6%9E%84%E4%B8%8E-Vibe-Coding-%E5%AE%9E%E8%B7%B5/">
+
+<meta property="og:title" content="从 Claude Code 源码到 Go Agent Kernel：Turnmesh 的四层重构与 Vibe Coding 实践 · Jayleonc">
+<meta property="og:description" content="记录后端工程、AI 编程、项目复盘与长期学习，也整理一个软件工程师在真实世界里的思考与实践。">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Jayleonc">
+<meta property="og:locale" content="zh-CN">
+
+<meta property="og:url" content="https://jayleonc.github.io/2026/04/14/%E4%BB%8E-Claude-Code-%E6%BA%90%E7%A0%81%E5%88%B0-Go-Agent-Kernel%EF%BC%9ATurnmesh-%E7%9A%84%E5%9B%9B%E5%B1%82%E9%87%8D%E6%9E%84%E4%B8%8E-Vibe-Coding-%E5%AE%9E%E8%B7%B5/">
+
+
+<meta property="og:image" content="https://jayleonc.github.io/images/1.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://jayleonc.github.io/images/1.png">
+
+<meta name="twitter:title" content="从 Claude Code 源码到 Go Agent Kernel：Turnmesh 的四层重构与 Vibe Coding 实践 · Jayleonc">
+<meta name="twitter:description" content="记录后端工程、AI 编程、项目复盘与长期学习，也整理一个软件工程师在真实世界里的思考与实践。">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,30;0,9..144,400..900,100;1,9..144,400..900,30;1,9..144,400..900,100&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<body class="layout-post">
+  <header class="site-header" data-site-header>
+  <div class="shell site-header__inner">
+    
+    <a class="site-brand" href="/">
+      <span class="site-brand__mark">J<em>l</em></span>
+      <span class="site-brand__text">
+        <strong>Jayleonc</strong>
+        <small>用代码、AI 和写作记录成长</small>
+      </span>
+    </a>
+
+    <div class="site-header__actions">
+      <nav class="site-nav" id="site-nav" data-site-nav>
+        
+        <a href="/" class="">文章</a>
+        
+        <a href="/archives/" class="">归档</a>
+        
+        <a href="/about/" class="">关于</a>
+        
+        <a href="/friends/" class="">资源</a>
+        
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </nav>
+
+      <button class="theme-toggle" type="button" aria-label="切换主题" title="切换主题" data-theme-toggle>
+        <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m12.95 5.536 1.414 1.414M4.636 4.636 6.05 6.05m10.9-1.414L15.536 6.05M6.05 17.95l-1.414 1.414M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>
+          </svg>
+        </span>
+        <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M20 15.5A7.5 7.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
+          </svg>
+        </span>
+      </button>
+
+      <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+  <main class="site-main">
+    
+  <article class="post-shell shell">
+    <div class="post-layout">
+      <div class="post-main">
+        <header class="post-hero reveal">
+          
+            <p class="eyebrow">
+              AI工程</p>
+        
+        <h1>从 Claude Code 源码到 Go Agent Kernel：Turnmesh 的四层重构与 Vibe Coding 实践</h1>
+        <div class="post-hero__meta">
+          <span>2026-04-14</span>
+          <span>17 分钟阅读</span>
+          <span>7317 字</span>
+        </div>
+        
+        
+        <div class="tag-list post-tags">
+          
+          <a class="tag-chip" href="/tags/AI/">AI</a>
+          
+          <a class="tag-chip" href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">架构设计</a>
+          
+          <a class="tag-chip" href="/tags/Agent-Runtime/">Agent Runtime</a>
+          
+          <a class="tag-chip" href="/tags/Go/">Go</a>
+          
+        </div>
+        
+      </header>
+
+      <div class="post-content prose">
+        <p>最近，我有种在“拆解外星黑盒”的兴奋感。这个黑盒就是被泄露出来的 Claude Code 源码。</p>
+<p>昨晚，在上海出差的酒店里，我拉着 AI（Codex’s gpt 5.4 xhigh）进行了一场高强度的 Vibe Coding。对于一个长期沉溺于 Agent 系统设计的开发者来说，这些 TypeScript 源码展现了一种极为罕见的工程美感。相比于那些试图拼接出一个“稳定” Agent 的沉重平台，我更倾向于构建一个极其轻量的、可嵌入的、专注于 <strong>Turn Loop</strong>（轮次循环）的内核。</p>
+<p>于是，我决定用 Go 重写这个内核。这个项目我取名叫 <code>turnmesh</code>。</p>
+<p>有趣的是，这个项目的 baseline 几乎是我在两个小时左右内“Vibe 出来”的。我直接把泄露出来的关键 TS 文件丢给它，然后跟它讨论：“你看，Claude Code 在 <code>QueryEngine.ts</code> 里定义的这个 loop 逻辑，如果搬到 Go 这种强类型的并发模型里，我们该怎么做抽象？”</p>
+<p>两个小时左右后，<code>turnmesh</code> 的基本骨架——包括 <code>internal/orchestrator</code> 的状态机和 <code>internal/executor</code> 的工具执行面——就已经跑通了。</p>
+<p>但 Vibe Coding 只是帮我跳过了枯燥的样板代码。作为一个人类工程师，真正的挑战在于随后的“手术式重构”：如何从那一堆 TS 逻辑中提炼出真正具备普适性的四层架构，并把它塞进我已有的 <code>ai-customer</code>（智能客服）和 <code>kh</code>（知识库）项目中。</p>
+<h2 id="核心架构总结：Turnmesh-与-Hermes-Agent-的工程共鸣"><a href="#核心架构总结：Turnmesh-与-Hermes-Agent-的工程共鸣" class="headerlink" title="核心架构总结：Turnmesh 与 Hermes Agent 的工程共鸣"></a>核心架构总结：Turnmesh 与 Hermes Agent 的工程共鸣</h2><p>在进入细节之前，我想先聊聊最近 AI 圈子里非常火的 <strong>Hermes Agent</strong> 工程概念。</p>
+<p>很多人对 Hermes 的认知还停留在模型层面，但实际上 Nous Research 提出的 Hermes Agent 架构代表了一种全新的工程哲学：<strong>LLM 只是内核中的一个组件，而环绕在 LLM 之外、为其提供环境、工具、状态和演进能力的整套系统，才构成了真正的“Hermes”概念。</strong></p>
+<p>我结合 Claude Code 的源码拆解以及自己对 Agent 实践的理解，将 <code>turnmesh</code> 的设计初衷与这种“平台无关持久化内核”高度统一。我将整个内核抽象为四层底座，目的就是为了让 LLM 在这个受控的、可进化的环境中真正“活起来”。这四层底座不是简单的模块堆砌，而是一次对 Agent 生存环境的深度解构：</p>
+<ol>
+<li><strong>编排层 (Orchestrator Layer)</strong>：Agent 的“大脑中枢”。它定义了一个显式的 <strong>Turn 状态机</strong>，将模型请求、工具调用、结果回填封装进一个单一的、可预测的循环中。它负责决定“现在该做什么”，而不是“怎么做”。这一层直接回扣了 Claude Code 中最核心的 <code>QueryEngine</code> 逻辑。</li>
+<li><strong>执行层 (Executor Layer)</strong>：Agent 的“手脚”。它提供了一个统一的、安全的、支持超时与取消的工具执行平面。无论是本地 Shell 还是业务 API，在执行层看来，都是一致的接口契约。这一层是对 <code>StreamingToolExecutor</code> 在 Go 环境下的高并发重塑。</li>
+<li><strong>反馈层 (Feedback Layer)</strong>：Agent 的“神经网络”。它将内核内部发生的所有隐形事实（进度、审计、审批）转化为显式的、可订阅的事件流。这是解决 Agent “黑盒感”的关键所在，让 Kernel 在任何宿主应用中都能保持极高的透明度。</li>
+<li><strong>记忆层 (Memory Layer)<strong>：Agent 的“知识库”。它借鉴了 Hermes 的</strong>分层记忆架构</strong>（Hot/Cold/Procedural Memory），在运行时与总装层上补齐了工作记忆与持久记忆隔离的接口，并为自动压缩策略预留了清晰的接入位。</li>
+</ol>
+<p>这四层结构构建了一个闭环：编排层下指令，执行层去干活，反馈层报进度，记忆层记事实。</p>
+<h2 id="剥离外壳：向-Claude-Code-借一次架构视角"><a href="#剥离外壳：向-Claude-Code-借一次架构视角" class="headerlink" title="剥离外壳：向 Claude Code 借一次架构视角"></a>剥离外壳：向 Claude Code 借一次架构视角</h2><p>在阅读 <code>claude-code-source-code/src/QueryEngine.ts</code> 时，我最深刻的感触是，大模型应用的逻辑正在经历一次“Agent-first”的范式转移。</p>
+<p>在以前的逻辑里，我们习惯于“业务逻辑调用模型”。而 Claude Code 展示的是一种更高级的形态：“运行时管理一切，模型只是一个决策源”。这种视角的转变，是整套重构工作的思想源头。</p>
+<p>我总结了 Claude Code 源码中最有价值的几个模块：</p>
+<ul>
+<li><code>QueryEngine.ts</code>: 负责整个多轮对话的编排。</li>
+<li><code>Tool.ts</code> 与 <code>toolOrchestration.ts</code>: 定义了工具如何被模型发现并执行。</li>
+<li><code>memdir</code>: 这一块极其精彩，它展示了如何在本地文件系统维护 Agent 的长期记忆。</li>
+</ul>
+<p>结合与 Codex’s gpt 5.4 xhigh 的多次深度对话，我将这套复杂的 TS 源码拆解成了 <code>turnmesh</code> 的四个核心层。</p>
+<h3 id="第一层：编排层-Orchestrator-Layer-——-显式的-Turn-生命周期"><a href="#第一层：编排层-Orchestrator-Layer-——-显式的-Turn-生命周期" class="headerlink" title="第一层：编排层 (Orchestrator Layer) —— 显式的 Turn 生命周期"></a>第一层：编排层 (Orchestrator Layer) —— 显式的 Turn 生命周期</h3><p>在 <code>internal/orchestrator</code> 包中，我实现了一个严谨的状态机。</p>
+<p>传统的 Agent 实现中，代码往往散落在各种异步回调里。一旦涉及到多轮 Tool Call（工具调用），状态管理就会变成一场灾难。Claude Code 的做法给了我很大启发：它定义了一个非常清晰的 <code>Turn</code> 概念。</p>
+<p>一次 <code>Turn</code> 代表了从用户输入到模型输出一个最终结果的全过程。在这个过程中，可能会经历 N 次 <code>tool_use -&gt; tool_result</code> 的往复。在 <code>turnmesh</code> 中，我将这个过程收拢到了 <code>RunTurn</code> 方法里。</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// turnmesh.go 中的核心 facade</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Runtime)</span></span> RunTurn(ctx context.Context, req TurnRequest) (TurnResult, <span class="type">error</span>) {</span><br><span class="line">    <span class="comment">// 这里的编排逻辑完全借鉴了 QueryEngine.ts 的设计</span></span><br><span class="line">    <span class="comment">// 但使用了 Go 的 channel 和 select 进行了并发重构</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>我在这里做的一个关键决定是：<strong>编排层必须是纯粹的。</strong> 它不应该知道任何关于 UI 的事，也不应该知道具体是哪家模型。它只负责管理 <code>TurnRequest</code> 到 <code>TurnResult</code> 的状态流转。</p>
+<p>这种设计在 Go 中通过 <code>select</code> 和 <code>context</code> 得到了极佳的体现。相比于 TS 的 Promise 链条，Go 的 Channel 能更自然地表达“流式输出”与“工具中断”的复杂交织。当模型决定调用工具时，Orchestrator 会挂起当前的模型流，将上下文移交给执行层，等待执行结果回填后，再次唤醒模型流。这种显式状态机设计，彻底杜绝了业务层因为处理多轮 Tool Call 而导致的状态混乱问题。</p>
+<h3 id="第二层：执行层-Executor-Layer-——-统一的工具执行面"><a href="#第二层：执行层-Executor-Layer-——-统一的工具执行面" class="headerlink" title="第二层：执行层 (Executor Layer) —— 统一的工具执行面"></a>第二层：执行层 (Executor Layer) —— 统一的工具执行面</h3><p>执行层对应的是 <code>internal/executor</code>。在 Claude Code 中，<code>StreamingToolExecutor.ts</code> 负责实时流式输出工具执行的过程。</p>
+<p>在 <code>turnmesh</code> 中，我定义了一个统一的 <code>Tool</code> 接口。无论是本地的 Shell 脚本（对应 Claude Code 的 <code>BashTool</code>），还是业务系统注入的查订单接口，在内核看来，都是平等的“执行体”。</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Tool <span class="keyword">struct</span> {</span><br><span class="line">    Name        <span class="type">string</span></span><br><span class="line">    Description <span class="type">string</span></span><br><span class="line">    InputSchema JSONSchema</span><br><span class="line">    Handler     <span class="function"><span class="keyword">func</span><span class="params">(ctx context.Context, call ToolCall)</span></span> (ToolOutcome, <span class="type">error</span>)</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里的核心挑战在于 <strong>超时与取消（Cancellation）</strong>。当用户在终端按下 <code>Ctrl+C</code> 时，或者当模型产生了一个错误的、死循环的工具调用时，执行层必须能够原子性地、安全地中断正在运行的子进程或网络请求。我在 <code>internal/executor</code> 中使用了 Go 的 <code>context.Context</code> 树，完美地复现了 Claude Code 在 <code>Shell.ts</code> 中实现的信号管理。</p>
+<p>执行层屏蔽了所有的脏活累活：超时控制、上下文取消、沙盒环境隔离、乃至标准输出流的截断保护。执行层设计的精妙之处在于它完全不依赖任何特定的模型。它只认 <code>ToolCall</code> 和 <code>ToolOutcome</code>。这意味着，当明天我们需要将底层大模型从 OpenAI 切换到 Gemini 时，我们辛苦沉淀的几十个业务 Tool，一行代码都不需要改。</p>
+<h3 id="第三层：反馈层-Feedback-Layer-——-将事实转为事件"><a href="#第三层：反馈层-Feedback-Layer-——-将事实转为事件" class="headerlink" title="第三层：反馈层 (Feedback Layer) —— 将事实转为事件"></a>第三层：反馈层 (Feedback Layer) —— 将事实转为事件</h3><p>反馈层（<code>internal/feedback</code>）是我认为最容易被忽视、却又最重要的一层。</p>
+<p>Agent 运行的过程往往是一个黑盒。用户经常会感到焦虑：“模型现在在干什么？它在查哪个数据库？它是不是死机了？”</p>
+<p>在 Claude Code 中，由于使用了 React 和 Ink，反馈逻辑被深度耦合在了 UI 渲染里。在重构 <code>turnmesh</code> 时，我决定将反馈逻辑彻底“事件化”。内核会在 turn 开始、模型消息生成、工具调用与结果回填、引用产出、澄清请求以及完成/失败这些关键节点，向外吐出结构化事件。对外暴露的主事件面是 <code>started / message / tool_call / tool_result / citation / clarification / completed / error</code>；而更偏内部审计与汇聚的反馈能力，则继续留在 <code>internal/feedback</code> 这一类 sink 中。</p>
+<p>这种设计让反馈逻辑变得极其通用。同一套内核，既可以对接 TUI 展示进度条，也可以对接 Web 前端展示动态气泡，甚至可以对接日志系统进行全链路审计。它解决了一个根本性问题：如何让外部观察者在不介入执行过程的情况下，实时感知内部的状态变迁。</p>
+<h3 id="第四层：记忆层-Memory-Layer-——-工作记忆与持久记忆的隔离"><a href="#第四层：记忆层-Memory-Layer-——-工作记忆与持久记忆的隔离" class="headerlink" title="第四层：记忆层 (Memory Layer) —— 工作记忆与持久记忆的隔离"></a>第四层：记忆层 (Memory Layer) —— 工作记忆与持久记忆的隔离</h3><p>记忆层对应 <code>internal/memory</code>。这是我花最多时间研究 Claude Code <code>memdir</code> 模块的部分。</p>
+<p>Claude Code 并没有简单地把所有聊天记录塞进模型。它区分了“会话日志”和“工作记忆”。</p>
+<p>在 <code>turnmesh</code> 中，我先补齐了一套 <strong>Compact Policy</strong>（压缩策略）所依赖的 runtime 接口，并在 <code>engine</code> 的总装层上把 snapshot / writeback / compact 这条链路接通。当会话上下文（Token 数）逼近限制时，系统就可以根据预设策略触发一次“摘要行动”，把过往的琐碎对话压缩成关键事实（Fact），再沉淀到持久记忆中。这里我更愿意把它描述成“已经具备并可装配的记忆运行时”，而不是一个所有业务默认自动开启的魔法能力。</p>
+<p>这种记忆的分层治理，是一个 Agent 能否在长程任务（Long-running tasks）中不“迷失方向”的关键。我在 Go 实现中，将存储介质抽象成了接口（Store Interface），这使得我们可以根据成本和性能，动态切换内存存储、文件存储或者 Redis 存储，而无需修改上层的 Compact 逻辑。</p>
+<h2 id="宏观与微观：关于工作流编排的思考"><a href="#宏观与微观：关于工作流编排的思考" class="headerlink" title="宏观与微观：关于工作流编排的思考"></a>宏观与微观：关于工作流编排的思考</h2><p>在开发 <code>turnmesh</code> 的过程中，我一直在思考一个问题：有了这种高度灵活的 Agent Kernel，我们还需要那种拖拽式的工作流编排（Workflow Orchestration）吗？</p>
+<p>我的结论是：它们是互补的。</p>
+<p>工作流编排（Workflow）负责的是“宏观路径”——比如从 A 状态必须流转到 B 状态，这是一套确定的业务规则。这种规则往往是不可逾越的，比如在金融场景下的转账审批流程，你绝对不希望大模型根据心情去“智能决策”是否跳过风控。</p>
+<p>而 <code>turnmesh</code> 这种 Agent Kernel 负责的是“微观智能”——在某一个允许灵活处理的节点上，大模型该如何灵活地利用工具去达成目标。</p>
+<p>在 <code>turnmesh</code> 中，我预留了接入工作流引擎的钩子。你可以把一个完整的工作流节点，抽象成内核的一个 <code>Tool</code>；也可以把内核的一次 <code>RunTurn</code> 调用，当成工作流中的一个智能化步骤。这种“宏观定路径，微观放智能”的混合模式，才是一个严肃的 AI 应用该有的样子。</p>
+<h2 id="真正的战场：将-ai-customer-与-kh-接入-Kernel-的“手术复盘”"><a href="#真正的战场：将-ai-customer-与-kh-接入-Kernel-的“手术复盘”" class="headerlink" title="真正的战场：将 ai-customer 与 kh 接入 Kernel 的“手术复盘”"></a>真正的战场：将 ai-customer 与 kh 接入 Kernel 的“手术复盘”</h2><p>在完成 <code>turnmesh</code> 核心重构的同时，我拉着 Codex’s gpt 5.4 xhigh 进行了一场高强度的设计会审：我们开始考虑如何将已有的 <code>ai-customer</code>（智能客服）和 <code>kh</code>（知识库）这两个项目，切换到这套全新的 Agent 底座上。</p>
+<p>这不是简单的包替换，而是一场关于“权力边界”的讨论。我们花了几个小时去分析业务数据与 <code>turnmesh</code> 的结合点，反复推敲哪些东西该留在业务系统，哪些该交给 Kernel。</p>
+<h3 id="明确边界：人在这里做了什么决定？"><a href="#明确边界：人在这里做了什么决定？" class="headerlink" title="明确边界：人在这里做了什么决定？"></a>明确边界：人在这里做了什么决定？</h3><p>在接入分析中，我面临的最大决策是：<strong>哪些逻辑该留给业务系统，哪些逻辑该下沉到内核？</strong></p>
+<p>最初 AI 建议我把尽可能多的东西都下沉到 <code>turnmesh</code>，包括客服系统的知识库检索路径。我当场就否决了这个建议。这个否决动作，正是我作为架构师在整场“Vibe Coding”中体现的最核心价值。</p>
+<p>我的决定是：</p>
+<ul>
+<li><strong>业务壳保留在应用层</strong>：企微的消息回调逻辑、用户会话的并发去重、消息 Pending Queue 的管理、乃至具体的 <code>SystemPrompt</code> 生成策略和 <code>preSearch</code>（预检索），这些都是业务特有的“灵魂”，必须留在业务仓库里。</li>
+<li><strong>Runtime 运行时下沉到内核</strong>：模型轮次循环、多轮工具调度的状态管理、Provider 的 Adapter 隔离、统一的事件流反馈，这些通用的“肌肉”，必须下沉到 <code>turnmesh</code>。</li>
+</ul>
+<p>这种决策让整个接入过程变成了一次精密的“外科手术”。在 <code>ai-customer</code> 中，我删掉了几百行手写的、充满了诡异状态判定和 <code>/chat/completions</code> 调用逻辑的代码，改为了对 <code>turnmesh.New(...).RunTurn(...)</code> 的调用。</p>
+<h3 id="从-langchaingo-转向-turnmesh：关于“轻量”的取舍"><a href="#从-langchaingo-转向-turnmesh：关于“轻量”的取舍" class="headerlink" title="从 langchaingo 转向 turnmesh：关于“轻量”的取舍"></a>从 langchaingo 转向 turnmesh：关于“轻量”的取舍</h3><p>在 <code>kh</code> 知识库项目的重构中，我面临过一个非常现实的选择：<strong>要不要继续用 langchaingo？</strong></p>
+<p>最初我们确实是使用 <code>langchaingo</code> 来构建 Agent 逻辑的。作为 Go 生态中目前组件最丰富的一批 AI 框架，它给了我们非常快的起步速度。但随着业务深入，我发现这种“全家桶”式的框架在处理复杂的、定制化的 Turn Loop 时显得过于沉重。</p>
+<p><code>langchaingo</code> 的设计理念更多是“组件组装”，而我想追求的是像 Claude Code 那样极致的“轮次控制”。在大规模并发和复杂的流式事件处理场景下，由于 <code>langchaingo</code> 的层级过深，我们很难在不修改框架源码的情况下，精准地插桩自己的反馈层（Feedback）、澄清事件（Clarification）和更细颗粒度的工具回路控制。</p>
+<p>最终我决定放弃继续依赖 <code>langchaingo</code> 的 Agent 模块，转而将核心能力收拢进 <code>turnmesh</code>。更准确地说，这不是把 <code>langchaingo</code> 从 <code>kh</code> 里彻底抹掉，而是把它请出 Agent 主循环：它仍然保留在底层 provider、多模态兼容和部分历史消息转换链路里，但灵魂般的“Turn Loop”控制权被收回到 <code>turnmesh</code>。这种重构带来的“轻量”，本质上不是把能力做少，而是把边界收窄。</p>
+<p>这里真正的取舍，不是“要不要用 <code>langchaingo</code>”，而是“谁来掌握主循环”。<code>turnmesh</code> 只接管跨业务复用的运行时能力：Turn Loop、Tool Dispatch、Provider/Session 边界和结构化事件；而 <code>kh</code> 继续保留业务自己的壳：会话落库、dataset/ACL、SSE 推送、citation collector、业务 prompt。这意味着复杂度并没有被假装消灭，而是被重新安放到了更合理的位置。对我来说，这才是“轻量”的真正含义。</p>
+<h3 id="统一调用面：One-Shot-API-的价值"><a href="#统一调用面：One-Shot-API-的价值" class="headerlink" title="统一调用面：One-Shot API 的价值"></a>统一调用面：One-Shot API 的价值</h3><p>在重构过程中，我进一步发现 <code>kh</code> 知识库项目里有不少场景并不需要复杂的多轮 Agent。比如 Query Rewrite（提问重写），本质上只需要模型完成一次输出。</p>
+<p>如果为了这么简单的需求去引入一套复杂的 Agent 运行时，显然是过度设计。但我又希望复用 <code>turnmesh</code> 已经做好的 Provider 适配和日志监控。</p>
+<p>于是我在 <code>turnmesh</code> 中引入了 <code>RunOneShot</code> API。它代表的是一种统一调用面的方向：对于那些不需要 Tool Loop 的链路，也可以走同一套 Provider 配置、日志观测和调用封装。</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在 kh 中，查询重写这类链路未来可以收敛为统一的 One-Shot 调用面</span></span><br><span class="line">result, err := turnmesh.RunOneShot(ctx, config, turnmesh.OneShotRequest{</span><br><span class="line">    SystemPrompt: <span class="string">"你是一个专业的搜索专家，请重写用户的提问..."</span>,</span><br><span class="line">    Messages: messages,</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里也需要实话实说：当前 <code>kh</code> 的 Query Rewrite 实现仍然直接走原有的 <code>llmClient.StreamChat(...)</code> 链路，<code>RunOneShot</code> 更像是我已经补齐好的统一基础设施，以及下一步自然的收敛方向。但一旦这类链路切过来，无论是复杂的客服多轮对话，还是简单的关键词提取，在我们的底层基础设施里就会真正统一起来。这意味着我只需要在一处地方配置 API Key、在一处地方优化模型调用成本、在一处地方观测所有的模型延迟。</p>
+<h2 id="结语：控制复杂度的唯一方法，是面对它"><a href="#结语：控制复杂度的唯一方法，是面对它" class="headerlink" title="结语：控制复杂度的唯一方法，是面对它"></a>结语：控制复杂度的唯一方法，是面对它</h2><p>重构 <code>turnmesh</code> 的过程，让我对“AI 时代的应用开发”有了全新的理解。</p>
+<p>我们可以用 Codex’s gpt 5.4 xhigh 在两个小时左右内做出一个原型，这展现了 AI 极高的生产力。但在处理真实的业务边界、定义长久可维护的架构层级时，人类工程师的判断力依然是不可替代的。我们决定了系统在哪里停止自动延伸，决定了哪一部分权力该交给模型，哪一部分必须紧紧攥在代码里。</p>
+<p>我并不是在做一个“更好的 Claude Code 翻译版”，而是在尝试构建一个能够嵌入到我们现有所有 Go 业务中的“Agent 核心引擎”。</p>
+<p>目前，<code>turnmesh</code> 的核心单测以及接入相关的关键验证已经跑通。在 <code>ai-customer</code> 与 <code>kh</code> 的切换过程中，新的内核至少已经证明自己在边界控制和异常 Tool Call 防御上更稳；至于更系统的 benchmark 和压力测试，我认为仍然值得在下一阶段补齐，而不是在这里提前把话说满。</p>
+<p>Agent 的路还很长，但至少这一次，我们不再是在沙堆上筑塔，而是拥有了一块坚硬的、经过源码级深研的底座。</p>
+
+      </div>
+    </div>
+  </div>
+
+  
+  <nav class="post-nav">
+    
+    
+    <a class="post-nav__item post-nav__item--next" href="/2026/04/11/%E5%A4%9A%E7%A7%9F%E6%88%B7%E9%9A%94%E7%A6%BB%E7%9A%84%E8%89%BA%E6%9C%AF%EF%BC%9A%E5%9C%A8-RAG-%E7%B3%BB%E7%BB%9F%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%8E%9F%E5%AD%90%E7%BA%A7%E7%9A%84%E7%A7%9F%E6%88%B7%E5%AE%89%E5%85%A8/">
+      <span>下一篇</span>
+      <strong>多租户隔离的艺术：在 RAG 系统中实现原子级的租户安全</strong>
+    </a>
+    
+  </nav>
+  
+</article>
+  </main>
+  
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <div class="site-footer__links">
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </div>
+      <p class="site-footer__title">© 2026
+          Jayleonc
+      </p>
+      <p class="site-footer__meta">
+        自 2019 年起持续写作，本站已稳定运行 <span data-runtime data-since="2019-02-28T00:00:00+08:00">7 年</span>。
+        <span id="busuanzi_container_site_uv" style="display:none;">已与 <span id="busuanzi_value_site_uv"></span> 位访客在此相遇。</span>
+      </p>
+      <p class="site-footer__note">
+        Hexo 8 · Atelier 自定义主题
+      </p>
+    </div>
+  </footer>
+  <script async defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script src="/js/site.js"></script>
+</body>
+</html>
