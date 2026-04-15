@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从生产 ID 语义错位到统一 ID 编排层：我和 AI 如何完成一次跨服务重构 · Jayleonc</title>
+<meta name="description" content="一次生产环境 ID 语义不一致问题，我如何和 AI 从现场定位、架构裁决、Spec/Plan/Tasks 到代码收口与文档治理，完整走完一轮高风险改造。">
+<meta name="theme-color" content="#f3e8da">
+
+
+<link rel="canonical" href="https://jayleonc.github.io/2026/04/15/%E4%BB%8E%E7%94%9F%E4%BA%A7-ID-%E8%AF%AD%E4%B9%89%E9%94%99%E4%BD%8D%E5%88%B0%E7%BB%9F%E4%B8%80-ID-%E7%BC%96%E6%8E%92%E5%B1%82%EF%BC%9A%E6%88%91%E5%92%8C-AI-%E5%A6%82%E4%BD%95%E5%AE%8C%E6%88%90%E4%B8%80%E6%AC%A1%E8%B7%A8%E6%9C%8D%E5%8A%A1%E9%87%8D%E6%9E%84/">
+
+<meta property="og:title" content="从生产 ID 语义错位到统一 ID 编排层：我和 AI 如何完成一次跨服务重构 · Jayleonc">
+<meta property="og:description" content="一次生产环境 ID 语义不一致问题，我如何和 AI 从现场定位、架构裁决、Spec/Plan/Tasks 到代码收口与文档治理，完整走完一轮高风险改造。">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Jayleonc">
+<meta property="og:locale" content="zh-CN">
+
+<meta property="og:url" content="https://jayleonc.github.io/2026/04/15/%E4%BB%8E%E7%94%9F%E4%BA%A7-ID-%E8%AF%AD%E4%B9%89%E9%94%99%E4%BD%8D%E5%88%B0%E7%BB%9F%E4%B8%80-ID-%E7%BC%96%E6%8E%92%E5%B1%82%EF%BC%9A%E6%88%91%E5%92%8C-AI-%E5%A6%82%E4%BD%95%E5%AE%8C%E6%88%90%E4%B8%80%E6%AC%A1%E8%B7%A8%E6%9C%8D%E5%8A%A1%E9%87%8D%E6%9E%84/">
+
+
+<meta property="og:image" content="https://jayleonc.github.io/images/1.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://jayleonc.github.io/images/1.png">
+
+<meta name="twitter:title" content="从生产 ID 语义错位到统一 ID 编排层：我和 AI 如何完成一次跨服务重构 · Jayleonc">
+<meta name="twitter:description" content="一次生产环境 ID 语义不一致问题，我如何和 AI 从现场定位、架构裁决、Spec/Plan/Tasks 到代码收口与文档治理，完整走完一轮高风险改造。">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,30;0,9..144,400..900,100;1,9..144,400..900,30;1,9..144,400..900,100&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<body class="layout-post">
+  <header class="site-header" data-site-header>
+  <div class="shell site-header__inner">
+    
+    <a class="site-brand" href="/">
+      <span class="site-brand__mark">J<em>l</em></span>
+      <span class="site-brand__text">
+        <strong>Jayleonc</strong>
+        <small>用代码、AI 和写作记录成长</small>
+      </span>
+    </a>
+
+    <div class="site-header__actions">
+      <nav class="site-nav" id="site-nav" data-site-nav>
+        
+        <a href="/" class="">文章</a>
+        
+        <a href="/archives/" class="">归档</a>
+        
+        <a href="/about/" class="">关于</a>
+        
+        <a href="/friends/" class="">资源</a>
+        
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </nav>
+
+      <button class="theme-toggle" type="button" aria-label="切换主题" title="切换主题" data-theme-toggle>
+        <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m12.95 5.536 1.414 1.414M4.636 4.636 6.05 6.05m10.9-1.414L15.536 6.05M6.05 17.95l-1.414 1.414M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>
+          </svg>
+        </span>
+        <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M20 15.5A7.5 7.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
+          </svg>
+        </span>
+      </button>
+
+      <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+  <main class="site-main">
+    
+  <article class="post-shell shell">
+    <div class="post-layout">
+      <div class="post-main">
+        <header class="post-hero reveal">
+          
+            <p class="eyebrow">
+              AI工程</p>
+        
+        <h1>从生产 ID 语义错位到统一 ID 编排层：我和 AI 如何完成一次跨服务重构</h1>
+        <div class="post-hero__meta">
+          <span>2026-04-15 23:48:09</span>
+          <span>8 分钟阅读</span>
+          <span>3543 字</span>
+        </div>
+        
+        <p class="post-hero__summary">一次生产环境 ID 语义不一致问题，我如何和 AI 从现场定位、架构裁决、Spec/Plan/Tasks 到代码收口与文档治理，完整走完一轮高风险改造。</p>
+        
+        
+        <div class="tag-list post-tags">
+          
+          <a class="tag-chip" href="/tags/AI/">AI</a>
+          
+          <a class="tag-chip" href="/tags/%E6%8A%80%E6%9C%AF/">技术</a>
+          
+          <a class="tag-chip" href="/tags/%E6%80%9D%E8%80%83/">思考</a>
+          
+          <a class="tag-chip" href="/tags/%E6%9E%B6%E6%9E%84%E5%AE%9E%E8%B7%B5/">架构实践</a>
+          
+          <a class="tag-chip" href="/tags/%E5%BC%80%E6%94%BE%E5%B9%B3%E5%8F%B0/">开放平台</a>
+          
+        </div>
+        
+      </header>
+
+      <div class="post-content prose">
+        <p>昨晚出现了一个线上问题，对我自己是一次很扎实的提醒：很多“看起来是配置差异”的问题，深层其实是接口契约没有真正冻结。</p>
+<p>为了方便理解，本文把具体系统抽象成三层：适配层（jzadapter）、平台层（wwrpabase）和开放平台业务层。事情的起点很直接：这三层刚一起发版到生产。</p>
+<p>发完不久，接口返回里 <code>robot_id</code>、<code>group_id</code>、<code>contact_id</code> 的形态就出现了明显差异：开发环境看起来是包装过的 ID，生产环境回的是底层纯数字 SN。这个现象如果只停在列表接口，还不算最糟；真正麻烦的是，客户端会拿这些 ID 去调其它接口，链路一长就会出现语义割裂。</p>
+<h2 id="这个问题是怎么被我钉死的"><a href="#这个问题是怎么被我钉死的" class="headerlink" title="这个问题是怎么被我钉死的"></a>这个问题是怎么被我钉死的</h2><p>我第一步没有去改代码，先把现场压实。</p>
+<p>同一个 key 在生产和开发的配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config_tool -f GetStr -k system_state</span><br></pre></td></tr></table></figure>
+
+<p>生产：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;base_channel&quot;</span><span class="punctuation">:</span><span class="number">3</span><span class="punctuation">,</span><span class="attr">&quot;default_dev_type&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>开发：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;base_channel&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">,</span><span class="attr">&quot;bns_key&quot;</span><span class="punctuation">:</span><span class="string">&quot;...&quot;</span><span class="punctuation">,</span><span class="attr">&quot;default_dev_type&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这时候我和 AI 的分工很清楚：我负责提出“该验证什么”，AI 负责帮我快速扫代码事实。</p>
+<p>我们很快确认了几件关键事实：</p>
+<ul>
+<li><code>system_state</code> 是全局配置，不带 corp 维度。</li>
+<li><code>base_channel=3</code> 走 WEG 路径时，转换器本身是直通返回。</li>
+<li><code>base_channel=1</code> 走 BNS 路径时，才会使用 <code>bns_key</code> 做 AES 编解码。</li>
+</ul>
+<p>换句话说，生产和开发 <code>robot_sn</code> 看起来不一样，根因并不在某张业务表，核心是“编解码路径”不同。</p>
+<h2 id="最关键的判断：生产不能改-base-channel"><a href="#最关键的判断：生产不能改-base-channel" class="headerlink" title="最关键的判断：生产不能改 base_channel"></a>最关键的判断：生产不能改 base_channel</h2><p>这一步我问自己说：</p>
+<p>如果根因是 <code>base_channel</code>，那是不是把生产也改成 1 就结束了？</p>
+<p>很显然，我们是不能这么做滴。</p>
+<p><code>base_channel</code> 在适配层是全局态，它影响的不止一个接口，也不止开放平台业务层。这个开关一动，潜在影响面会覆盖整条底层编解码链路。所以：生产不能改这个配置。</p>
+<p>到这里，问题就变成了一个架构题：</p>
+<p>在不动生产 <code>base_channel</code> 的前提下，怎么把开放平台对外 ID 语义稳定下来。</p>
+<h2 id="架构抉择：我为什么选了平台层收口"><a href="#架构抉择：我为什么选了平台层收口" class="headerlink" title="架构抉择：我为什么选了平台层收口"></a>架构抉择：我为什么选了平台层收口</h2><p>当时桌面上有几条路。</p>
+<p>第一条路是在开放平台业务层自己做一层映射或 AES。实现速度看起来快，长期风险很高，后面会形成双真相源。</p>
+<p>第二条路是开放平台业务层直接连适配层。能解决一部分问题，分层会开始走样，后面回调链路和其它服务复用也会更难。</p>
+<p>第三条路是“开放平台业务层 -&gt; 平台层”，把 ID 编解码契约收口到平台层，业务层只保留一个统一入口。这个方案符合我们原本的依赖方向，也更适合把策略做成系统能力。</p>
+<p>我最后拍板第三条。</p>
+<p>同时我和 AI 一起把另一个关键点定了：</p>
+<p><code>HLOPEN_USE_LEGACY_ID</code> 这个租户特性开关，只能在平台层的 ID 格式化能力内部判定，开放平台业务层不直接读 <code>feature</code>。</p>
+<p>这个决定看起来像细节，实际是防止策略漂移的核心。只要判定点分散，后面同步接口、异步结果、事件回调就会慢慢长成三套语义。</p>
+<h2 id="我和-AI-在“自动化”上争论过一轮"><a href="#我和-AI-在“自动化”上争论过一轮" class="headerlink" title="我和 AI 在“自动化”上争论过一轮"></a>我和 AI 在“自动化”上争论过一轮</h2><p>过程中我追问了一个问题：<br>既然定了统一 ID 编排层，那是不是应该把所有同步响应、异步结果、回调回传都自动化接进去？</p>
+<p>AI 一开始给了一个方向：<br>用反射自动扫描字段，或者通过拦截器 + 注册表，让转换“自动发生”。</p>
+<p>但我很快把这个方向否掉了。原因很现实：</p>
+<ul>
+<li>字段语义不可穷举。今天叫 <code>robot_id</code>，明天可能叫 <code>sender_uid</code>、<code>target_sn</code>，靠字段名猜语义注定会漏。</li>
+<li>字段方向不稳定。同一个字段在入参是“外部 -&gt; 内部”，在出参是“内部 -&gt; 外部”，自动机制很难判断上下文。</li>
+<li>序列化字符串替换不可靠。异步结果里很多是 JSON 字符串，盲替会把非 ID 数字一起改掉。</li>
+<li>排障代价高。隐式转换一旦出错，代码里找不到明确调用点，问题会变成“看不见的 bug”。</li>
+</ul>
+<p>后来方案被收敛成两种：</p>
+<ol>
+<li>拦截器 + 中心注册表：集中声明哪些接口字段要转换。</li>
+<li>显式逐点改造 + 极简 helper：在赋值现场直接调用 <code>idcodec</code>。</li>
+</ol>
+<p>我最终坚持第二种。核心不是“省体力”，而是降低心智负担。<br>在我看来，中心注册表 + 拦截器是典型过度设计：每次加新功能或改接口，都要回头检查注册中心有没有补齐，维护路径会被人为拉长。  在这个地方，我的原则很简单：心智负担一定要小，代码大道至简，能在现场显式完成的，就不要绕到隐式机制里。</p>
+<p>显式改造的好处是，代码天然可审计、可 grep、可 review。比如从：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsp.RobotId = robotSn</span><br></pre></td></tr></table></figure>
+
+<p>变成：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsp.RobotId = idcodec.FormatRobot(ctx, corpID, appID, robotSn)</span><br></pre></td></tr></table></figure>
+
+<p>每个转换点都写在现场，不需要额外心智去记“还要不要去某个中心注册表补一行”。对后续维护者来说，这比“聪明的自动化”更可靠。</p>
+<h2 id="我怎么把“讨论”压成可执行工程"><a href="#我怎么把“讨论”压成可执行工程" class="headerlink" title="我怎么把“讨论”压成可执行工程"></a>我怎么把“讨论”压成可执行工程</h2><p>我这次最大的体感是：只靠聊天很难收口复杂改造。</p>
+<p>所以我直接用三层文档把它钉住：</p>
+<ul>
+<li><code>spec.md</code>：定义必须满足的约束和验收标准。</li>
+<li><code>plan.md</code>：把状态变换拆成 Phase，并写清不变量。</li>
+<li><code>tasks.md</code>：把每一步要改的文件、命令、门禁检查全部落成执行清单。</li>
+</ul>
+<p>这套方法帮我解决了两个问题。</p>
+<p>一个问题是“记忆漂移”。这类跨服务改造会持续几天，换会话窗口、换上下文都很常见。没有冻结文档，团队和 AI 都会慢慢偏航。</p>
+<p>另一个问题是“做完以后怎么证明做完”。我们把 grep 门禁、编译门禁、结构门禁都写进了 <code>tasks.md</code>，执行结果能直接对照。</p>
+<h2 id="真正落代码时，我和-AI-的协作方式"><a href="#真正落代码时，我和-AI-的协作方式" class="headerlink" title="真正落代码时，我和 AI 的协作方式"></a>真正落代码时，我和 AI 的协作方式</h2><p>代码层面改动很大，覆盖适配层、平台层、开放平台业务层三条线。</p>
+<p>核心动作包括：</p>
+<ul>
+<li>在平台层协议增加批量 <code>resolve/format</code> 能力。</li>
+<li>在适配层协议补齐反向能力，保证包装 ID 入参双读可用。</li>
+<li>在平台层新增统一 <code>open_id_codec</code> 模块，收口 <code>resolve/format</code> 逻辑和特性开关判定。</li>
+<li>在开放平台业务层新增 <code>idcodec</code> 模块，把同步接口、异步任务、回调链路统一接入。</li>
+</ul>
+<p>迁移量真正大的地方在业务层异步任务和 <code>cb_*</code> 回调链。这个阶段 AI 的价值非常高：它能快速定位调用点、批量替换、补 helper、跑编译。</p>
+<p>同时我也很清楚，关键裁决必须是我来做：</p>
+<ul>
+<li>哪些旧路径可以删，哪些必须暂时保留。</li>
+<li>错误语义怎么映射，才能跟现有对外错误码兼容。</li>
+<li>哪些变更是“功能收口”，哪些其实是在偷改业务语义。</li>
+</ul>
+<p>我在这个阶段一直坚持一件事：AI 可以快，但不能越权替我做架构判断。</p>
+<h2 id="代码完成后，我做了哪些“看起来慢”的事"><a href="#代码完成后，我做了哪些“看起来慢”的事" class="headerlink" title="代码完成后，我做了哪些“看起来慢”的事"></a>代码完成后，我做了哪些“看起来慢”的事</h2><p>代码过编译只是中段，不是终点。</p>
+<p>这次我把后置治理也做完了：</p>
+<ul>
+<li>补全关键函数注释，尤其是业务层 <code>idcodec</code> 和平台层 <code>open_id_codec</code>。</li>
+<li>在平台层补 Prometheus 指标：<ul>
+<li><code>id_resolve_hit_mode_total</code></li>
+<li><code>id_format_mode_total</code></li>
+<li><code>id_codec_error_total</code></li>
+<li><code>id_codec_latency</code></li>
+</ul>
+</li>
+<li>更新 <code>constitution.md</code>，把“统一 ID 编排层”的硬约束写进宪法文档。</li>
+<li>更新 roadmap&#x2F;progress，确保后续会话知道当前系统事实。</li>
+<li>把业务层 README 从“改造记录”重写成“统一 ID 编排层说明”。</li>
+</ul>
+<p>这些动作短期看不性感，长期会省掉大量返工。后来的人读文档就能知道：这里的策略边界是什么，为什么这么定，新增接口该走哪条路。</p>
+<h2 id="我在生产项目里的-AI-协作分工"><a href="#我在生产项目里的-AI-协作分工" class="headerlink" title="我在生产项目里的 AI 协作分工"></a>我在生产项目里的 AI 协作分工</h2><p>这是我平时与 AI 协作的一种方式。AI 最稳的角色有三个：</p>
+<ul>
+<li>代码考古与事实扫描器</li>
+<li>批量迁移执行器</li>
+<li>文档草案生成器</li>
+</ul>
+<p>我自己主要负责三件事：</p>
+<ul>
+<li>边界和风险判断</li>
+<li>ADR 级别的方案取舍</li>
+<li>验收口径和最终签字</li>
+</ul>
+<p>AI 负责提速，我负责边界、取舍和验收。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>这次从“生产返回纯数字 SN”到“统一 ID 编排层”落地，对我来说不是一次普通修 bug。</p>
+<p>它更像一次完整的工程演练：</p>
+<p>现场定位、根因确认、边界约束、架构裁决、Spec&#x2F;Plan&#x2F;Tasks、跨服务改造、门禁验收、文档收口，整个链条都跑了一遍。</p>
+<p>如果你也在做类似的跨服务治理改造，我自己的经验是：</p>
+<p>先把系统事实钉死，再把方案写成可执行清单，最后才是代码。这个顺序会慢一点，心里会稳很多。</p>
+<p>当然，目前还没做完整测试，这篇主要是一次过程分享和总结。整个过程从问题出现、分析定位、方案收敛到代码改完，实际投入大约三个小时。  </p>
+<p>这也是 AI 协作最明显的价值：如果纯手工推进这次改造，按我的经验最快也要两天… maybe 三天哈哈。</p>
+<p>我现在还在上海，明天要继续进行现场适配&#x2F;交付工作，累瘫了…</p>
+<h2 id="附：和-AI-工作截图"><a href="#附：和-AI-工作截图" class="headerlink" title="附：和 AI 工作截图"></a>附：和 AI 工作截图</h2><p>分享两张和 AI 一起工作的截图。</p>
+<p><img src="/2026/04/15/%E4%BB%8E%E7%94%9F%E4%BA%A7-ID-%E8%AF%AD%E4%B9%89%E9%94%99%E4%BD%8D%E5%88%B0%E7%BB%9F%E4%B8%80-ID-%E7%BC%96%E6%8E%92%E5%B1%82%EF%BC%9A%E6%88%91%E5%92%8C-AI-%E5%A6%82%E4%BD%95%E5%AE%8C%E6%88%90%E4%B8%80%E6%AC%A1%E8%B7%A8%E6%9C%8D%E5%8A%A1%E9%87%8D%E6%9E%84/iShot_2026-04-15_23.11.31.png" alt="和 AI 工作截图 2"></p>
+<p><img src="/2026/04/15/%E4%BB%8E%E7%94%9F%E4%BA%A7-ID-%E8%AF%AD%E4%B9%89%E9%94%99%E4%BD%8D%E5%88%B0%E7%BB%9F%E4%B8%80-ID-%E7%BC%96%E6%8E%92%E5%B1%82%EF%BC%9A%E6%88%91%E5%92%8C-AI-%E5%A6%82%E4%BD%95%E5%AE%8C%E6%88%90%E4%B8%80%E6%AC%A1%E8%B7%A8%E6%9C%8D%E5%8A%A1%E9%87%8D%E6%9E%84/iShot_2026-04-15_23.09.56.png" alt="和 AI 工作截图 1"></p>
+
+      </div>
+    </div>
+  </div>
+
+  
+  <nav class="post-nav">
+    
+    
+    <a class="post-nav__item post-nav__item--next" href="/2026/04/15/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E7%9A%84%E6%9C%AC%E8%B4%A8%EF%BC%9A%E9%80%9A%E8%BF%87%E6%8A%BD%E8%B1%A1%E4%B8%8E%E7%90%86%E8%AE%BA%E6%9E%84%E5%BB%BA%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E5%A4%8D%E6%9D%82%E6%80%A7/">
+      <span>下一篇</span>
+      <strong>软件工程的本质：通过抽象与理论构建管理系统复杂性</strong>
+    </a>
+    
+  </nav>
+  
+</article>
+
+  </main>
+  
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <div class="site-footer__links">
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </div>
+      <p class="site-footer__title">© 2026
+          Jayleonc
+      </p>
+      <p class="site-footer__meta">
+        自 2019 年起持续写作，本站已稳定运行 <span data-runtime data-since="2019-02-28T00:00:00+08:00">7 年</span>。
+        <span id="busuanzi_container_site_uv" style="display:none;">已与 <span id="busuanzi_value_site_uv"></span> 位访客在此相遇。</span>
+      </p>
+      <p class="site-footer__note">
+        Hexo 8 · Atelier 自定义主题
+      </p>
+    </div>
+  </footer>
+  <script async defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script src="/js/site.js"></script>
+</body>
+</html>
