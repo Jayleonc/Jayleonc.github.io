@@ -402,14 +402,291 @@ select {
 }
 
 .hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.06fr) minmax(18.5rem, 0.94fr);
+  gap: clamp(1.3rem, 3vw, 2.6rem);
+  align-items: stretch;
+  padding: 3.7rem 0 1.8rem;
+}
+
+.hero__left {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  padding: 5.6rem 0 4.4rem;
+  min-height: 100%;
+  height: 100%;
 }
 
 .hero__copy {
   width: 100%;
+  max-width: 46rem;
+  padding-bottom: clamp(1.1rem, 1.9vw, 1.8rem);
+}
+
+.hero__stage {
+  position: relative;
+  width: 100%;
+  display: grid;
+  gap: 1.05rem;
+  padding: 1.2rem 1.15rem 1.45rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--surface-strong) 90%, transparent), color-mix(in srgb, var(--bg-soft) 76%, transparent)),
+    radial-gradient(circle at 100% 0%, rgba(208, 90, 53, 0.12), transparent 54%);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.hero__stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.12) 100%);
+}
+
+.hero__stage > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hero__stage-head {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.hero__stage-head .eyebrow {
+  margin: 0;
+}
+
+.hero__stage-head h2 {
+  margin: 0;
+  max-width: 16ch;
+  font-family: var(--display-font);
+  font-size: clamp(1.48rem, 2.35vw, 2.08rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  font-variation-settings: "opsz" 144, "SOFT" 60;
+}
+
+.hero__stage-body {
+  margin: 0;
+  max-width: 36ch;
+  color: var(--muted);
+  font-size: 0.97rem;
+  line-height: 1.82;
+  text-wrap: pretty;
+}
+
+.hero__stage-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 1.2rem;
+  padding: 0.58rem 0 0.45rem;
+  border-top: 1px solid color-mix(in srgb, var(--line) 90%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 90%, transparent);
+}
+
+.hero__stage-stats span {
+  color: var(--whisper);
+  font-family: var(--ui-font);
+  font-size: 0.72rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.hero__stage-stats strong {
+  margin-right: 0.3rem;
+  color: var(--accent);
+  font-size: 0.94rem;
+  letter-spacing: 0.03em;
+}
+
+.hero__stage-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border: 1px solid color-mix(in srgb, var(--line) 84%, transparent);
+  border-radius: 13px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--bg-soft) 72%, transparent);
+}
+
+.hero-stage-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.25rem 0.95rem;
+  align-items: start;
+  padding: 0.8rem 0.9rem;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+  background: transparent;
+  transition: transform var(--transition), background var(--transition);
+}
+
+.hero-stage-card:last-child {
+  border-bottom: 0;
+}
+
+.hero-stage-card:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--surface-hover) 52%, transparent);
+}
+
+.hero-stage-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  grid-column: 1;
+  color: var(--whisper);
+  font-size: 0.67rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  font-family: var(--ui-font);
+}
+
+.hero-stage-card__label {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.hero-stage-card h3 {
+  margin: 0;
+  grid-column: 1;
+  font-size: 1.18rem;
+  line-height: 1.18;
+  font-family: var(--display-font);
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 144, "SOFT" 55;
+}
+
+.hero-stage-card h3 a {
+  color: inherit;
+}
+
+.hero-stage-card p {
+  grid-column: 1;
+  margin: 0.08rem 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.54;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.hero-stage-card__footer {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: stretch;
+  display: grid;
+  align-content: center;
+  justify-items: end;
+  gap: 0.32rem;
+}
+
+.hero-stage-card__latest {
+  margin: 0;
+  display: grid;
+  gap: 0.1rem;
+  text-align: right;
+}
+
+.hero-stage-card__latest span {
+  flex: 0 0 auto;
+  color: var(--whisper);
+  font-family: var(--ui-font);
+  font-size: 0.58rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.hero-stage-card__latest a {
+  min-width: 0;
+  max-width: 10.2rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.hero-stage-card__latest a:hover {
+  color: var(--accent);
+}
+
+.hero-stage-card__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--accent);
+  font-family: var(--ui-font);
+  font-size: 0.67rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hero-stage-card__action::after {
+  content: "→";
+}
+
+.hero-stage-card__action:hover {
+  color: var(--accent-warm);
+}
+
+.hero__about {
+  margin-top: auto;
+  width: min(100%, 33rem);
+  padding: 0.95rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--surface-strong) 86%, transparent);
+  box-shadow: var(--shadow-soft);
+}
+
+.hero__about .eyebrow {
+  margin: 0 0 0.6rem;
+}
+
+.hero__about-body {
+  margin: 0;
+  font-family: var(--display-font);
+  font-size: 1.03rem;
+  line-height: 1.66;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.hero__about-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.52rem;
+  margin-top: 1rem;
+}
+
+.hero__about-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.38rem 0.84rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg-soft) 70%, transparent);
+  color: var(--muted);
+  font-family: var(--ui-font);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: border-color var(--transition), color var(--transition), background-color var(--transition);
+}
+
+.hero__about-link:hover {
+  color: var(--accent);
+  border-color: var(--line-strong);
+  background: var(--surface-hover);
 }
 
 .hero__copy,
@@ -667,8 +944,15 @@ select {
   scroll-margin-top: 6.5rem;
 }
 
+.layout-index .home-section--stream {
+  margin-top: clamp(3.2rem, 5.8vw, 4.6rem);
+  padding-top: clamp(1.6rem, 2.8vw, 2.2rem);
+  scroll-margin-top: calc(var(--anchor-offset) + 1.2rem);
+  z-index: 1;
+}
+
 .layout-index .home-section--intro {
-  padding-top: clamp(3.6rem, 6vw, 5.4rem);
+  padding-top: clamp(1.4rem, 3.2vw, 2.4rem);
 }
 
 .layout-index .home-section + .home-section {
@@ -824,6 +1108,10 @@ select {
   grid-template-columns: minmax(0, 1fr) minmax(18.5rem, 22rem);
   gap: 2.6rem;
   align-items: start;
+}
+
+.home-stream--single {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .home-stream__main,
@@ -2207,8 +2495,48 @@ a.tag-chip:hover,
 }
 
 @media (max-width: 980px) {
-  .hero::before {
-    display: none;
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 1.45rem;
+    padding-top: 2.35rem;
+    padding-bottom: 2.65rem;
+    align-items: start;
+  }
+
+  .hero__stage {
+    padding: 0.95rem 0.95rem 1.3rem;
+  }
+
+  .hero__stage-head h2 {
+    max-width: none;
+  }
+
+  .hero__stage-list {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(235px, 84%);
+    gap: 0.55rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+    scroll-snap-type: x mandatory;
+  }
+
+  .hero-stage-card {
+    scroll-snap-align: start;
+    border: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
+    border-radius: 12px;
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
+    background: color-mix(in srgb, var(--bg-soft) 80%, transparent);
+  }
+
+  .hero__about {
+    width: 100%;
+    max-width: none;
+    margin-top: 1.1rem;
+    padding: 0.9rem 0.95rem;
   }
 
   .hero__feature {
@@ -2256,6 +2584,11 @@ a.tag-chip:hover,
   .layout-index .home-section.section--cta {
     padding-top: 2.4rem;
     padding-bottom: 2rem;
+  }
+
+  .layout-index .home-section--stream {
+    margin-top: 0;
+    padding-top: 1.7rem;
   }
 
   .layout-index .home-section + .home-section {
