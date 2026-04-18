@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>复盘：一个短视频小程序的快速上线策略与架构抉择 · Jayleonc</title>
+<meta name="description" content="一个为了验证市场而开发的 MVP 短视频系统，在极致开发速度与工业级架构坚持之间是如何权衡的。">
+<meta name="theme-color" content="#f3e8da">
+
+
+<link rel="canonical" href="https://jayleonc.github.io/2026/04/18/short-video-applet-mvp-retrospective/">
+
+<meta property="og:title" content="复盘：一个短视频小程序的快速上线策略与架构抉择 · Jayleonc">
+<meta property="og:description" content="一个为了验证市场而开发的 MVP 短视频系统，在极致开发速度与工业级架构坚持之间是如何权衡的。">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Jayleonc">
+<meta property="og:locale" content="zh-CN">
+
+<meta property="og:url" content="https://jayleonc.github.io/2026/04/18/short-video-applet-mvp-retrospective/">
+
+
+<meta property="og:image" content="https://jayleonc.github.io/images/1.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://jayleonc.github.io/images/1.png">
+
+<meta name="twitter:title" content="复盘：一个短视频小程序的快速上线策略与架构抉择 · Jayleonc">
+<meta name="twitter:description" content="一个为了验证市场而开发的 MVP 短视频系统，在极致开发速度与工业级架构坚持之间是如何权衡的。">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,30;0,9..144,400..900,100;1,9..144,400..900,30;1,9..144,400..900,100&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<body class="layout-post">
+  <header class="site-header" data-site-header>
+  <div class="shell site-header__inner">
+    
+    <a class="site-brand" href="/">
+      <span class="site-brand__mark">J<em>l</em></span>
+      <span class="site-brand__text">
+        <strong>Jayleonc</strong>
+        <small>用代码、AI 和写作记录成长</small>
+      </span>
+    </a>
+
+    <div class="site-header__actions">
+      <nav class="site-nav" id="site-nav" data-site-nav>
+        
+        <a href="/" class="">文章</a>
+        
+        <a href="/archives/" class="">归档</a>
+        
+        <a href="/about/" class="">关于</a>
+        
+        <a href="/friends/" class="">资源</a>
+        
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </nav>
+
+      <button class="theme-toggle" type="button" aria-label="切换主题" title="切换主题" data-theme-toggle>
+        <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m12.95 5.536 1.414 1.414M4.636 4.636 6.05 6.05m10.9-1.414L15.536 6.05M6.05 17.95l-1.414 1.414M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>
+          </svg>
+        </span>
+        <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M20 15.5A7.5 7.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
+          </svg>
+        </span>
+      </button>
+
+      <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+  <main class="site-main">
+    
+  <article class="post-shell shell">
+    <div class="post-layout">
+      <div class="post-main">
+        <header class="post-hero reveal">
+          
+            <p class="eyebrow">
+              技术复盘</p>
+        
+        <h1>复盘：一个短视频小程序的快速上线策略与架构抉择</h1>
+        <div class="post-hero__meta">
+          <span>2026-04-18 10:00:00</span>
+          <span>6 分钟阅读</span>
+          <span>2625 字</span>
+        </div>
+        
+        <p class="post-hero__summary">一个为了验证市场而开发的 MVP 短视频系统，在极致开发速度与工业级架构坚持之间是如何权衡的。</p>
+        
+        
+        <div class="tag-list post-tags">
+          
+          <a class="tag-chip" href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/">架构设计</a>
+          
+          <a class="tag-chip" href="/tags/Go/">Go</a>
+          
+          <a class="tag-chip" href="/tags/Redis/">Redis</a>
+          
+          <a class="tag-chip" href="/tags/MVP/">MVP</a>
+          
+        </div>
+        
+      </header>
+
+      <div class="post-content prose">
+        <p>在整理硬盘时，翻出了半年前的一个项目源码。那是当时为了切入微信广告赛道，打算用两周时间快速上线的一个短视频内容管理平台。虽然最后因为业务调整，项目还没正式推向市场就停掉了，但在那个极致追求“短平快”的环境下，我关于架构设计的一些纠结和坚持，现在回头看依然挺有意思。</p>
+<h4 id="一、-业务背景：高频重复与广告变现"><a href="#一、-业务背景：高频重复与广告变现" class="headerlink" title="一、 业务背景：高频重复与广告变现"></a><strong>一、 业务背景：高频重复与广告变现</strong></h4><p>这个项目的逻辑非常纯粹：通过爬虫抓取海量视频内容，分发给中老年用户，在刷视频的过程中插入激励视频广告。</p>
+<p>针对这批用户，我们在调研中发现了一个特点：他们对“精准推荐”的要求不高，但对内容的“杀时间”爽感要求很高。只要视频刷得顺畅、不重复，他们就能停留很久。这个业务属性给了我们在技术实现上很大的“取舍”空间。</p>
+<h4 id="二、-解决分页漂移：Session-List-的随机策略"><a href="#二、-解决分页漂移：Session-List-的随机策略" class="headerlink" title="二、 解决分页漂移：Session List 的随机策略"></a><strong>二、 解决分页漂移：Session List 的随机策略</strong></h4><p>在短视频流中，最头疼的是“分页漂移”。</p>
+<p>如果用传统的 <code>LIMIT offset, limit</code> 分页，后台爬虫在实时塞入新内容时，用户滑到第二页可能就会看到第一页出现过的视频。要在短时间内搞一套推荐算法显然不现实，所以我实现了一套基于 Redis 的 <strong>Session List 缓存机制</strong>。</p>
+<ol>
+<li><strong>随机采样</strong>：用户进入时，系统从近期的视频池中随机抽取 500 条视频 ID。</li>
+<li><strong>内存 Shuffle</strong>：这 500 条 ID 在后端通过 <code>rand.Shuffle</code> 再次打乱。</li>
+<li><strong>Session 绑定</strong>：将这组有序的 ID 存入 Redis 并设置过期时间。后续的分页请求（Page 2, 3…）本质上只是在消费这个固定的 List。</li>
+</ol>
+<p>这种做法很“原始”，但在那个赶进度的阶段，它用极低的成本解决了用户体感最核心的问题。</p>
+<h4 id="三、-架构上的“执念”：那个让我心累的依赖容器"><a href="#三、-架构上的“执念”：那个让我心累的依赖容器" class="headerlink" title="三、 架构上的“执念”：那个让我心累的依赖容器"></a><strong>三、 架构上的“执念”：那个让我心累的依赖容器</strong></h4><p>在当时的开发环境下，领导的反馈很直接：“不要搞什么三层架构，太复杂了，简单直接写就行。”</p>
+<p>这里提到的“简单方案”，本质上就是利用 Go 的全局变量和 <code>init()</code> 函数。必须承认，全局变量在 MVP 阶段有它极其诱人的一面：开发极快，不需要层层传递参数，任何地方 <code>import</code> 就能用；心智负担低，不用考虑依赖拓扑。</p>
+<p>但我心里有一个底线：即使项目生命周期可能很短，也不能让它烂在手里。全局变量带来的隐式状态是系统腐烂的开始。因为状态是全局共享的，并行测试变得极难；由于 <code>init()</code> 执行顺序依赖于 import 顺序，一旦项目变大，你根本无法准确判断数据库、Redis 和配置中心到底谁先初始化完。</p>
+<p>我希望通过某种机制，让系统在未来增加功能时依然能保持基本的模块解耦。于是，我选择在项目中引入了一套自研的<strong>依赖注入（DI）容器</strong>。</p>
+<p>现在回想起来，那段日子确实挺“拧巴”的。</p>
+<p><strong>1. 手动装配的苦恼</strong><br>因为是自研容器，没用 <code>wire</code> 这种静态编译工具，我必须手动管理模块的注册。为了追求所谓的“模块自治”，我采用了<strong>按模块注册</strong>的方式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模块 A 注册</span></span><br><span class="line">container.Provide(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> *ModuleA &#123;</span><br><span class="line">    <span class="keyword">return</span> NewModuleA()</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模块 B 注册，依赖模块 A</span></span><br><span class="line">container.Provide(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> *ModuleB &#123;</span><br><span class="line">    <span class="keyword">return</span> NewModuleB(container.Get[*ModuleA]())</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 隐藏的注册顺序地雷</strong><br>由于我没有在容器里实现复杂的递归解析或拓扑排序，这种“模块即插件”的模式带来了一个隐性隐患：<strong>必须严格遵守注册顺序</strong>。如果模块 B 在模块 A 之前被注册，<code>container.Get[*ModuleA]()</code> 就会因为找不到实例而直接报错或返回 nil。</p>
+<p>在那段时间里，我常常在深夜调试那些因为初始化顺序不对导致的 panic。那种“明明知道方向是对的，却因为环境和工具不成熟而不断修修补补”的疲惫感，我记忆犹新。虽然这种由于“方便”而产生的技术债在短期内看起来收益很高，但我更担心它会变成永久的泥潭。</p>
+<p>最终我还是留下了容器。这种“手动有序注册”虽然笨，但它强迫我在代码层面去思考：<strong>谁才是真正的基础设施？谁依赖谁？</strong> 这种对依赖关系的显式声明，是防止代码演变成“大泥球”的最后一道防线。</p>
+<h4 id="四、-数据建模：共享-Content-层与-Aggregate-Root-的尝试"><a href="#四、-数据建模：共享-Content-层与-Aggregate-Root-的尝试" class="headerlink" title="四、 数据建模：共享 Content 层与 Aggregate Root 的尝试"></a><strong>四、 数据建模：共享 Content 层与 Aggregate Root 的尝试</strong></h4><p>在内容模型设计上，我面临一个选择：是把所有属性塞进一张表，还是做领域拆分？最终我采用了一种“核心主表 + 子模块扩展表”的结构。</p>
+<ul>
+<li><strong>Content（聚合根）</strong>：存放 ID、标题、封面、分类等共有属性。</li>
+<li><strong>子模块扩展表</strong>：分为 <code>video</code>（视频）、<code>gallery</code>（图集）、<code>article</code>（图文）。</li>
+</ul>
+<p>在这种结构下，<code>content</code> 模块成为了一个共享层，它只提供 Repository（数据库操作），不提供 Service 和 Handler。而具体的 <code>video</code> 模块则拥有自己的独立业务逻辑，它会通过容器获取 <code>content.Repo</code> 来操作共享数据。</p>
+<p>这种设计的优势在于，当你想要增加一个“短剧”业务时，它只需要在 <code>video</code> 模块下扩展一个子领域（Subdomain），而不需要改动核心的内容分发链路。这种对“领域边界”的划分，让我在后期处理多租户隔离和内容分发时，省去了大量的重复工作。</p>
+<h4 id="五、-反思：在丑陋中维持平衡"><a href="#五、-反思：在丑陋中维持平衡" class="headerlink" title="五、 反思：在丑陋中维持平衡"></a><strong>五、 反思：在丑陋中维持平衡</strong></h4><p>当时我也在想：既然公司追求“短平快”，这种坚持有意义吗？反正这些代码可能活不过几个月。</p>
+<p>回头看，那次经历让我真正理解了架构师的修行：<strong>在系统里设计完美闭环并不难，难的是在混乱、不完美，甚至有些“恶心”的现实环境中，仍然守住系统里那一点点秩序。</strong></p>
+<p>我学会了接受“不完美的平衡”：</p>
+<ul>
+<li>我可以接受用随机抽样这种“投机”的方式解决分页，因为那是业务所需的。</li>
+<li>但我不能接受完全没有依赖管理的全局变量，因为那是工程师的底线。</li>
+</ul>
+<p>这让我想到一句话：<strong>“知世俗，但不世俗。”</strong></p>
+<p>理解世俗的逻辑，比如业务要快、成本要低、生命周期短，是为了让项目先活下来；守住必要的技术底线，比如模块化、依赖清晰、数据模型合理，是为了让系统不在短期妥协里失控，也让自己作为工程师的专业性不被一点点磨掉。</p>
+<h4 id="六、-总结"><a href="#六、-总结" class="headerlink" title="六、 总结"></a><strong>六、 总结</strong></h4><p>回头再看这个项目，我其实并不满意。很多设计现在看来都显得粗糙，代码边界也不够清晰，有些地方还带着明显的试错痕迹。但它仍然有价值。那套 DI 容器思路、素材管理中的回滚逻辑，以及“核心能力 + 扩展能力”的模型意识，今天看仍有些粗糙，但它再次强化了我对工程边界的理解：代码要能跑，也要能承受后续变化。</p>
+<p>如果现在再回到那个时刻，我大概会删掉不少东西，把设计做得更轻，也更贴近当时真正的问题。但我应该还是会保留那一点对秩序的敏感。毕竟很多项目走到最后，留下来的不一定是代码本身，反倒是你在混乱里判断边界、处理取舍、承认不完美的方式。</p>
+
+      </div>
+    </div>
+  </div>
+
+  
+  <nav class="post-nav">
+    
+    
+    <a class="post-nav__item post-nav__item--next" href="/2026/04/15/%E4%BB%8E%E7%94%9F%E4%BA%A7-ID-%E8%AF%AD%E4%B9%89%E9%94%99%E4%BD%8D%E5%88%B0%E7%BB%9F%E4%B8%80-ID-%E7%BC%96%E6%8E%92%E5%B1%82%EF%BC%9A%E6%88%91%E5%92%8C-AI-%E5%A6%82%E4%BD%95%E5%AE%8C%E6%88%90%E4%B8%80%E6%AC%A1%E8%B7%A8%E6%9C%8D%E5%8A%A1%E9%87%8D%E6%9E%84/">
+      <span>下一篇</span>
+      <strong>从生产 ID 语义错位到统一 ID 编排层：我和 AI 如何完成一次跨服务重构</strong>
+    </a>
+    
+  </nav>
+  
+</article>
+
+  </main>
+  
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <div class="site-footer__links">
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </div>
+      <p class="site-footer__title">© 2026
+          Jayleonc
+      </p>
+      <p class="site-footer__meta">
+        自 2019 年起持续写作，本站已稳定运行 <span data-runtime data-since="2019-02-28T00:00:00+08:00">7 年</span>。
+        <span id="busuanzi_container_site_uv" style="display:none;">已与 <span id="busuanzi_value_site_uv"></span> 位访客在此相遇。</span>
+      </p>
+      <p class="site-footer__note">
+        Hexo 8 · Atelier 自定义主题
+      </p>
+    </div>
+  </footer>
+  <script async defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script src="/js/site.js"></script>
+</body>
+</html>
