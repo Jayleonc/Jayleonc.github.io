@@ -128,7 +128,7 @@
       </header>
 
       <div class="post-content prose">
-        <p>Meridian 最近已经不再只是一个日志查询原型。</p>
+        <p><a target="_blank" rel="noopener" href="https://github.com/Jayleonc/meridian">Meridian</a> 最近已经不再只是一个日志查询原型。</p>
 <p>它现在更像一套 MCP 驱动的智能运维观测平台：Probe 负责拿日志证据，Atlas 负责服务和元数据，Lens 负责只读数据查询，Trace 预留链路关联，Nexus 站在最前面做统一入口和工具转发。Console 给人看，Agent 通过 MCP 拿证据，开发服务器只暴露一个 <code>3000</code> 端口，内部服务都收在后面。</p>
 <p>这个项目一开始吸引我的点很直接：把排障时散落在日志、数据库、配置、服务健康里的线索，收成 AI 可以调用的标准工具。AI 不需要猜，它可以通过 Probe 查日志，通过 Lens 查数据，通过 Atlas 理解系统结构，再把这些证据组织成候选归因。</p>
 <p>但最近这次推进里，最有感觉的变化发生在另一个地方：Meridian 开始学会观察自己。</p>
