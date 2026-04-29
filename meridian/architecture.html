@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian — 业务诊断平台架构全景图</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg-deep: #0a0e17;
+    --bg-card: #111827;
+    --bg-card-hover: #1a2332;
+    --border: #1e2d3d;
+    --border-active: #2a4a6b;
+    --text-primary: #e2e8f0;
+    --text-secondary: #8b9bb4;
+    --text-dim: #4a5568;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-purple: #8b5cf6;
+    --accent-indigo: #6366f1;
+    --glow-blue: rgba(59, 130, 246, 0.15);
+    --glow-cyan: rgba(6, 182, 212, 0.15);
+    --glow-emerald: rgba(16, 185, 129, 0.15);
+    --glow-amber: rgba(245, 158, 11, 0.15);
+    --glow-purple: rgba(139, 92, 246, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'Noto Sans SC', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .noise-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .grid-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 56px;
+    position: relative;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+  }
+
+  .project-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    padding: 6px 16px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    background: rgba(6, 182, 212, 0.05);
+  }
+
+  .header h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #e2e8f0 0%, #3b82f6 50%, #06b6d4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+
+  .header .subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  .header .cn-subtitle {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    font-weight: 300;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  /* Architecture Layout */
+  .arch-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Layer */
+  .layer {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    background: rgba(17, 24, 39, 0.6);
+    backdrop-filter: blur(8px);
+    transition: border-color 0.3s;
+  }
+
+  .layer:hover {
+    border-color: var(--border-active);
+  }
+
+  .layer-label {
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 2px 12px;
+    border-radius: 2px;
+    background: var(--bg-deep);
+  }
+
+  .layer-label.blue { color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); }
+  .layer-label.cyan { color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
+  .layer-label.emerald { color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+  .layer-label.amber { color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+  .layer-label.purple { color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.3); }
+  .layer-label.rose { color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); }
+  .layer-label.indigo { color: var(--accent-indigo); border: 1px solid rgba(99, 102, 241, 0.3); }
+
+  .layer-content {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  /* Component Card */
+  .comp {
+    flex: 1;
+    min-width: 200px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    position: relative;
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .comp:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-active);
+    transform: translateY(-1px);
+  }
+
+  .comp-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .comp-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .comp-cn {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  .comp-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+
+  .tag-python { color: var(--accent-amber); background: var(--glow-amber); }
+  .tag-go { color: var(--accent-cyan); background: var(--glow-cyan); }
+  .tag-react { color: var(--accent-blue); background: var(--glow-blue); }
+  .tag-agent { color: var(--accent-purple); background: var(--glow-purple); }
+  .tag-store { color: var(--accent-emerald); background: var(--glow-emerald); }
+
+  .comp-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+
+  .comp-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .feature {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-secondary);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  /* Flow Arrows */
+  .flow-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 0;
+    gap: 16px;
+  }
+
+  .flow-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .flow-arrow .line {
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(to bottom, var(--accent-blue), var(--accent-cyan));
+    border-radius: 1px;
+    opacity: 0.5;
+  }
+
+  .flow-arrow .arrow-head {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid var(--accent-cyan);
+    opacity: 0.5;
+  }
+
+  .flow-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  /* Project Names Panel */
+  .names-panel {
+    margin-top: 48px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    background: rgba(17, 24, 39, 0.4);
+  }
+
+  .names-panel h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  .names-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+
+  .name-entry {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 4px;
+  }
+
+  .name-entry .proj-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-cyan);
+    white-space: nowrap;
+  }
+
+  .name-entry .proj-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  /* Data Flow Diagram */
+  .dataflow {
+    margin-top: 48px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    background: rgba(17, 24, 39, 0.4);
+  }
+
+  .dataflow h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+  }
+
+  .flow-diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    padding: 16px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+
+  .flow-diagram .fl-section {
+    margin-bottom: 12px;
+  }
+
+  .flow-diagram .fl-title {
+    color: var(--accent-blue);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .flow-diagram .fl-line {
+    padding-left: 12px;
+    position: relative;
+  }
+
+  .flow-diagram .fl-line::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent-cyan);
+  }
+
+  .hl-blue { color: var(--accent-blue); }
+  .hl-cyan { color: var(--accent-cyan); }
+  .hl-emerald { color: var(--accent-emerald); }
+  .hl-amber { color: var(--accent-amber); }
+  .hl-purple { color: var(--accent-purple); }
+  .hl-rose { color: var(--accent-rose); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .header h1 { font-size: 28px; }
+    .layer-content { flex-direction: column; }
+    .comp { min-width: auto; }
+    .names-grid { grid-template-columns: 1fr; }
+    .legend { gap: 12px; }
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .layer, .names-panel, .dataflow {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  .layer:nth-child(1) { animation-delay: 0.05s; }
+  .layer:nth-child(2) { animation-delay: 0.1s; }
+  .layer:nth-child(3) { animation-delay: 0.15s; }
+  .layer:nth-child(4) { animation-delay: 0.2s; }
+  .layer:nth-child(5) { animation-delay: 0.25s; }
+  .layer:nth-child(6) { animation-delay: 0.3s; }
+  .layer:nth-child(7) { animation-delay: 0.35s; }
+  .layer:nth-child(8) { animation-delay: 0.4s; }
+  .names-panel { animation-delay: 0.45s; }
+  .dataflow { animation-delay: 0.5s; }
+</style>
+</head>
+<body>
+
+<div class="noise-overlay"></div>
+<div class="grid-bg"></div>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="project-badge">Architecture Overview v1.0</div>
+    <h1>Meridian</h1>
+    <div class="subtitle">Intelligent Business Diagnosis Platform</div>
+    <div class="cn-subtitle">业务智能诊断平台 · 全景架构</div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-amber)"></div>Python / MCP</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-cyan)"></div>Go / Service</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-blue)"></div>React / Frontend</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-purple)"></div>AI Agent</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-indigo)"></div>DevOps MCP</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-emerald)"></div>Data Store</div>
+  </div>
+
+  <div class="arch-grid">
+
+    <!-- Layer 0: Human Interface -->
+    <div class="layer">
+      <div class="layer-label blue">人员交互层 · Human Interface</div>
+      <div class="layer-content">
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Meridian Console</div>
+              <div class="comp-cn">运维工作台</div>
+            </div>
+            <span class="comp-tag tag-react">React</span>
+          </div>
+          <div class="comp-desc">面向工程师的统一前端。待办驱动，聚合所有需要人工确认的变更、标注、审批任务。</div>
+          <div class="comp-features">
+            <span class="feature">元数据总览</span>
+            <span class="feature">语义标注</span>
+            <span class="feature">变更待办</span>
+            <span class="feature">知识管理</span>
+            <span class="feature">Manifest 审批</span>
+            <span class="feature">排障工作台</span>
+          </div>
+        </div>
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Meridian Agent</div>
+              <div class="comp-cn">诊断智能体</div>
+            </div>
+            <span class="comp-tag tag-agent">Agent</span>
+          </div>
+          <div class="comp-desc">面向 AI 的统一入口。通过 MCP 协议调用下层所有工具，执行证据采集、链路拼接、候选归因等任务。</div>
+          <div class="comp-features">
+            <span class="feature">证据整理</span>
+            <span class="feature">链路分析</span>
+            <span class="feature">候选归因</span>
+            <span class="feature">案例检索</span>
+            <span class="feature">配置草稿生成</span>
+          </div>
+        </div>
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Developer AI Client</div>
+              <div class="comp-cn">开发者本地 Codex / Claude</div>
+            </div>
+            <span class="comp-tag tag-agent">DevOps</span>
+          </div>
+          <div class="comp-desc">开发者本地通过 Nexus:3000 连接 MCP，直接观察 Meridian 自身运行状态、服务日志、配置缺口和 smoke test。</div>
+          <div class="comp-features">
+            <span class="feature">devops.runtime_status</span>
+            <span class="feature">tail_service_log</span>
+            <span class="feature">config_check</span>
+            <span class="feature">smoke_test</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow -->
+    <div class="flow-row">
+      <div class="flow-arrow"><div class="line"></div><div class="arrow-head"></div></div>
+      <span class="flow-label">MCP Protocol / HTTP API</span>
+      <div class="flow-arrow"><div class="line"></div><div class="arrow-head"></div></div>
+    </div>
+
+    <!-- Layer 1: Orchestration -->
+    <div class="layer">
+      <div class="layer-label purple">编排与网关层 · Orchestration</div>
+      <div class="layer-content">
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Nexus</div>
+              <div class="comp-cn">MCP 网关 & 编排器</div>
+            </div>
+            <span class="comp-tag tag-python">Python</span>
+          </div>
+          <div class="comp-desc">受控工具网关。通过 registry / manifest 动态暴露 MCP 工具，统一执行权限、审计、限流、错误归一、返回裁剪与 adapter 调用。</div>
+          <div class="comp-features">
+            <span class="feature">MCP Registry</span>
+            <span class="feature">DevOps MCP</span>
+            <span class="feature">Console Static</span>
+            <span class="feature">Tool Manifest</span>
+            <span class="feature">Adapter Pipeline</span>
+            <span class="feature">Rate Limit</span>
+            <span class="feature">Audit Log</span>
+            <span class="feature">Auth</span>
+          </div>
+        </div>
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Forge</div>
+              <div class="comp-cn">MCP Builder</div>
+            </div>
+            <span class="comp-tag tag-python">Python</span>
+          </div>
+          <div class="comp-desc">模板驱动的配置生成器。基于 Atlas 元数据生成 Lens entity_definition 或 Nexus tool_manifest 草稿，经审批后动态生效，不生成生产代码。</div>
+          <div class="comp-features">
+            <span class="feature">模板引擎</span>
+            <span class="feature">Entity Definition</span>
+            <span class="feature">Tool Manifest</span>
+            <span class="feature">配置校验</span>
+            <span class="feature">版本管理</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow -->
+    <div class="flow-row">
+      <div class="flow-arrow"><div class="line"></div><div class="arrow-head"></div></div>
+      <span class="flow-label">调用 / Manifest 注册 / 配置下发</span>
+      <div class="flow-arrow"><div class="line"></div><div class="arrow-head"></div></div>
+    </div>
+
+    <!-- Layer 2: Core MCP Services -->
+    <div class="layer">
+      <div class="layer-label cyan">核心 MCP 服务层 · Core MCP Services</div>
+      <div class="layer-content">
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Atlas</div>
+              <div class="comp-cn">Meta MCP · 元数据中心</div>
+            </div>
+            <span class="comp-tag tag-python">Python</span>
+          </div>
+          <div class="comp-desc">整个平台的"真相源"。自动采集数据库 schema、服务列表，管理语义标注，提供 diff 与搜索能力。</div>
+          <div class="comp-features">
+            <span class="feature">list_services</span>
+            <span class="feature">get_schema</span>
+            <span class="feature">diff_schema</span>
+            <span class="feature">search_meta</span>
+            <span class="feature">get_semantics</span>
+          </div>
+        </div>
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Probe</div>
+              <div class="comp-cn">日志观测 MCP</div>
+            </div>
+            <span class="comp-tag tag-python">Python</span>
+          </div>
+          <div class="comp-desc">安全只读的日志证据采集器。从服务日志文件中按条件检索，返回结构化日志片段。L1 层核心组件。</div>
+          <div class="comp-features">
+            <span class="feature">search_logs</span>
+            <span class="feature">tail_logs</span>
+            <span class="feature">grep_pattern</span>
+            <span class="feature">log_stats</span>
+          </div>
+        </div>
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Lens</div>
+              <div class="comp-cn">数据查询 MCP</div>
+            </div>
+            <span class="comp-tag tag-python">Python</span>
+          </div>
+          <div class="comp-desc">基于语义层的结构化数据查询。AI 通过 DSL 表达查询意图，Lens 生成安全 SQL 并执行。严格只读。</div>
+          <div class="comp-features">
+            <span class="feature">query_entity</span>
+            <span class="feature">describe_entity</span>
+            <span class="feature">DSL → SQL</span>
+            <span class="feature">风控约束</span>
+          </div>
+        </div>
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Trace</div>
+              <div class="comp-cn">链路关联 MCP</div>
+            </div>
+            <span class="comp-tag tag-python">Python</span>
+          </div>
+          <div class="comp-desc">L2 层核心。按 request_id / trace_id / order_id 等主键，跨服务聚合日志与状态，还原事件链路。</div>
+          <div class="comp-features">
+            <span class="feature">trace_by_id</span>
+            <span class="feature">link_events</span>
+            <span class="feature">timeline_view</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow -->
+    <div class="flow-row">
+      <div class="flow-arrow"><div class="line"></div><div class="arrow-head"></div></div>
+      <span class="flow-label">读取元数据 / 语义规则 / 历史案例</span>
+      <div class="flow-arrow"><div class="line"></div><div class="arrow-head"></div></div>
+    </div>
+
+    <!-- Layer 3: Semantic & Knowledge -->
+    <div class="layer">
+      <div class="layer-label emerald">语义 & 知识层 · Semantic & Knowledge</div>
+      <div class="layer-content">
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Codex</div>
+              <div class="comp-cn">诊断知识库</div>
+            </div>
+            <span class="comp-tag tag-store">Store</span>
+          </div>
+          <div class="comp-desc">L3 层核心。存储业务规则、历史案例、排查路径、噪音说明、归因规则等结构化经验知识。</div>
+          <div class="comp-features">
+            <span class="feature">问题案例</span>
+            <span class="feature">排查路径</span>
+            <span class="feature">业务规则</span>
+            <span class="feature">噪音白名单</span>
+            <span class="feature">归因规则</span>
+            <span class="feature">链路说明</span>
+          </div>
+        </div>
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Semantic Registry</div>
+              <div class="comp-cn">语义注册表</div>
+            </div>
+            <span class="comp-tag tag-store">Store</span>
+          </div>
+          <div class="comp-desc">三层语义模型存储。自动推断层 + 规则增强层 + 人工标注层合并为统一语义视图，供所有 MCP 引用。</div>
+          <div class="comp-features">
+            <span class="feature">字段语义</span>
+            <span class="feature">业务对象定义</span>
+            <span class="feature">实体关系</span>
+            <span class="feature">枚举映射</span>
+          </div>
+        </div>
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Changelog</div>
+              <div class="comp-cn">变更追踪</div>
+            </div>
+            <span class="comp-tag tag-store">Store</span>
+          </div>
+          <div class="comp-desc">存储所有 schema diff、服务变更、配置变更的历史记录。驱动待办生成和知识过时检测。</div>
+          <div class="comp-features">
+            <span class="feature">Schema Diff</span>
+            <span class="feature">服务变更</span>
+            <span class="feature">过时检测</span>
+            <span class="feature">待办生成</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow -->
+    <div class="flow-row">
+      <div class="flow-arrow"><div class="line"></div><div class="arrow-head"></div></div>
+      <span class="flow-label">自动采集 / 定时扫描 / 只读查询</span>
+      <div class="flow-arrow"><div class="line"></div><div class="arrow-head"></div></div>
+    </div>
+
+    <!-- Layer 4: Data Sources -->
+    <div class="layer">
+      <div class="layer-label amber">业务数据源层 · Business Data Sources</div>
+      <div class="layer-content">
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">MySQL Clusters</div>
+              <div class="comp-cn">业务数据库</div>
+            </div>
+            <span class="comp-tag tag-store">Store</span>
+          </div>
+          <div class="comp-desc">圈量、海量等业务系统的 MySQL 实例。Atlas 从 information_schema 采集表结构，Lens 执行只读查询。</div>
+          <div class="comp-features">
+            <span class="feature">information_schema</span>
+            <span class="feature">业务表</span>
+            <span class="feature">只读副本</span>
+          </div>
+        </div>
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Service Hosts</div>
+              <div class="comp-cn">业务服务器 · Supervisor</div>
+            </div>
+            <span class="comp-tag tag-go">Go Binary</span>
+          </div>
+          <div class="comp-desc">物理机部署的 Go 微服务。通过 supervisor 管理进程。Atlas 扫描服务列表，Probe 读取日志文件。</div>
+          <div class="comp-features">
+            <span class="feature">supervisor</span>
+            <span class="feature">Go 二进制</span>
+            <span class="feature">日志文件</span>
+            <span class="feature">配置文件</span>
+          </div>
+        </div>
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">WeChat Work API</div>
+              <div class="comp-cn">企业微信接口</div>
+            </div>
+            <span class="comp-tag tag-go">External</span>
+          </div>
+          <div class="comp-desc">企业微信相关的回调记录、消息状态、RPA 任务执行结果等外部数据源。</div>
+          <div class="comp-features">
+            <span class="feature">回调记录</span>
+            <span class="feature">消息状态</span>
+            <span class="feature">RPA 结果</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow -->
+    <div class="flow-row">
+      <div class="flow-arrow"><div class="line"></div><div class="arrow-head"></div></div>
+      <span class="flow-label">持久化</span>
+      <div class="flow-arrow"><div class="line"></div><div class="arrow-head"></div></div>
+    </div>
+
+    <!-- Layer 5: Platform Storage -->
+    <div class="layer">
+      <div class="layer-label rose">平台自身存储 · Platform Storage</div>
+      <div class="layer-content">
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Meridian DB</div>
+              <div class="comp-cn">平台数据库 · PostgreSQL</div>
+            </div>
+            <span class="comp-tag tag-store">PostgreSQL</span>
+          </div>
+          <div class="comp-desc">Meridian 平台自身的持久化存储。存放元数据快照、语义标注、知识条目、变更记录、tool manifest、entity definition、审计日志。</div>
+          <div class="comp-features">
+            <span class="feature">meta_snapshots</span>
+            <span class="feature">semantic_annotations</span>
+            <span class="feature">knowledge_entries</span>
+            <span class="feature">changelog</span>
+            <span class="feature">tool_manifests</span>
+            <span class="feature">entity_definitions</span>
+            <span class="feature">audit_logs</span>
+          </div>
+        </div>
+        <div class="comp">
+          <div class="comp-header">
+            <div>
+              <div class="comp-name">Runtime Logs</div>
+              <div class="comp-cn">开发服务器运行日志</div>
+            </div>
+            <span class="comp-tag tag-store">Files</span>
+          </div>
+          <div class="comp-desc">非 Docker 开发部署由 dev-server.sh 将各服务 stdout/stderr 写入 .meridian/logs，DevOps MCP 只读这些日志。</div>
+          <div class="comp-features">
+            <span class="feature">nexus.log</span>
+            <span class="feature">atlas.log</span>
+            <span class="feature">probe.log</span>
+            <span class="feature">lens.log</span>
+            <span class="feature">trace.log</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Project Names -->
+  <div class="names-panel">
+    <h2>项目命名 · Project Naming</h2>
+    <div class="names-grid">
+      <div class="name-entry">
+        <span class="proj-name">Meridian</span>
+        <span class="proj-desc">总平台名称 — 经络，取"贯通全身脉络"之意</span>
+      </div>
+      <div class="name-entry">
+        <span class="proj-name">Atlas</span>
+        <span class="proj-desc">Meta MCP — 地图集，系统全貌的真相源</span>
+      </div>
+      <div class="name-entry">
+        <span class="proj-name">Probe</span>
+        <span class="proj-desc">日志观测 MCP — 探针，深入服务内部采集证据</span>
+      </div>
+      <div class="name-entry">
+        <span class="proj-name">Lens</span>
+        <span class="proj-desc">数据查询 MCP — 透镜，聚焦数据库中的业务事实</span>
+      </div>
+      <div class="name-entry">
+        <span class="proj-name">Trace</span>
+        <span class="proj-desc">链路关联 MCP — 追踪，跨服务还原事件链路</span>
+      </div>
+      <div class="name-entry">
+        <span class="proj-name">Nexus</span>
+        <span class="proj-desc">MCP 网关 — 受控工具入口，registry / manifest 驱动</span>
+      </div>
+      <div class="name-entry">
+        <span class="proj-name">Forge</span>
+        <span class="proj-desc">MCP Builder — 锻造炉，模板驱动生成配置草稿</span>
+      </div>
+      <div class="name-entry">
+        <span class="proj-name">Codex</span>
+        <span class="proj-desc">诊断知识库 — 法典，组织级排障经验的沉淀</span>
+      </div>
+      <div class="name-entry">
+        <span class="proj-name">Console</span>
+        <span class="proj-desc">运维工作台 — 待办驱动的人员交互界面</span>
+      </div>
+      <div class="name-entry">
+        <span class="proj-name">DevOps MCP</span>
+        <span class="proj-desc">开发者观察入口 — 通过 Nexus 暴露只读运行状态与日志工具</span>
+      </div>
+      <div class="name-entry">
+        <span class="proj-name">Changelog</span>
+        <span class="proj-desc">变更追踪 — 驱动同步与过时检测的引擎</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Flow -->
+  <div class="dataflow">
+    <h2>核心数据流 · Key Data Flows</h2>
+    <div class="flow-diagram">
+
+      <div class="fl-section">
+        <div class="fl-title">Flow 1 · 元数据自举（Atlas 驱动）</div>
+        <div class="fl-line"><span class="hl-amber">Atlas</span> 定时连接 MySQL information_schema，采集表结构快照</div>
+        <div class="fl-line"><span class="hl-amber">Atlas</span> 通过 supervisor XML-RPC 扫描服务列表与进程状态</div>
+        <div class="fl-line"><span class="hl-emerald">Changelog</span> 对比新旧快照，生成 diff 记录</div>
+        <div class="fl-line"><span class="hl-blue">Console</span> 展示变更待办，等待人工确认或 Agent 生成标注草稿</div>
+        <div class="fl-line"><span class="hl-emerald">Semantic Registry</span> 更新语义视图，下游 MCP 自动生效</div>
+      </div>
+
+      <div class="fl-section">
+        <div class="fl-title">Flow 2 · 排障查询（Agent 驱动）</div>
+        <div class="fl-line"><span class="hl-purple">Agent</span> 收到排障请求，通过 <span class="hl-cyan">Nexus</span> 发现可用工具</div>
+        <div class="fl-line"><span class="hl-purple">Agent</span> 调用 <span class="hl-amber">Atlas</span> 了解涉及的服务与数据结构</div>
+        <div class="fl-line"><span class="hl-purple">Agent</span> 调用 <span class="hl-amber">Probe</span> 采集日志证据</div>
+        <div class="fl-line"><span class="hl-purple">Agent</span> 调用 <span class="hl-amber">Lens</span> 通过 DSL 查询业务数据</div>
+        <div class="fl-line"><span class="hl-purple">Agent</span> 调用 <span class="hl-amber">Trace</span> 按主键拼接跨服务链路</div>
+        <div class="fl-line"><span class="hl-purple">Agent</span> 检索 <span class="hl-emerald">Codex</span> 匹配历史案例与业务规则</div>
+        <div class="fl-line"><span class="hl-purple">Agent</span> 输出：证据摘要 + 候选归因 + 待验证项 + 下一步建议</div>
+      </div>
+
+      <div class="fl-section">
+        <div class="fl-title">Flow 3 · 工具自扩展（Forge 驱动）</div>
+        <div class="fl-line"><span class="hl-purple">Agent</span> 识别到新业务对象需要查询能力</div>
+        <div class="fl-line"><span class="hl-purple">Agent</span> 调用 <span class="hl-amber">Atlas</span> 获取该对象的 schema 与语义</div>
+        <div class="fl-line"><span class="hl-purple">Agent</span> 调用 <span class="hl-amber">Forge</span> 基于模板生成 entity_definition 或 tool_manifest 草稿</div>
+        <div class="fl-line"><span class="hl-blue">Console</span> 展示草稿，人工审批后写入 Lens 配置或 <span class="hl-cyan">Nexus</span> registry</div>
+        <div class="fl-line"><span class="hl-cyan">Nexus</span> 通过 adapter pipeline 动态暴露工具；普通扩展不修改 server.py</div>
+        <div class="fl-line">新业务对象或新工具能力即时可用，Agent 能力受控扩展</div>
+      </div>
+
+      <div class="fl-section">
+        <div class="fl-title">Flow 4 · 知识沉淀（人 + Agent 协作）</div>
+        <div class="fl-line">事故复盘后，工程师通过 <span class="hl-blue">Console</span> 提交案例到 <span class="hl-emerald">Codex</span></div>
+        <div class="fl-line"><span class="hl-emerald">Changelog</span> 检测到关联服务变更时，标记知识条目为"待复查"</div>
+        <div class="fl-line"><span class="hl-purple">Agent</span> 排障时发现建议被工程师否定，反馈标记知识为"可能过时"</div>
+        <div class="fl-line">知识质量随使用持续提升，而不是随时间衰减</div>
+      </div>
+
+      <div class="fl-section">
+        <div class="fl-title">Flow 5 · 开发者观察（DevOps MCP）</div>
+        <div class="fl-line">开发者本地 <span class="hl-purple">Codex / Claude</span> 连接 <span class="hl-cyan">Nexus:3000</span> 的 MCP 入口</div>
+        <div class="fl-line"><span class="hl-cyan">Nexus</span> 暴露只读 <span class="hl-amber">devops.*</span> 工具，不直接执行重启或改配置</div>
+        <div class="fl-line"><span class="hl-amber">dev-server.sh</span> 将服务 stdout/stderr 落盘到 <span class="hl-emerald">.meridian/logs/*.log</span></div>
+        <div class="fl-line">开发者可查看运行状态、服务日志、配置缺口、Console 构建状态和 smoke test</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

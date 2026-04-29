@@ -405,15 +405,13 @@ select {
   display: grid;
   grid-template-columns: minmax(0, 1.06fr) minmax(18.5rem, 0.94fr);
   gap: clamp(1.3rem, 3vw, 2.6rem);
-  align-items: stretch;
+  align-items: start;
   padding: 3.7rem 0 1.8rem;
 }
 
 .hero__left {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
-  height: 100%;
 }
 
 .hero__copy {
@@ -639,7 +637,7 @@ select {
 }
 
 .hero__about {
-  margin-top: auto;
+  margin-top: clamp(2rem, 4vw, 3.2rem);
   width: min(100%, 33rem);
   padding: 0.95rem 1rem;
   border: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
@@ -1769,6 +1767,93 @@ a.tag-chip:hover,
   margin: 0 auto;
 }
 
+.meridian-shell {
+  padding-top: clamp(2rem, 5vw, 3.2rem);
+}
+
+.meridian-hero {
+  width: min(100%, calc(var(--measure) + 18rem));
+  margin: 0 auto 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.meridian-hero > .eyebrow {
+  margin: 0 0 0.85rem;
+}
+
+.meridian-hero h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 0.96;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  font-family: var(--display-font);
+  font-variation-settings: "opsz" 144, "SOFT" 60;
+}
+
+.meridian-hero__summary {
+  max-width: 46rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(1.03rem, 2vw, 1.2rem);
+  line-height: 1.82;
+}
+
+.meridian-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.35rem;
+}
+
+.meridian-overview {
+  width: min(100%, calc(var(--measure) + 18rem));
+  margin: 0 auto;
+}
+
+.meridian-overview__copy {
+  max-width: var(--measure);
+  padding-top: 0.2rem;
+}
+
+.meridian-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1.1rem;
+  font-family: var(--ui-font);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.meridian-facts span {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.38rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+}
+
+.meridian-facts strong {
+  color: var(--ink);
+}
+
+.meridian-posts {
+  width: min(100%, calc(var(--measure) + 10rem));
+  margin: clamp(3rem, 8vw, 5rem) auto 0;
+}
+
+.meridian-empty {
+  margin: 0;
+  color: var(--muted);
+}
+
 .about-grid__side,
 .contact-grid__cards {
   display: grid;
@@ -2616,6 +2701,7 @@ a.tag-chip:hover,
   .cta-block,
   .about-grid,
   .contact-grid,
+  .meridian-overview,
   .post-layout,
   .archive-year {
     grid-template-columns: 1fr;
@@ -2853,6 +2939,14 @@ a.tag-chip:hover,
 
   .series-panel h3 {
     font-size: 1.4rem;
+  }
+
+  .meridian-hero {
+    margin-bottom: 1.8rem;
+  }
+
+  .meridian-hero h1 {
+    font-size: clamp(2.8rem, 15vw, 4.4rem);
   }
 
   .cta-block__actions {

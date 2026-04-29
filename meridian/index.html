@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian · Jayleonc</title>
+<meta name="description" content="Meridian 是一个 MCP 驱动的业务智能诊断平台，这里会持续整理它的架构、阶段进展、AI 协作方法和运行态治理实践。">
+<meta name="theme-color" content="#f3e8da">
+
+
+<link rel="canonical" href="https://jayleonc.github.io/meridian/index.html">
+
+<meta property="og:title" content="Meridian · Jayleonc">
+<meta property="og:description" content="Meridian 是一个 MCP 驱动的业务智能诊断平台，这里会持续整理它的架构、阶段进展、AI 协作方法和运行态治理实践。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jayleonc">
+<meta property="og:locale" content="zh-CN">
+
+<meta property="og:url" content="https://jayleonc.github.io/meridian/index.html">
+
+
+<meta property="og:image" content="https://jayleonc.github.io/images/1.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://jayleonc.github.io/images/1.png">
+
+<meta name="twitter:title" content="Meridian · Jayleonc">
+<meta name="twitter:description" content="Meridian 是一个 MCP 驱动的业务智能诊断平台，这里会持续整理它的架构、阶段进展、AI 协作方法和运行态治理实践。">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,30;0,9..144,400..900,100;1,9..144,400..900,30;1,9..144,400..900,100&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<body class="layout-meridian">
+  <header class="site-header" data-site-header>
+  <div class="shell site-header__inner">
+    
+    <a class="site-brand" href="/">
+      <span class="site-brand__mark">J<em>l</em></span>
+      <span class="site-brand__text">
+        <strong>Jayleonc</strong>
+        <small>用代码、AI 和写作记录成长</small>
+      </span>
+    </a>
+
+    <div class="site-header__actions">
+      <nav class="site-nav" id="site-nav" data-site-nav>
+        
+        <a href="/" class="">文章</a>
+        
+        <a href="/meridian/" class="is-active">Meridian</a>
+        
+        <a href="/archives/" class="">归档</a>
+        
+        <a href="/about/" class="">关于</a>
+        
+        <a href="/friends/" class="">资源</a>
+        
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </nav>
+
+      <button class="theme-toggle" type="button" aria-label="切换主题" title="切换主题" data-theme-toggle>
+        <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m12.95 5.536 1.414 1.414M4.636 4.636 6.05 6.05m10.9-1.414L15.536 6.05M6.05 17.95l-1.414 1.414M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>
+          </svg>
+        </span>
+        <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M20 15.5A7.5 7.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
+          </svg>
+        </span>
+      </button>
+
+      <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+  <main class="site-main">
+    
+
+<section class="meridian-shell shell">
+  <header class="meridian-hero reveal">
+    <p class="eyebrow">Series</p>
+    <h1>Meridian</h1>
+    
+    <p class="meridian-hero__summary">Meridian 是一个 MCP 驱动的业务智能诊断平台，这里会持续整理它的架构、阶段进展、AI 协作方法和运行态治理实践。</p>
+    
+    <div class="meridian-hero__actions">
+      <a class="button button--primary" href="/meridian/architecture.html">打开架构全景</a>
+      <a class="button button--ghost" href="#meridian-posts">阅读系列文章</a>
+    </div>
+  </header>
+
+  <section class="meridian-overview reveal">
+    <div class="meridian-overview__copy prose">
+      <p>Meridian 是一套 MCP 驱动的业务智能诊断平台。它把日志、元数据、只读数据查询、链路关联和开发者观察面收成一组可以被 AI 调用的工具，让排障不再只靠人工翻日志和复制终端输出。</p>
+<p>这个系列会记录 Meridian 从架构全景、Probe &#x2F; Atlas &#x2F; Lens &#x2F; Nexus 的能力拆分，到 DevOps MCP、自我进化 skill 和后续智能诊断闭环的演进过程。</p>
+
+      <div class="meridian-facts">
+        <span><strong>1</strong> 篇文章</span>
+        <span>Probe / Atlas / Lens / Nexus</span>
+        <span>DevOps MCP</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="meridian-posts" id="meridian-posts">
+    <header class="section-heading reveal">
+      <p class="eyebrow">Posts</p>
+      <h2>Meridian 系列文章</h2>
+    </header>
+    
+    
+<div class="essay-list essay-list--stream">
+  
+  <article class="essay-row essay-row--stream reveal">
+    <div class="essay-row__index"><em>01</em></div>
+    <div class="essay-row__body">
+      <div class="essay-row__meta">
+        <span>2026-04-29</span>
+        
+        <span>AI工程</span>
+        
+      </div>
+      <h3><a href="/2026/04/29/%E8%AE%A9-AI-%E8%87%AA%E6%88%91%E8%BF%9B%E5%8C%96%EF%BC%9AMeridian-DevOps-MCP-%E6%96%B9%E6%B3%95%E8%AE%BA/">让 AI 自我进化：Meridian DevOps MCP 方法论</a></h3>
+      <p>
+        
+        从 SDD 的设计时治理走到 DevOps MCP 的运行时治理，记录一次让 AI 先观察部署环境、再修代码、再反写项目级 skill 的 Meridian 实践。
+      </p>
+      
+    </div>
+    <a class="essay-row__link" href="/2026/04/29/%E8%AE%A9-AI-%E8%87%AA%E6%88%91%E8%BF%9B%E5%8C%96%EF%BC%9AMeridian-DevOps-MCP-%E6%96%B9%E6%B3%95%E8%AE%BA/">阅读文章</a>
+  </article>
+  
+</div>
+
+    
+  </section>
+</section>
+
+  </main>
+  
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <div class="site-footer__links">
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </div>
+      <p class="site-footer__title">© 2026
+          Jayleonc
+      </p>
+      <p class="site-footer__meta">
+        自 2019 年起持续写作，本站已稳定运行 <span data-runtime data-since="2019-02-28T00:00:00+08:00">7 年</span>。
+        <span id="busuanzi_container_site_uv" style="display:none;">已与 <span id="busuanzi_value_site_uv"></span> 位访客在此相遇。</span>
+      </p>
+      <p class="site-footer__note">
+        Hexo 8 · Atelier 自定义主题
+      </p>
+    </div>
+  </footer>
+  <script async defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script src="/js/site.js"></script>
+</body>
+</html>
