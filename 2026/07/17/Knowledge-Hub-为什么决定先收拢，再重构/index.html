@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knowledge Hub 为什么决定先收拢，再重构 · Jayleonc</title>
+<meta name="description" content="一次从限流需求开始的系统体检。Knowledge Hub 如何从拆分大 Service 走向平台收拢，并用路由映射、共享检索和独立 Workflow 为重构建立安全顺序。">
+<meta name="theme-color" content="#f3e8da">
+
+
+<link rel="canonical" href="https://jayleonc.github.io/2026/07/17/Knowledge-Hub-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%86%B3%E5%AE%9A%E5%85%88%E6%94%B6%E6%8B%A2%EF%BC%8C%E5%86%8D%E9%87%8D%E6%9E%84/">
+
+<meta property="og:title" content="Knowledge Hub 为什么决定先收拢，再重构 · Jayleonc">
+<meta property="og:description" content="一次从限流需求开始的系统体检。Knowledge Hub 如何从拆分大 Service 走向平台收拢，并用路由映射、共享检索和独立 Workflow 为重构建立安全顺序。">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Jayleonc">
+<meta property="og:locale" content="zh-CN">
+
+<meta property="og:url" content="https://jayleonc.github.io/2026/07/17/Knowledge-Hub-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%86%B3%E5%AE%9A%E5%85%88%E6%94%B6%E6%8B%A2%EF%BC%8C%E5%86%8D%E9%87%8D%E6%9E%84/">
+
+
+<meta property="og:image" content="https://jayleonc.github.io/images/1.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://jayleonc.github.io/images/1.png">
+
+<meta name="twitter:title" content="Knowledge Hub 为什么决定先收拢，再重构 · Jayleonc">
+<meta name="twitter:description" content="一次从限流需求开始的系统体检。Knowledge Hub 如何从拆分大 Service 走向平台收拢，并用路由映射、共享检索和独立 Workflow 为重构建立安全顺序。">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,30;0,9..144,400..900,100;1,9..144,400..900,30;1,9..144,400..900,100&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 8.1.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<body class="layout-post">
+  <header class="site-header" data-site-header>
+  <div class="shell site-header__inner">
+    
+    <a class="site-brand" href="/">
+      <span class="site-brand__mark">J<em>l</em></span>
+      <span class="site-brand__text">
+        <strong>Jayleonc</strong>
+        <small>用代码、AI 和写作记录成长</small>
+      </span>
+    </a>
+
+    <div class="site-header__actions">
+      <nav class="site-nav" id="site-nav" data-site-nav>
+        
+        <a href="/" class="">文章</a>
+        
+        <a href="/archives/" class="">归档</a>
+        
+        <a href="/about/" class="">关于</a>
+        
+        <a href="/friends/" class="">资源</a>
+        
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </nav>
+
+      <button class="theme-toggle" type="button" aria-label="切换主题" title="切换主题" data-theme-toggle>
+        <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 4V2m0 20v-2m8-8h2M2 12h2m12.95 5.536 1.414 1.414M4.636 4.636 6.05 6.05m10.9-1.414L15.536 6.05M6.05 17.95l-1.414 1.414M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>
+          </svg>
+        </span>
+        <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M20 15.5A7.5 7.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
+          </svg>
+        </span>
+      </button>
+
+      <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+  <main class="site-main">
+    
+  <article class="post-shell shell">
+    <div class="post-layout">
+      <div class="post-main">
+        <header class="post-hero reveal">
+          
+            <p class="eyebrow">
+              技术复盘</p>
+        
+        <h1>Knowledge Hub 为什么决定先收拢，再重构</h1>
+        <div class="post-hero__meta">
+          <span>2026-07-17 16:23:16</span>
+          <span>11 分钟阅读</span>
+          <span>4942 字</span>
+        </div>
+        
+        <p class="post-hero__summary">一次从限流需求开始的系统体检。Knowledge Hub 如何从拆分大 Service 走向平台收拢，并用路由映射、共享检索和独立 Workflow 为重构建立安全顺序。</p>
+        
+        
+        <div class="tag-list post-tags">
+          
+          <a class="tag-chip" href="/tags/AI/">AI</a>
+          
+          <a class="tag-chip" href="/tags/knowledge-hub/">knowledge-hub</a>
+          
+          <a class="tag-chip" href="/tags/%E6%9E%B6%E6%9E%84%E6%B2%BB%E7%90%86/">架构治理</a>
+          
+          <a class="tag-chip" href="/tags/%E6%8A%80%E6%9C%AF/">技术</a>
+          
+          <a class="tag-chip" href="/tags/%E6%80%9D%E8%80%83/">思考</a>
+          
+        </div>
+        
+      </header>
+
+      <div class="post-content prose">
+        <p>距离上一次更新博客，已经过去两个多月了。</p>
+<p>从五月初开始，我的人生方向有些失去坐标。差不多三个月里，状态一直不太好。颓废这个词放在这里并不过分，很多事情提不起劲，过去很确定的目标也突然失去了吸引力。</p>
+<p>那段时间，我开始接触和学习一些心理学，也第一次认真去看自己的心理投射。</p>
+<p>人很容易把没有被自己看见的需要、期待和担心投向外界，然后从别人的反应里确认自己。很多以为是在处理现实的问题，里面其实夹着没有被正视的恐惧：害怕不被认可，害怕自己不够好，害怕做错选择，也害怕某一天发现，过去坚持的方向并不适合自己。</p>
+<p>以前我会用忙碌把这些东西压下去。写代码、学新技术、做复杂系统，都能带来一种很直接的确定感。只要事情一直往前推进，好像就不需要回答那些更难的问题。</p>
+<p>这次没有躲过去。</p>
+<p>回头看，我甚至觉得这是一种幸运。恐惧赶在三十岁以前被提上了日程，我还有时间去认识它，也有时间重新理解自己。如果它一直被埋着，可能要到更久以后，才会以更难处理的方式出现。</p>
+<p>现在当然谈不上什么都想明白了，但至少开始知道，哪些选择来自自己，哪些选择只是为了获得评价；哪些焦虑来自现实，哪些焦虑来自比较。</p>
+<p>这种变化也慢慢进入了工作。</p>
+<p>过去很长一段时间里，我会下意识地从别人的评价里证明自己。系统做得够不够复杂，方案看起来够不够厉害，别人是否认可我的能力，这些东西多少都会影响我的判断。</p>
+<p>现在更愿意让工作回到工作本身。</p>
+<p>一个需求值不值得做，一套架构是否真的降低了维护成本，一个功能有没有解决用户的问题，这些事实比外界评价更重要。也不需要再和谁比较，每个人有自己的节奏、经历和方向。</p>
+<p>我正在尝试和自己成为朋友。允许自己偶尔停下来，允许状态不好，也允许过去的一些判断被推翻。等那些证明、比较和焦虑慢慢退下去以后，工作反而变得更清楚了。</p>
+<p>这种变化，最近也落在了 <code>Knowledge Hub</code> 上。</p>
+<h2 id="起点是一个很具体的限流需求"><a href="#起点是一个很具体的限流需求" class="headerlink" title="起点是一个很具体的限流需求"></a>起点是一个很具体的限流需求</h2><p>这次原本要做的是限流。</p>
+<p>KH 里有一些昂贵操作，比如文档解析、索引、检索、Agent 执行以及开放 API 调用。它们一旦被恶意请求或者无意并发拖住，后端很容易受到影响。</p>
+<p>当时的计划很明确：给昂贵操作设置严格的 Rate Limit，提供临时封禁用户的 Killswitch，再通过响应 Header 告诉客户端剩余额度和重试时间。</p>
+<p>这类需求很容易直接落成一个中间件，再配几张 Redis Key 和管理开关。</p>
+<p>准备往下做的时候，我突然问了一个问题：</p>
+<blockquote>
+<p>Knowledge Hub 现在臃肿吗？维护起来到底有多难？</p>
+</blockquote>
+<p>这个问题让限流暂时停了下来。</p>
+<h2 id="系统已经走到了需要回头看的位置"><a href="#系统已经走到了需要回头看的位置" class="headerlink" title="系统已经走到了需要回头看的位置"></a>系统已经走到了需要回头看的位置</h2><p>KH 已经不再是一套简单的 RAG 服务。</p>
+<p>它现在有 Project、Dataset、Document、VFS、GitSync、权限、资产、RAG、Agent、Chat、Workspace、Admin、审计和后台 Worker。产品能力一直在增长，代码也很自然地跟着长了起来。</p>
+<p>当前后端有大约 6.4 万行 Go，三个前端加起来超过 5 万行 TypeScript。系统注册了 123 条模块路由，<code>docs</code> 目录里有 282 份 Markdown。</p>
+<p>数字本身没有否定这个项目。KH 承担的功能本来就复杂，企业知识系统也不可能只靠几个 CRUD 接口撑起来。</p>
+<p>真正影响维护的是职责开始缠在一起。</p>
+<p><code>document.Service</code> 已经有 61 个方法，从上传、解析、分片、修订、治理，一直管到 Git、VFS、ACL 和资产。<code>project.Service</code> 有 41 个方法，项目生命周期、目录树、权限和摘要都挤在同一份契约里。GitSync 的核心 Service 超过 2200 行，RAG 包接近 1.1 万行。</p>
+<p>一些关键模块还缺少直接测试。与此同时，两份配置示例已经出现冲突，部分旧字段会被 Viper 静默忽略；文档里也残留着大量过期 Phase、旧接口和已经变化的系统描述。</p>
+<p>KH 的业务复杂度有真实来源，工程里积累的偶然复杂度也到了该处理的时候。</p>
+<h2 id="一开始想的是拆，后来讨论成了收拢"><a href="#一开始想的是拆，后来讨论成了收拢" class="headerlink" title="一开始想的是拆，后来讨论成了收拢"></a>一开始想的是拆，后来讨论成了收拢</h2><p>最初的重构思路很常见：拆开 Document、Project、GitSync 和 RAG，把大 Service 改成一组小接口。</p>
+<p>这个方向没有错，但它只处理了系统内部。</p>
+<p>讨论继续往下走时，一个更大的问题冒了出来：</p>
+<blockquote>
+<p>整个服务能不能收拢？</p>
+</blockquote>
+<p>如果只拆内部实现，外部依然散落着 Project、Document、Dataset、Content、Workspace 等多套入口，三个前端继续维护各自的 API、鉴权和流式处理，系统仍然很难形成一个稳定的产品边界。</p>
+<p>最终收敛出来的架构大概是这样：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">产品入口</span><br><span class="line">├── Workspace</span><br><span class="line">├── Immersive Chat</span><br><span class="line">└── Admin</span><br><span class="line"></span><br><span class="line">应用能力</span><br><span class="line">├── Knowledge Workspace</span><br><span class="line">│   ├── Projects / Documents / Datasets / VFS</span><br><span class="line">│   ├── Git Sources / Assets</span><br><span class="line">│   └── Ingestion / Indexing</span><br><span class="line">├── Shared Retrieval</span><br><span class="line">├── Intelligence Runtime</span><br><span class="line">├── Identity &amp; Access</span><br><span class="line">└── Platform Operations</span><br><span class="line"></span><br><span class="line">跨域协调</span><br><span class="line">├── WorkspaceWorkflow</span><br><span class="line">├── ResourcePolicyWorkflow</span><br><span class="line">└── MemberLifecycleWorkflow</span><br></pre></td></tr></table></figure>
+
+<p>这里的收拢发生在产品入口、API 命名和应用能力层。内部依然保留专业组件，每个组件只处理自己真正拥有的规则。</p>
+<h2 id="路由先收拢，代码晚一点再动"><a href="#路由先收拢，代码晚一点再动" class="headerlink" title="路由先收拢，代码晚一点再动"></a>路由先收拢，代码晚一点再动</h2><p>这次讨论里，我最认可的一个修正，是把纯路由映射放到内部重构之前。</p>
+<p>新的 Workspace API 会按照资源建立二级结构：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/api/workspace/projects/*</span><br><span class="line">/api/workspace/documents/*</span><br><span class="line">/api/workspace/datasets/*</span><br><span class="line">/api/workspace/vfs/*</span><br><span class="line">/api/workspace/sources/*</span><br><span class="line">/api/workspace/assets/*</span><br><span class="line">/api/workspace/search/*</span><br></pre></td></tr></table></figure>
+
+<p>第一阶段不会重写 Handler。新旧路径直接指向同一个处理函数：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/api/projects/list</span><br><span class="line">        └── projectHandler.ListProjects</span><br><span class="line"></span><br><span class="line">/api/workspace/projects/list</span><br><span class="line">        └── projectHandler.ListProjects</span><br></pre></td></tr></table></figure>
+
+<p>这一步只改变入口名称，业务行为保持一致。</p>
+<p>看起来很简单，真正危险的地方在中间件。</p>
+<p>KH 的路由没有使用完全相同的 Guard。普通 Project 和 Document 接口通常经过 JWT、Isolation、Governance；Audit 还会增加 PortalGuard 和 AdminMiddleware；Asset 与 Git Image 又有独立挂载的 GET 路由。</p>
+<p>因此，重构前必须生成一份 Route Manifest。每条路由都要记录 Method、完整 Path、Handler、Guard、中间件顺序、RequiredPermission、响应格式、Header、SSE 或文件流语义，以及当前有哪些客户端在调用。</p>
+<p>执行顺序也因此变得很清楚：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">行为基线与 Route Manifest</span><br><span class="line">    -&gt; 新路由映射旧 Handler</span><br><span class="line">    -&gt; Workspace / Chat / Admin 迁移</span><br><span class="line">    -&gt; 观察旧路由调用</span><br><span class="line">    -&gt; 重构 Handler 后方的应用服务</span><br><span class="line">    -&gt; 清理旧入口</span><br></pre></td></tr></table></figure>
+
+<p>代码暂时没变，系统的产品边界已经可以先稳定下来。</p>
+<h2 id="Retrieval-应该被共享，Ingestion-跟着内容走"><a href="#Retrieval-应该被共享，Ingestion-跟着内容走" class="headerlink" title="Retrieval 应该被共享，Ingestion 跟着内容走"></a>Retrieval 应该被共享，Ingestion 跟着内容走</h2><p>RAG 的归属也经历了一次调整。</p>
+<p>最初的想法是把整个 RAG 都放进 Intelligence Runtime。继续推演后发现，Workspace Search 和 Chat&#x2F;Agent 都会消费检索能力。Workspace 如果为了搜索而依赖 Intelligence Runtime，边界会再次绕起来。</p>
+<p>最终的划分是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Workspace Ingestion -&gt; Index Writer -&gt; Search Index</span><br><span class="line"></span><br><span class="line">Workspace Search ─┐</span><br><span class="line">                  ├── Shared Retrieval</span><br><span class="line">Chat / Agent ─────┘</span><br></pre></td></tr></table></figure>
+
+<p>文档摄取、切片、Embedding、索引状态归 Workspace，因为它们跟着内容生命周期发生。</p>
+<p>Retrieval 成为共享查询能力，负责语义召回、关键词召回、混合融合、Rerank、路径过滤、ACL 过滤和 Evidence 组装。Chat 和 Agent 继续负责对话理解、工具调用和答案生成。</p>
+<p>逻辑边界已经清楚，物理拆包会排在路由映射和客户端迁移之后。当前 <code>rag.Service</code>、RAGIndexer、Embedding Client 和 pgvector 访问仍然共享大量实现，太早动它们会把 API 迁移、Worker 迁移和检索行为变化叠在一起。</p>
+<p>安全顺序比目录看起来整齐更重要。</p>
+<h2 id="Workflow-要拥有完整的事务"><a href="#Workflow-要拥有完整的事务" class="headerlink" title="Workflow 要拥有完整的事务"></a>Workflow 要拥有完整的事务</h2><p>当前 Orchestrator 同时承担内容写入、权限级联、访问模拟和成员离职回收。后面会按照完整用户动作拆成多个 Workflow，每个 Workflow 独立注入 <code>UnitOfWork</code>。</p>
+<p>这里有一条很重要的约束：</p>
+<blockquote>
+<p>Workflow 之间不能互相调用。</p>
+</blockquote>
+<p>假设一次 Managed Upload 同时需要创建文档、建立 VFS 节点并继承权限，这个动作应该由 <code>WorkspaceWorkflow</code> 持有完整事务。它可以调用权限领域提供的端口，但不会绕去调用另一个 <code>ResourcePolicyWorkflow</code>。</p>
+<p>一个用户动作只有一个事务所有者。否则 Workflow 看起来拆开了，事务边界却开始变得隐形，后面排障会更麻烦。</p>
+<h2 id="Chat-的沉浸感会保留"><a href="#Chat-的沉浸感会保留" class="headerlink" title="Chat 的沉浸感会保留"></a>Chat 的沉浸感会保留</h2><p>前端也有类似的问题。</p>
+<p>Workspace 是多面板的工具型界面，适合管理资料、查看目录、编辑内容。Chat 是全屏沉浸式体验，适合连续对话和阅读证据。这两种交互解决的是不同场景。</p>
+<p>维护上的收拢会集中在 Auth、API Client、SSE、Chat Runtime、Evidence、Markdown 和 VFS Store。两个 Shell 继续保留各自的 Layout。</p>
+<p>未来可以选择两个独立应用，也可以变成一个构建产物里的两套路由。无论采用哪种方式，沉浸式 Chat 都会留下来。</p>
+<h2 id="文档和配置也是系统的一部分"><a href="#文档和配置也是系统的一部分" class="headerlink" title="文档和配置也是系统的一部分"></a>文档和配置也是系统的一部分</h2><p>这次重构还有一条不太显眼的线：清理仓库里的历史噪声。</p>
+<p>282 份 Markdown、279 处 Phase 或历史注释、两份互相冲突的配置模板，这些内容会影响开发者，也会影响参与开发的 AI。</p>
+<p>当旧文档还在描述已经不存在的接口，配置模板里出现程序根本不会读取的字段，系统的记忆就开始和源码分叉。</p>
+<p>后面的治理会建立一个明确的文档入口。当前架构、API、运维说明、正在进行的工作和历史归档会被分开。配置也只保留一份人工维护的模板，并增加未知键校验。</p>
+<p>历史不会消失，它会回到该待的位置。当前事实也会拥有一个真正可信的入口。</p>
+<h2 id="写在这次重构之前"><a href="#写在这次重构之前" class="headerlink" title="写在这次重构之前"></a>写在这次重构之前</h2><p>到现在为止，这次重构还没有修改一行业务代码。</p>
+<p>以前的我大概已经开始写限流中间件，顺手再拆几个 Service。快速完成一套复杂方案，会带来很强的成就感，也很容易被我当成能力的证明。</p>
+<p>现在更愿意先停下来。</p>
+<p>系统到底要长成什么样子，哪些能力应该收拢，哪些边界需要保留，哪一步可以做到零行为变化，以及如何证明功能一个都没有丢。这些问题没有代码那么显眼，却决定了后面写下的代码会成为资产，还是下一轮维护压力。</p>
+<p>这几个月对我的影响，大概也在这里。</p>
+<p>我不再急着从别人的评价里确认自己，也不再需要用一套足够复杂的系统证明什么。工作回到了工作本身：看清问题，尊重事实，做出取舍，然后承担结果。</p>
+<p>不和别人比较以后，很多东西反而简单了。可以承认过去的设计已经开始变重，也可以承认最初提出的方案并不完整。讨论里出现分歧时，也不需要急着证明谁对谁错，只需要继续沿着代码事实往下推，直到大家找到更好的答案。</p>
+<p>这次 KH 的架构，就是这样一点点收敛出来的。</p>
+<p>它从限流开始，经过一次关于系统是否臃肿的追问，一路落到了平台入口、共享检索、Workflow 事务和前端双 Shell 的整体收拢上。</p>
+<p>代码还没有开始重构，但重构已经发生了。</p>
+<p>人有时候也是这样。</p>
+<p>真正的变化未必马上产生一个 commit。面对同一个问题时，反应已经和过去不同了。</p>
+
+      </div>
+    </div>
+  </div>
+
+  
+  <nav class="post-nav">
+    
+    
+    <a class="post-nav__item post-nav__item--next" href="/2026/04/29/%E8%AE%A9-AI-%E8%87%AA%E6%88%91%E8%BF%9B%E5%8C%96%EF%BC%9AMeridian-DevOps-MCP-%E6%96%B9%E6%B3%95%E8%AE%BA/">
+      <span>下一篇</span>
+      <strong>让 AI 自我进化：Meridian DevOps MCP 方法论</strong>
+    </a>
+    
+  </nav>
+  
+</article>
+
+  </main>
+  
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <div class="site-footer__links">
+        <div class="social-links">
+  
+  <a href="https://github.com/Jayleonc" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+  
+  
+  <a href="mailto:jayleonc@163.com" aria-label="Email">Email</a>
+  
+</div>
+
+      </div>
+      <p class="site-footer__title">© 2026
+          Jayleonc
+      </p>
+      <p class="site-footer__meta">
+        自 2019 年起持续写作，本站已稳定运行 <span data-runtime data-since="2019-02-28T00:00:00+08:00">7 年</span>。
+        <span id="busuanzi_container_site_uv" style="display:none;">已与 <span id="busuanzi_value_site_uv"></span> 位访客在此相遇。</span>
+      </p>
+      <p class="site-footer__note">
+        Hexo 8 · Atelier 自定义主题
+      </p>
+    </div>
+  </footer>
+  <script async defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script src="/js/site.js"></script>
+</body>
+</html>
